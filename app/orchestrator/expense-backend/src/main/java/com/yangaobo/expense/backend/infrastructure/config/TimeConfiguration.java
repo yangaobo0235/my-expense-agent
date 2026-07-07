@@ -1,0 +1,14 @@
+package com.yangaobo.expense.backend.infrastructure.config;
+
+import java.time.Clock;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class TimeConfiguration {
+
+    @Bean
+    Clock expenseFlowClock() {
+        return Clock.systemUTC();
+    }
+}

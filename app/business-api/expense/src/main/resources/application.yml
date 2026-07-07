@@ -1,0 +1,38 @@
+server:
+  port: ${EXPENSE_SERVICE_PORT:25103}
+spring:
+  config:
+    import:
+      - optional:file:.env.local[.properties]
+      - optional:file:../../../.env.local[.properties]
+  application:
+    name: expense
+  datasource:
+    url: ${EXPENSE_DATASOURCE_URL}
+    username: ${EXPENSE_DATASOURCE_USERNAME}
+    password: ${EXPENSE_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${EXPENSE_SERVICE_DATASOURCE_POOL_SIZE:5}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    table: flyway_schema_history_expense_business
+    baseline-on-migrate: true
+    baseline-version: 0
+expense:
+  mcp:
+    security:
+      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/expense-flow}
+      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/certs}
+      jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
+      audiences:
+        - ${EXPENSE_MCP_AUDIENCE:expense-mcp}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true

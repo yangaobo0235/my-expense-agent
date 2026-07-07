@@ -1,0 +1,13 @@
+package com.yangaobo.expense.backend.domain.risk;
+
+public enum RiskSignalCode {
+    DUPLICATE_DOCUMENT,
+    AMOUNT_MISMATCH,
+    DATE_ANOMALY,
+    SELLER_ANOMALY,
+    POLICY_LIMIT_EXCEEDED,
+    MISSING_REQUIRED_DOCUMENT,
+    LOW_EXTRACTION_CONFIDENCE,
+    FORBIDDEN_EXPENSE_ITEM,
+    DEPENDENCY_UNAVAILABLE
+}

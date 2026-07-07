@@ -1,0 +1,42 @@
+{
+  "name": "expense-flow-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 25105",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "api:generate": "openapi-typescript http://localhost:25101/v3/api-docs -o src/api/generated/schema.ts",
+    "api:check": "node scripts/check-openapi-schema.mjs"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@tanstack/react-query": "^5.90.21",
+    "antd": "^6.3.3",
+    "axios": "^1.13.6",
+    "dayjs": "^1.11.19",
+    "keycloak-js": "^26.2.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "4.7.0",
+    "jsdom": "26.1.0",
+    "msw": "^2.14.6",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "~5.9.3",
+    "vite": "6.4.1",
+    "vitest": "3.2.4"
+  }
+}

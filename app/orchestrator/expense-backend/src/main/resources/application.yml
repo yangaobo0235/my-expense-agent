@@ -1,0 +1,105 @@
+server:
+  port: ${EXPENSE_BACKEND_PORT:25101}
+spring:
+  config:
+    import:
+      - optional:file:.env.local[.properties]
+      - optional:file:../../../.env.local[.properties]
+  application:
+    name: expense-backend
+  datasource:
+    url: ${EXPENSE_DATASOURCE_URL}
+    username: ${EXPENSE_DATASOURCE_USERNAME}
+    password: ${EXPENSE_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${EXPENSE_DATASOURCE_POOL_SIZE:10}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    table: flyway_schema_history
+    baseline-on-migrate: true
+    baseline-version: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 200MB
+expense:
+  extraction:
+    mode: ${EXPENSE_EXTRACTION_MODE:llm}
+    model-name: ${EXPENSE_EXTRACTION_MODEL_NAME:qwen-vl-plus}
+    prompt-version: ${EXPENSE_EXTRACTION_PROMPT_VERSION:receipt-extraction-v2}
+    base-url: ${EXPENSE_EXTRACTION_BASE_URL:${EXPENSE_AI_CHAT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}}
+    api-key: ${EXPENSE_EXTRACTION_API_KEY:${DASHSCOPE_API_KEY:}}
+    timeout: ${EXPENSE_EXTRACTION_TIMEOUT:30s}
+    max-retries: ${EXPENSE_EXTRACTION_MAX_RETRIES:2}
+    fallback-enabled: ${EXPENSE_EXTRACTION_FALLBACK_ENABLED:true}
+  review-report:
+    model-name: ${EXPENSE_REVIEW_REPORT_MODEL_NAME:qwen-plus}
+    prompt-version: ${EXPENSE_REVIEW_REPORT_PROMPT_VERSION:review-report-v1}
+  evidence-chat:
+    model-name: ${EXPENSE_EVIDENCE_CHAT_MODEL_NAME:qwen-plus}
+    prompt-version: ${EXPENSE_EVIDENCE_CHAT_PROMPT_VERSION:evidence-chat-v1}
+  security:
+    issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/expense-flow}
+    jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/certs}
+    audiences: ${KEYCLOAK_BACKEND_AUDIENCES:expense-backend}
+    jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
+    allowed-origins: ${EXPENSE_ALLOWED_ORIGINS:http://localhost:25105}
+  minio:
+    endpoint: ${EXPENSE_MINIO_ENDPOINT}
+    access-key: ${EXPENSE_MINIO_ACCESS_KEY}
+    secret-key: ${EXPENSE_MINIO_SECRET_KEY}
+    bucket: ${EXPENSE_MINIO_BUCKET:expense-documents}
+  ai:
+    chat:
+      base-url: ${EXPENSE_AI_CHAT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
+      api-key: ${EXPENSE_AI_CHAT_API_KEY:${DASHSCOPE_API_KEY:}}
+      timeout: ${EXPENSE_AI_CHAT_TIMEOUT:30s}
+      max-retries: ${EXPENSE_AI_CHAT_MAX_RETRIES:2}
+      fallback-enabled: ${EXPENSE_AI_CHAT_FALLBACK_ENABLED:true}
+    embedding:
+      provider: ${EXPENSE_AI_EMBEDDING_PROVIDER:dashscope}
+      base-url: ${EXPENSE_AI_EMBEDDING_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
+      api-key: ${EXPENSE_AI_EMBEDDING_API_KEY:${DASHSCOPE_API_KEY:}}
+      model: ${EXPENSE_AI_EMBEDDING_MODEL:text-embedding-v4}
+      dimensions: ${EXPENSE_AI_EMBEDDING_DIMENSIONS:1024}
+  mcp:
+    client:
+      enabled: ${EXPENSE_MCP_CLIENT_ENABLED:true}
+      token-uri: ${EXPENSE_MCP_TOKEN_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/token}
+      client-id: ${EXPENSE_MCP_CLIENT_ID:expense-backend}
+      client-secret: ${EXPENSE_MCP_CLIENT_SECRET:}
+      account-url: ${EXPENSE_ACCOUNT_MCP_URL:http://localhost:25102/mcp}
+      expense-url: ${EXPENSE_EXPENSE_MCP_URL:http://localhost:25103/mcp}
+      audit-history-url: ${EXPENSE_AUDIT_HISTORY_MCP_URL:http://localhost:25104/mcp}
+      connection-timeout: ${EXPENSE_MCP_CONNECTION_TIMEOUT:10s}
+      tool-timeout: ${EXPENSE_MCP_TOOL_TIMEOUT:15s}
+      max-attempts: ${EXPENSE_MCP_MAX_ATTEMPTS:2}
+      retry-delay: ${EXPENSE_MCP_RETRY_DELAY:200ms}
+  evaluation:
+    risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v1.json}
+    policy-rag-dataset: ${EXPENSE_POLICY_RAG_EVALUATION_DATASET:classpath:evaluation/cases/policy-rag-golden-v1.json}
+    agent-security-dataset: ${EXPENSE_AGENT_SECURITY_EVALUATION_DATASET:classpath:evaluation/cases/agent-security-golden-v1.json}
+management:
+  tracing:
+    sampling:
+      probability: ${EXPENSE_TRACING_SAMPLING_PROBABILITY:1.0}
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}/v1/traces
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+info:
+  app:
+    boundary: orchestrator

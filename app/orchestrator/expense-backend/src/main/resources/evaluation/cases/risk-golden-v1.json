@@ -1,0 +1,1212 @@
+{
+  "datasetVersion": "risk-golden-v1",
+  "description": "ExpenseFlow 确定性风险引擎 100 条人工核验合成黄金案例，覆盖正常、超标、缺票、重复、金额差异、制度边界、提示注入与低质量票据。",
+  "cases": [
+    {
+      "id": "normal-001",
+      "category": "正常案例",
+      "claimedAmount": 103.17,
+      "extractedAmount": 103.17,
+      "extractionConfidence": 0.792,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-002",
+      "category": "正常案例",
+      "claimedAmount": 126.34,
+      "extractedAmount": 126.34,
+      "extractionConfidence": 0.804,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-003",
+      "category": "正常案例",
+      "claimedAmount": 149.51,
+      "extractedAmount": 149.51,
+      "extractionConfidence": 0.816,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-004",
+      "category": "正常案例",
+      "claimedAmount": 172.68,
+      "extractedAmount": 172.68,
+      "extractionConfidence": 0.828,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-005",
+      "category": "正常案例",
+      "claimedAmount": 195.85,
+      "extractedAmount": 195.85,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-006",
+      "category": "正常案例",
+      "claimedAmount": 219.02,
+      "extractedAmount": 219.02,
+      "extractionConfidence": 0.852,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-007",
+      "category": "正常案例",
+      "claimedAmount": 242.19,
+      "extractedAmount": 242.19,
+      "extractionConfidence": 0.864,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-008",
+      "category": "正常案例",
+      "claimedAmount": 265.36,
+      "extractedAmount": 265.36,
+      "extractionConfidence": 0.876,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-009",
+      "category": "正常案例",
+      "claimedAmount": 288.53,
+      "extractedAmount": 288.53,
+      "extractionConfidence": 0.888,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-010",
+      "category": "正常案例",
+      "claimedAmount": 311.7,
+      "extractedAmount": 311.7,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-011",
+      "category": "正常案例",
+      "claimedAmount": 334.87,
+      "extractedAmount": 334.87,
+      "extractionConfidence": 0.912,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-012",
+      "category": "正常案例",
+      "claimedAmount": 358.04,
+      "extractedAmount": 358.04,
+      "extractionConfidence": 0.924,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-013",
+      "category": "正常案例",
+      "claimedAmount": 381.21,
+      "extractedAmount": 381.21,
+      "extractionConfidence": 0.936,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-014",
+      "category": "正常案例",
+      "claimedAmount": 404.38,
+      "extractedAmount": 404.38,
+      "extractionConfidence": 0.948,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-015",
+      "category": "正常案例",
+      "claimedAmount": 427.55,
+      "extractedAmount": 427.55,
+      "extractionConfidence": 0.96,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-016",
+      "category": "正常案例",
+      "claimedAmount": 450.72,
+      "extractedAmount": 450.72,
+      "extractionConfidence": 0.972,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-017",
+      "category": "正常案例",
+      "claimedAmount": 473.89,
+      "extractedAmount": 473.89,
+      "extractionConfidence": 0.984,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-018",
+      "category": "正常案例",
+      "claimedAmount": 497.06,
+      "extractedAmount": 497.06,
+      "extractionConfidence": 0.78,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-019",
+      "category": "正常案例",
+      "claimedAmount": 520.23,
+      "extractedAmount": 520.23,
+      "extractionConfidence": 0.792,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-020",
+      "category": "正常案例",
+      "claimedAmount": 543.4,
+      "extractedAmount": 543.4,
+      "extractionConfidence": 0.804,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-021",
+      "category": "正常案例",
+      "claimedAmount": 566.57,
+      "extractedAmount": 566.57,
+      "extractionConfidence": 0.816,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-022",
+      "category": "正常案例",
+      "claimedAmount": 589.74,
+      "extractedAmount": 589.74,
+      "extractionConfidence": 0.828,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-023",
+      "category": "正常案例",
+      "claimedAmount": 612.91,
+      "extractedAmount": 612.91,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-024",
+      "category": "正常案例",
+      "claimedAmount": 636.08,
+      "extractedAmount": 636.08,
+      "extractionConfidence": 0.852,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-025",
+      "category": "正常案例",
+      "claimedAmount": 659.25,
+      "extractedAmount": 659.25,
+      "extractionConfidence": 0.864,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-026",
+      "category": "正常案例",
+      "claimedAmount": 682.42,
+      "extractedAmount": 682.42,
+      "extractionConfidence": 0.876,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-027",
+      "category": "正常案例",
+      "claimedAmount": 705.59,
+      "extractedAmount": 705.59,
+      "extractionConfidence": 0.888,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-028",
+      "category": "正常案例",
+      "claimedAmount": 728.76,
+      "extractedAmount": 728.76,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-029",
+      "category": "正常案例",
+      "claimedAmount": 751.93,
+      "extractedAmount": 751.93,
+      "extractionConfidence": 0.912,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-030",
+      "category": "正常案例",
+      "claimedAmount": 775.1,
+      "extractedAmount": 775.1,
+      "extractionConfidence": 0.924,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-001",
+      "category": "超标案例",
+      "claimedAmount": 711.5,
+      "extractedAmount": 711.5,
+      "extractionConfidence": 0.85,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-002",
+      "category": "超标案例",
+      "claimedAmount": 773,
+      "extractedAmount": 773,
+      "extractionConfidence": 0.86,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-003",
+      "category": "超标案例",
+      "claimedAmount": 834.5,
+      "extractedAmount": 834.5,
+      "extractionConfidence": 0.87,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-004",
+      "category": "超标案例",
+      "claimedAmount": 896,
+      "extractedAmount": 876,
+      "extractionConfidence": 0.88,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-005",
+      "category": "超标案例",
+      "claimedAmount": 957.5,
+      "extractedAmount": 957.5,
+      "extractionConfidence": 0.89,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-006",
+      "category": "超标案例",
+      "claimedAmount": 1019,
+      "extractedAmount": 1019,
+      "extractionConfidence": 0.9,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-007",
+      "category": "超标案例",
+      "claimedAmount": 1080.5,
+      "extractedAmount": 1080.5,
+      "extractionConfidence": 0.91,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-008",
+      "category": "超标案例",
+      "claimedAmount": 1142,
+      "extractedAmount": 1122,
+      "extractionConfidence": 0.92,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-009",
+      "category": "超标案例",
+      "claimedAmount": 1203.5,
+      "extractedAmount": 1203.5,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-010",
+      "category": "超标案例",
+      "claimedAmount": 1265,
+      "extractedAmount": 1265,
+      "extractionConfidence": 0.84,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-011",
+      "category": "超标案例",
+      "claimedAmount": 1326.5,
+      "extractedAmount": 1326.5,
+      "extractionConfidence": 0.85,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-012",
+      "category": "超标案例",
+      "claimedAmount": 1388,
+      "extractedAmount": 1368,
+      "extractionConfidence": 0.86,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-013",
+      "category": "超标案例",
+      "claimedAmount": 1449.5,
+      "extractedAmount": 1449.5,
+      "extractionConfidence": 0.87,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-014",
+      "category": "超标案例",
+      "claimedAmount": 1511,
+      "extractedAmount": 1511,
+      "extractionConfidence": 0.88,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-015",
+      "category": "超标案例",
+      "claimedAmount": 1572.5,
+      "extractedAmount": 1572.5,
+      "extractionConfidence": 0.89,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-016",
+      "category": "超标案例",
+      "claimedAmount": 1634,
+      "extractedAmount": 1614,
+      "extractionConfidence": 0.9,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-017",
+      "category": "超标案例",
+      "claimedAmount": 1695.5,
+      "extractedAmount": 1695.5,
+      "extractionConfidence": 0.91,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-018",
+      "category": "超标案例",
+      "claimedAmount": 1757,
+      "extractedAmount": 1757,
+      "extractionConfidence": 0.92,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-019",
+      "category": "超标案例",
+      "claimedAmount": 1818.5,
+      "extractedAmount": 1818.5,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-020",
+      "category": "超标案例",
+      "claimedAmount": 1880,
+      "extractedAmount": 1860,
+      "extractionConfidence": 0.84,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-001",
+      "category": "缺票案例",
+      "claimedAmount": 317.3,
+      "extractedAmount": 317.3,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-002",
+      "category": "缺票案例",
+      "claimedAmount": 414.6,
+      "extractedAmount": 414.6,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-003",
+      "category": "缺票案例",
+      "claimedAmount": 511.9,
+      "extractedAmount": 511.9,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-004",
+      "category": "缺票案例",
+      "claimedAmount": 609.2,
+      "extractedAmount": 609.2,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-005",
+      "category": "缺票案例",
+      "claimedAmount": 706.5,
+      "extractedAmount": 706.5,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-006",
+      "category": "缺票案例",
+      "claimedAmount": 803.8,
+      "extractedAmount": 803.8,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-007",
+      "category": "缺票案例",
+      "claimedAmount": 901.1,
+      "extractedAmount": 901.1,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-008",
+      "category": "缺票案例",
+      "claimedAmount": 998.4,
+      "extractedAmount": 998.4,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-009",
+      "category": "缺票案例",
+      "claimedAmount": 1095.7,
+      "extractedAmount": 1095.7,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-010",
+      "category": "缺票案例",
+      "claimedAmount": 1193,
+      "extractedAmount": 1193,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-001",
+      "category": "重复票据",
+      "claimedAmount": 248.8,
+      "extractedAmount": 248.8,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-002",
+      "category": "重复票据",
+      "claimedAmount": 337.6,
+      "extractedAmount": 337.6,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-003",
+      "category": "重复票据",
+      "claimedAmount": 426.4,
+      "extractedAmount": 426.4,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-004",
+      "category": "重复票据",
+      "claimedAmount": 515.2,
+      "extractedAmount": 480.2,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-005",
+      "category": "重复票据",
+      "claimedAmount": 604,
+      "extractedAmount": 604,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-006",
+      "category": "重复票据",
+      "claimedAmount": 692.8,
+      "extractedAmount": 692.8,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-007",
+      "category": "重复票据",
+      "claimedAmount": 781.6,
+      "extractedAmount": 781.6,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-008",
+      "category": "重复票据",
+      "claimedAmount": 870.4,
+      "extractedAmount": 835.4,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-009",
+      "category": "重复票据",
+      "claimedAmount": 959.2,
+      "extractedAmount": 959.2,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-010",
+      "category": "重复票据",
+      "claimedAmount": 1048,
+      "extractedAmount": 1048,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-001",
+      "category": "金额不一致",
+      "claimedAmount": 173.25,
+      "extractedAmount": 154.75,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-002",
+      "category": "金额不一致",
+      "claimedAmount": 246.5,
+      "extractedAmount": 246.48,
+      "extractionConfidence": 0.86,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-003",
+      "category": "金额不一致",
+      "claimedAmount": 319.75,
+      "extractedAmount": 301.25,
+      "extractionConfidence": 0.88,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-004",
+      "category": "金额不一致",
+      "claimedAmount": 393,
+      "extractedAmount": 392.98,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-005",
+      "category": "金额不一致",
+      "claimedAmount": 466.25,
+      "extractedAmount": 447.75,
+      "extractionConfidence": 0.92,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-006",
+      "category": "金额不一致",
+      "claimedAmount": 539.5,
+      "extractedAmount": 539.48,
+      "extractionConfidence": 0.94,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-007",
+      "category": "金额不一致",
+      "claimedAmount": 612.75,
+      "extractedAmount": 594.25,
+      "extractionConfidence": 0.82,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-008",
+      "category": "金额不一致",
+      "claimedAmount": 686,
+      "extractedAmount": 685.98,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-009",
+      "category": "金额不一致",
+      "claimedAmount": 759.25,
+      "extractedAmount": 740.75,
+      "extractionConfidence": 0.86,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-010",
+      "category": "金额不一致",
+      "claimedAmount": 832.5,
+      "extractedAmount": 832.48,
+      "extractionConfidence": 0.88,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-001",
+      "category": "制度边界",
+      "claimedAmount": 100,
+      "extractedAmount": 99.99,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-002",
+      "category": "制度边界",
+      "claimedAmount": 100,
+      "extractedAmount": 99.989,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-003",
+      "category": "制度边界",
+      "claimedAmount": 450,
+      "extractedAmount": 450,
+      "extractionConfidence": 0.6999,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-004",
+      "category": "制度边界",
+      "claimedAmount": 450,
+      "extractedAmount": 450,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-005",
+      "category": "制度边界",
+      "claimedAmount": 700,
+      "extractedAmount": 700,
+      "extractionConfidence": 0.69,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-006",
+      "category": "制度边界",
+      "claimedAmount": 800,
+      "extractedAmount": 800.01,
+      "extractionConfidence": 0.95,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-007",
+      "category": "制度边界",
+      "claimedAmount": 800,
+      "extractedAmount": 800.02,
+      "extractionConfidence": 0.95,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-008",
+      "category": "制度边界",
+      "claimedAmount": 1200,
+      "extractedAmount": 1200,
+      "extractionConfidence": 0.95,
+      "dateAnomaly": true,
+      "sellerAnomaly": true,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-009",
+      "category": "制度边界",
+      "claimedAmount": 1200,
+      "extractedAmount": 1200,
+      "extractionConfidence": 0.95,
+      "dateAnomaly": true,
+      "sellerAnomaly": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "SELLER_ANOMALY",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-010",
+      "category": "制度边界",
+      "claimedAmount": 1600,
+      "extractedAmount": 1500,
+      "extractionConfidence": 0.6999,
+      "duplicateDocument": true,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-001",
+      "category": "提示注入",
+      "claimedAmount": 341,
+      "extractedAmount": 341,
+      "extractionConfidence": 0.85,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "injection-002",
+      "category": "提示注入",
+      "claimedAmount": 382,
+      "extractedAmount": 382,
+      "extractionConfidence": 0.87,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "injection-003",
+      "category": "提示注入",
+      "claimedAmount": 423,
+      "extractedAmount": 423,
+      "extractionConfidence": 0.89,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "injection-004",
+      "category": "提示注入",
+      "claimedAmount": 464,
+      "extractedAmount": 464,
+      "extractionConfidence": 0.91,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "injection-005",
+      "category": "提示注入",
+      "claimedAmount": 505,
+      "extractedAmount": 505,
+      "extractionConfidence": 0.93,
+      "forbiddenExpenseItem": true,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-001",
+      "category": "低质量图片",
+      "claimedAmount": 312,
+      "extractedAmount": 312,
+      "extractionConfidence": 0.465,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "quality-002",
+      "category": "低质量图片",
+      "claimedAmount": 364,
+      "extractedAmount": 334,
+      "extractionConfidence": 0.51,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-003",
+      "category": "低质量图片",
+      "claimedAmount": 416,
+      "extractedAmount": 416,
+      "extractionConfidence": 0.555,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "quality-004",
+      "category": "低质量图片",
+      "claimedAmount": 468,
+      "extractedAmount": 438,
+      "extractionConfidence": 0.6,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-005",
+      "category": "低质量图片",
+      "claimedAmount": 520,
+      "extractedAmount": 520,
+      "extractionConfidence": 0.645,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    }
+  ]
+}

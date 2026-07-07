@@ -1,0 +1,11 @@
+package com.yangaobo.expense.backend.application.workflow;
+
+public enum RiskRoutingAction {
+    LOW_RISK_AUTO_APPROVE,
+    MEDIUM_RISK_HUMAN_REVIEW,
+    HIGH_RISK_ESCALATE_WITH_DEBATE_ASSIST,
+    MISSING_INFO_REQUEST_MORE,
+    POLICY_CONFLICT_MANUAL_REVIEW,
+    POSSIBLE_FRAUD_ESCALATE,
+    DEPENDENCY_FAILURE_HUMAN_REVIEW
+}
