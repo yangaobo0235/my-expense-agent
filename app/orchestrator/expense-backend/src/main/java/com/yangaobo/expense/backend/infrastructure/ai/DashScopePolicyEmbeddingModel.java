@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.infrastructure.ai;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.policy.PolicyEmbeddingModel;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -39,8 +39,8 @@ public class DashScopePolicyEmbeddingModel implements PolicyEmbeddingModel {
     @Override
     public float[] embed(String text) {
         if (properties.apiKey() == null || properties.apiKey().isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
                     "启用 DashScope 向量模型时必须配置 EXPENSE_AI_EMBEDDING_API_KEY 或 DASHSCOPE_API_KEY");
         }
         try {
@@ -72,14 +72,14 @@ public class DashScopePolicyEmbeddingModel implements PolicyEmbeddingModel {
                 vector[index] = embedding.get(index).floatValue();
             }
             return vector;
-        } catch (ExpenseFlowException exception) {
+        } catch (CampusFundFlowException exception) {
             throw exception;
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw unavailable("百炼向量请求被中断");
         } catch (Exception exception) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
                     "百炼向量服务调用失败：" + exception.getMessage());
         }
     }
@@ -89,7 +89,7 @@ public class DashScopePolicyEmbeddingModel implements PolicyEmbeddingModel {
         return properties.model();
     }
 
-    private static ExpenseFlowException unavailable(String message) {
-        return new ExpenseFlowException(ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE, message);
+    private static CampusFundFlowException unavailable(String message) {
+        return new CampusFundFlowException(CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE, message);
     }
 }

@@ -32,11 +32,13 @@ export interface CaseDiagnosis {
 
 const stepLabels: Record<string, string> = {
   AGENT_PLAN: '处理计划',
-  MCP_EMPLOYEE_CONTEXT: '员工信息核对',
+  MCP_APPLICANT_CONTEXT: '申请人信息核对',
   MCP_DUPLICATE_CHECK: '历史重复检测',
+  MCP_PROJECT_BUDGET: '项目预算核对',
+  MCP_REIMBURSEMENT_HISTORY: '历史报销核对',
   MCP_REVIEW_EVIDENCE: '审核证据保存',
   PARALLEL_EVIDENCE_COLLECTION: '证据收集',
-  POLICY_RETRIEVAL: '费用制度核对',
+  POLICY_RETRIEVAL: '经费制度核对',
   RISK_ASSESSMENT: '风险评估',
   RISK_ROUTING: '分配审核方式',
   FINALIZE: '形成审核意见',
@@ -53,27 +55,21 @@ export function buildCaseStages(
   documents: ExpenseDocumentDetail[] = [],
   evidence?: CaseEvidence,
 ): CaseStage[] {
-  const failedStep = latestFailedStep(evidence);
+  const terminal = isTerminalStatus(expenseCase.status);
+  const failedStep = terminal ? undefined : latestFailedStep(evidence);
   const documentsUploaded = documents.length > 0 || !['DRAFT'].includes(expenseCase.status);
   const extracted = documents.some((document) => document.extraction) || after(expenseCase.status, 'EXTRACTED');
   const hasPolicy = Boolean(evidence?.policyFindings.length);
   const hasRisk = Boolean(evidence?.risk) || Boolean(expenseCase.riskLevel);
   const hasRun = Boolean(evidence?.run);
-  const settlementDone = Boolean(
-    evidence?.toolCalls.some(
-      (call) =>
-        call.writeOperation &&
-        call.status === 'SUCCEEDED' &&
-        ['submit_reimbursement', 'submit_payment'].includes(call.toolName),
-    ),
-  );
+  const settlementDone = expenseCase.settlementStatus === 'SUBMITTED';
 
   return [
     {
       key: 'summary',
       title: '基本信息',
       state: 'succeeded',
-      detail: `${expenseCase.applicantName} / ${expenseCase.departmentCode}`,
+      detail: `${expenseCase.applicantName} / ${expenseCase.projectCode}`,
     },
     {
       key: 'documents',
@@ -139,14 +135,14 @@ export function buildCaseStages(
     },
     {
       key: 'settlement',
-      title: '结算',
+      title: '入账',
       state: stageState({
         failed: false,
         warning: expenseCase.status === 'APPROVED' && !settlementDone,
         succeeded: settlementDone,
         active: expenseCase.status === 'APPROVED' && !settlementDone,
       }),
-      detail: settlementDone ? '结算已提交' : expenseCase.status === 'APPROVED' ? '待发起结算' : '审批后可用',
+      detail: settlementDone ? '入账已提交' : expenseCase.status === 'APPROVED' ? '待发起入账' : '审批后可用',
     },
   ];
 }
@@ -155,7 +151,7 @@ export function buildCaseDiagnosis(
   expenseCase: ExpenseCase,
   evidence?: CaseEvidence,
 ): CaseDiagnosis {
-  const failedStep = latestFailedStep(evidence);
+  const failedStep = isTerminalStatus(expenseCase.status) ? undefined : latestFailedStep(evidence);
   if (expenseCase.status === 'FAILED' || failedStep) {
     const stage = failedStep?.name ?? expenseCase.failureStage ?? 'UNKNOWN';
     const workflowRetry = Boolean(evidence?.run?.requestId) && isRecoverableWorkflowStep(stage);
@@ -166,7 +162,7 @@ export function buildCaseDiagnosis(
         description: failureDescription(
           stage,
           expenseCase.failureReason || failedStep?.errorMessage,
-          '票据识别失败，已保留案例和票据，可重新识别。',
+          '票据识别失败，已保留申请和票据，可重新识别。',
         ),
         actionLabel: '重新识别票据',
         retryKind: 'extraction',
@@ -192,7 +188,7 @@ export function buildCaseDiagnosis(
     return {
       severity: 'warning',
       title: '等待人工审核',
-      description: '该案例需要人工确认，请审核员结合票据、制度依据和风险提示作出决定。',
+      description: '该申请需要人工确认，请审核员结合票据、制度依据和风险提示作出决定。',
     };
   }
 
@@ -200,7 +196,7 @@ export function buildCaseDiagnosis(
     return {
       severity: 'success',
       title: '审核已批准',
-      description: '案例已通过审核，财务管理员可以继续发起结算。',
+      description: '申请已通过审核，学院财务可以继续发起入账。',
     };
   }
 
@@ -228,11 +224,11 @@ export function nextActionTitle(expenseCase: ExpenseCase) {
     case 'WAITING_HUMAN':
       return '等待人工审核';
     case 'APPROVED':
-      return '待发起结算';
+      return '待发起入账';
     case 'REJECTED':
       return '审核已拒绝';
     default:
-      return '案例处理中';
+      return '申请处理中';
   }
 }
 
@@ -243,11 +239,11 @@ export function nextActionDescription(expenseCase: ExpenseCase) {
     case 'EXTRACTED':
       return '票据内容已识别，下一步是核对制度并评估风险。';
     case 'WAITING_HUMAN':
-      return '该案例需要审核员确认。';
+      return '该申请需要审核员确认。';
     case 'APPROVED':
-      return '案例已通过审核，下一步由财务管理员发起结算。';
+      return '申请已通过审核，下一步由学院财务发起入账。';
     case 'REJECTED':
-      return '该案例已有拒绝决定，后续可查看审核记录和证据。';
+      return '该申请已有拒绝决定，后续可查看审核记录和证据。';
     default:
       return '系统会保留每一步的处理结果和失败原因。';
   }
@@ -260,7 +256,7 @@ export function latestFailedStep(evidence?: CaseEvidence) {
 export function isRecoverableWorkflowStep(stage: string) {
   return [
     'AGENT_PLAN',
-    'MCP_EMPLOYEE_CONTEXT',
+    'MCP_APPLICANT_CONTEXT',
     'MCP_DUPLICATE_CHECK',
     'MCP_REVIEW_EVIDENCE',
     'PARALLEL_EVIDENCE_COLLECTION',
@@ -304,6 +300,10 @@ function after(status: ExpenseCase['status'], checkpoint: ExpenseCase['status'])
   return order.indexOf(status) > order.indexOf(checkpoint);
 }
 
+function isTerminalStatus(status: ExpenseCase['status']) {
+  return status === 'APPROVED' || status === 'REJECTED';
+}
+
 function extractionDetail(expenseCase: ExpenseCase, documents: ExpenseDocumentDetail[]) {
   if (expenseCase.status === 'FAILED' && expenseCase.failureStage === 'DOCUMENT_EXTRACTION') {
     return '识别失败，可重试';
@@ -330,7 +330,7 @@ function reviewDetail(expenseCase: ExpenseCase) {
 
 function isEvidenceStep(stepName: string) {
   return [
-    'MCP_EMPLOYEE_CONTEXT',
+    'MCP_APPLICANT_CONTEXT',
     'MCP_DUPLICATE_CHECK',
     'MCP_REVIEW_EVIDENCE',
     'PARALLEL_EVIDENCE_COLLECTION',
@@ -340,7 +340,7 @@ function isEvidenceStep(stepName: string) {
 function failureDescription(stage: string, rawReason: string | undefined, fallback: string) {
   if (!rawReason) return fallback;
   if (rawReason.includes('DEPENDENCY_UNAVAILABLE') || rawReason.includes('MCP 调用失败')) {
-    return `${workflowStepLabel(stage)}暂时没有返回结果。案例已保留当前进度，可以稍后重试，或交给人工确认。`;
+    return `${workflowStepLabel(stage)}暂时没有返回结果。申请已保留当前进度，可以稍后重试，或交给人工确认。`;
   }
   if (rawReason.includes('_') || rawReason.includes('NON_RETRYABLE') || rawReason.includes('RETRYABLE')) {
     return fallback;

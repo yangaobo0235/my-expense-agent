@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.time.Instant;
 
 public class McpExpenseContextGateway implements ExpenseContextGateway {
 
@@ -45,26 +47,22 @@ public class McpExpenseContextGateway implements ExpenseContextGateway {
     }
 
     @Override
-    public EmployeeContext employeeContext(
-            String employeeId,
-            String fallbackRegion,
-            String fallbackEmployeeGrade) {
+    public ApplicantContext applicantContext(
+            String applicantId,
+            String projectCode) {
         JsonNode profile =
                 call(
-                        "get_employee_profile",
-                        Map.of("employeeId", employeeId));
+                        "get_applicant_profile",
+                        Map.of("applicantId", applicantId, "projectCode", projectCode));
         JsonNode methods =
                 call(
-                        "get_payment_methods",
-                        Map.of("employeeId", employeeId));
-        return new EmployeeContext(
-                text(profile, "employeeId", employeeId),
-                text(profile, "departmentCode", ""),
-                text(
-                        profile,
-                        "employeeGrade",
-                        fallbackEmployeeGrade),
-                text(profile, "region", fallbackRegion),
+                        "get_reimbursement_accounts",
+                        Map.of("applicantId", applicantId));
+        return new ApplicantContext(
+                text(profile, "applicantId", applicantId),
+                text(profile, "projectCode", projectCode),
+                text(profile, "campusLevel", "UNKNOWN"),
+                text(profile, "region", "CN"),
                 readStrings(methods),
                 "MCP",
                 false,
@@ -72,10 +70,45 @@ public class McpExpenseContextGateway implements ExpenseContextGateway {
     }
 
     @Override
+    public ProjectBudget projectBudget(String applicantId, String projectCode) {
+        JsonNode budget =
+                call(
+                        "get_project_budget_balance",
+                        Map.of("applicantId", applicantId, "projectCode", projectCode));
+        return new ProjectBudget(
+                text(budget, "applicantId", applicantId),
+                text(budget, "projectCode", projectCode),
+                decimal(budget, "total"),
+                decimal(budget, "available"),
+                text(budget, "currency", "CNY"),
+                budget.path("version").asLong(0),
+                instant(budget, "updatedAt"),
+                "MCP",
+                false,
+                "");
+    }
+
+    @Override
+    public ReimbursementHistory reimbursementHistory(String applicantId) {
+        JsonNode result =
+                call(
+                        "get_fund_reimbursement_history",
+                        Map.of("applicantId", applicantId));
+        List<Map<String, Object>> items = new ArrayList<>();
+        if (result.isArray()) {
+            result.forEach(
+                    item ->
+                            items.add(
+                                    objectMapper.convertValue(
+                                            item, new TypeReference<Map<String, Object>>() {})));
+        }
+        return new ReimbursementHistory(items, "MCP", false, "");
+    }
+
+    @Override
     public DuplicateCheck duplicateCheck(
             UUID currentCaseId,
-            List<String> documentSha256,
-            boolean fallbackDuplicate) {
+            List<String> documentSha256) {
         List<String> duplicates = new ArrayList<>();
         Map<String, Object> evidence = new LinkedHashMap<>();
         for (String sha256 : documentSha256) {
@@ -97,7 +130,7 @@ public class McpExpenseContextGateway implements ExpenseContextGateway {
                             result, new TypeReference<Map<String, Object>>() {}));
         }
         return new DuplicateCheck(
-                fallbackDuplicate || !duplicates.isEmpty(),
+                !duplicates.isEmpty(),
                 duplicates,
                 evidence,
                 "MCP",
@@ -147,5 +180,18 @@ public class McpExpenseContextGateway implements ExpenseContextGateway {
         List<String> values = new ArrayList<>();
         node.forEach(item -> values.add(item.asText()));
         return List.copyOf(values);
+    }
+
+    private static BigDecimal decimal(JsonNode node, String field) {
+        JsonNode value = node.path(field);
+        if (!value.isNumber() && !value.isTextual()) {
+            throw new IllegalStateException("MCP Tool 缺少金额字段：" + field);
+        }
+        return value.decimalValue();
+    }
+
+    private static Instant instant(JsonNode node, String field) {
+        String value = node.path(field).asText("");
+        return value.isBlank() ? Instant.EPOCH : Instant.parse(value);
     }
 }

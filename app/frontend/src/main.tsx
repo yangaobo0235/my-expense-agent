@@ -29,7 +29,7 @@ void enableMocks().then(() => {
         theme={{
           token: {
             colorPrimary: '#0f766e',
-            borderRadius: 10,
+            borderRadius: 6,
             fontFamily: '"Inter", "PingFang SC", "Microsoft YaHei", sans-serif',
           },
         }}

@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.yangaobo</groupId>
-        <artifactId>my-expense-agent</artifactId>
+        <artifactId>campus-fund-flow</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>expense-backend</artifactId>
-    <name>ExpenseFlow Backend</name>
+    <name>CampusFundFlow Backend</name>
     <dependencies>
         <dependency>
             <groupId>com.yangaobo</groupId>
@@ -21,6 +21,10 @@
             <groupId>com.yangaobo</groupId>
             <artifactId>expense-agents</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bsc.langgraph4j</groupId>
+            <artifactId>langgraph4j-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -38,7 +38,7 @@ public class ExpenseMcpConfiguration {
     ServletRegistrationBean<?> expenseMcpServlet(
             HttpServletStreamableServerTransportProvider transport) {
         var registration = new ServletRegistrationBean<>(transport, "/mcp/*");
-        registration.setName("expense-mcp");
+        registration.setName("fund-reimbursement-mcp");
         registration.setLoadOnStartup(1);
         return registration;
     }
@@ -50,16 +50,16 @@ public class ExpenseMcpConfiguration {
             ExpenseBusinessService service,
             ObjectMapper objectMapper) {
         return McpServer.sync(transport)
-                .serverInfo("expense-business-mcp", "1.0.0")
+                .serverInfo("campus-fund-business-mcp", "1.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .toolCall(tool(mapper, "validate_invoice_number", "校验发票号码格式", invoiceSchema()),
                         (e, r) -> result(objectMapper, service.validateInvoiceNumber(text(r, "invoiceNumber"))))
                 .toolCall(tool(mapper, "calculate_allowed_amount", "按制度限额计算可报销金额", amountSchema()),
                         (e, r) -> result(objectMapper, service.calculateAllowedAmount(decimal(r, "claimedAmount"), decimal(r, "policyLimit"))))
-                .toolCall(tool(mapper, "submit_reimbursement", "幂等提交报销单", reimbursementSchema()),
+                .toolCall(tool(mapper, "submit_fund_reimbursement", "幂等登记审批通过的经费报销", reimbursementSchema()),
                         (e, r) -> result(objectMapper, service.submitReimbursement(text(r, "requestId"), UUID.fromString(text(r, "caseId")), decimal(r, "amount"), text(r, "currency"))))
-                .toolCall(tool(mapper, "submit_payment", "幂等提交付款请求", paymentSchema()),
-                        (e, r) -> result(objectMapper, service.submitPayment(text(r, "requestId"), UUID.fromString(text(r, "reimbursementId")), decimal(r, "amount"), text(r, "currency"))))
+                .toolCall(tool(mapper, "submit_fund_posting", "幂等提交审批通过的经费入账", paymentSchema()),
+                        (e, r) -> result(objectMapper, service.submitFundPosting(text(r, "requestId"), UUID.fromString(text(r, "reimbursementId")), decimal(r, "amount"), text(r, "currency"))))
                 .build();
     }
 

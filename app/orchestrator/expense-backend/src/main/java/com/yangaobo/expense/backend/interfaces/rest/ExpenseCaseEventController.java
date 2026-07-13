@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
-@RequestMapping("/api/v1/expense-cases")
+@RequestMapping("/api/v1/fund-applications")
 public class ExpenseCaseEventController {
 
     private final ExpenseCaseEventService eventService;
@@ -70,8 +70,9 @@ public class ExpenseCaseEventController {
                                 ::getAuthority)
                 .anyMatch(
                         authority ->
-                                "ROLE_REVIEWER".equals(authority)
+                                "ROLE_COLLEGE_REVIEWER".equals(authority)
                                         || "ROLE_FINANCE_ADMIN"
-                                                .equals(authority));
+                                                .equals(authority)
+                                        || "ROLE_AUDITOR".equals(authority));
     }
 }

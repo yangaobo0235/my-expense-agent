@@ -4,6 +4,8 @@ import com.yangaobo.expense.backend.application.workflow.ExpenseContextGateway;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.time.Instant;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -17,32 +19,51 @@ public class FallbackExpenseContextGateway
         implements ExpenseContextGateway {
 
     @Override
-    public EmployeeContext employeeContext(
-            String employeeId,
-            String fallbackRegion,
-            String fallbackEmployeeGrade) {
-        return new EmployeeContext(
-                employeeId,
-                "",
-                fallbackEmployeeGrade,
-                fallbackRegion,
+    public ApplicantContext applicantContext(
+            String applicantId,
+            String projectCode) {
+        return new ApplicantContext(
+                applicantId,
+                projectCode,
+                "UNKNOWN",
+                "CN",
                 List.of(),
-                "WORKFLOW_COMMAND",
-                false,
-                "");
+                "MCP_DISABLED",
+                true,
+                "MCP Client 未启用");
+    }
+
+    @Override
+    public ProjectBudget projectBudget(String applicantId, String projectCode) {
+        return new ProjectBudget(
+                applicantId,
+                projectCode,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                "CNY",
+                0,
+                Instant.EPOCH,
+                "MCP_DISABLED",
+                true,
+                "MCP Client 未启用");
+    }
+
+    @Override
+    public ReimbursementHistory reimbursementHistory(String applicantId) {
+        return new ReimbursementHistory(
+                List.of(), "MCP_DISABLED", true, "MCP Client 未启用");
     }
 
     @Override
     public DuplicateCheck duplicateCheck(
             UUID currentCaseId,
-            List<String> documentSha256,
-            boolean fallbackDuplicate) {
+            List<String> documentSha256) {
         return new DuplicateCheck(
-                fallbackDuplicate,
-                fallbackDuplicate ? List.copyOf(documentSha256) : List.of(),
-                Map.of("commandDuplicate", fallbackDuplicate),
-                "WORKFLOW_COMMAND",
                 false,
-                "");
+                List.of(),
+                Map.of("documentSha256", List.copyOf(documentSha256)),
+                "MCP_DISABLED",
+                true,
+                "MCP Client 未启用");
     }
 }

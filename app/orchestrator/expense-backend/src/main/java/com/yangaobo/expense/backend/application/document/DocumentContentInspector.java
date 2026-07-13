@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.document;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -27,8 +27,8 @@ public class DocumentContentInspector {
                 && content[2] == (byte) 0xFF) {
             return DetectedDocumentType.JPEG;
         }
-        throw new ExpenseFlowException(
-                ExpenseFlowErrorCode.DOCUMENT_REJECTED,
+        throw new CampusFundFlowException(
+                CampusFundFlowErrorCode.DOCUMENT_REJECTED,
                 "Only PDF, PNG, and JPEG documents are supported");
     }
 

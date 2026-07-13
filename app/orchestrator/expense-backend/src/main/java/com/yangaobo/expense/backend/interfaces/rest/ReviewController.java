@@ -26,18 +26,21 @@ public class ReviewController {
     }
 
     @GetMapping
-    public List<ReviewTaskResponse> openTasks() {
-        return reviewService.openTasks().stream().map(ReviewTaskResponse::from).toList();
+    public List<ReviewTaskResponse> openTasks(Principal principal) {
+        return reviewService.openTasks(roles(principal)).stream()
+                .map(ReviewTaskResponse::from)
+                .toList();
     }
 
     @GetMapping("/{taskId}")
-    public ReviewTaskResponse get(@PathVariable UUID taskId) {
-        return ReviewTaskResponse.from(reviewService.get(taskId));
+    public ReviewTaskResponse get(@PathVariable UUID taskId, Principal principal) {
+        return ReviewTaskResponse.from(reviewService.get(taskId, roles(principal)));
     }
 
-    @GetMapping("/{taskId}/more-info-suggestion")
-    public ReviewApplicationService.MoreInfoSuggestion moreInfoSuggestion(@PathVariable UUID taskId) {
-        return reviewService.suggestMoreInfo(taskId);
+    @PostMapping("/{taskId}/more-info-suggestion")
+    public ReviewApplicationService.MoreInfoSuggestion moreInfoSuggestion(
+            @PathVariable UUID taskId, Principal principal) {
+        return reviewService.suggestMoreInfo(taskId, roles(principal));
     }
 
     @PostMapping("/{taskId}/approve")

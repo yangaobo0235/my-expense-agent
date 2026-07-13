@@ -1,13 +1,14 @@
 {
-  "realm": "expense-flow",
+  "realm": "campus-fund-flow",
   "enabled": true,
-  "displayName": "ExpenseFlow",
+  "displayName": "CampusFundFlow",
   "registrationAllowed": false,
   "resetPasswordAllowed": true,
   "roles": {
     "realm": [
-      {"name": "EMPLOYEE"},
-      {"name": "REVIEWER"},
+      {"name": "STUDENT"},
+      {"name": "ADVISOR"},
+      {"name": "COLLEGE_REVIEWER"},
       {"name": "FINANCE_ADMIN"},
       {"name": "PROMPT_AUTHOR"},
       {"name": "PROMPT_REVIEWER"},
@@ -17,23 +18,23 @@
   },
   "clients": [
     {
-      "clientId": "expense-web",
-      "name": "ExpenseFlow Web",
+      "clientId": "campus-fund-web",
+      "name": "CampusFundFlow Web",
       "enabled": true,
       "publicClient": true,
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
-      "redirectUris": ["http://localhost:25105/*", "http://192.168.23.66:25105/*"],
-      "webOrigins": ["http://localhost:25105", "http://192.168.23.66:25105"],
+      "redirectUris": ["http://localhost:25105/*", "http://127.0.0.1:25105/*", "http://192.168.23.66:25105/*"],
+      "webOrigins": ["http://localhost:25105", "http://127.0.0.1:25105", "http://192.168.23.66:25105"],
       "attributes": {"pkce.code.challenge.method": "S256"},
       "protocolMappers": [
         {
-          "name": "expense-backend-audience",
+          "name": "campus-fund-backend-audience",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "expense-backend",
+            "included.client.audience": "campus-fund-backend",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
@@ -42,8 +43,8 @@
       ]
     },
     {
-      "clientId": "expense-backend",
-      "name": "ExpenseFlow Backend",
+      "clientId": "campus-fund-backend",
+      "name": "CampusFundFlow Backend",
       "enabled": true,
       "publicClient": false,
       "serviceAccountsEnabled": true,
@@ -51,12 +52,12 @@
       "directAccessGrantsEnabled": false,
       "protocolMappers": [
         {
-          "name": "expense-backend-audience",
+          "name": "campus-fund-backend-audience",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "expense-backend",
+            "included.client.audience": "campus-fund-backend",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
@@ -75,12 +76,12 @@
           }
         },
         {
-          "name": "expense-mcp-audience",
+          "name": "fund-reimbursement-mcp-audience",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "expense-mcp",
+            "included.client.audience": "fund-reimbursement-mcp",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
@@ -107,7 +108,7 @@
       "publicClient": false
     },
     {
-      "clientId": "expense-mcp",
+      "clientId": "fund-reimbursement-mcp",
       "enabled": true,
       "bearerOnly": true,
       "publicClient": false

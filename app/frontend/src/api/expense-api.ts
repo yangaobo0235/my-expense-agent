@@ -34,6 +34,8 @@ import type {
   OperationResponse,
 } from './openapi-types';
 
+const FUND_APPLICATIONS_API = '/api/v1/fund-applications';
+
 export type CaseFilters = OperationQuery<'search'>;
 export type PolicySearchFilters = OperationQuery<'search_1'>;
 export type WorkflowInput = ExpenseWorkflowRequest;
@@ -46,7 +48,7 @@ export type ReviewDecisionInput = Pick<
 
 export async function listCases(filters: CaseFilters): Promise<ExpenseCasePage> {
   const response = await httpClient.get<OperationResponse<'search'>>(
-    '/api/v1/expense-cases',
+    FUND_APPLICATIONS_API,
     { params: filters },
   );
   return response.data as ExpenseCasePage;
@@ -54,15 +56,15 @@ export async function listCases(filters: CaseFilters): Promise<ExpenseCasePage> 
 
 export async function getCase(caseId: string): Promise<ExpenseCase> {
   const response = await httpClient.get<OperationResponse<'get_1'>>(
-    `/api/v1/expense-cases/${caseId}`,
+    `${FUND_APPLICATIONS_API}/${caseId}`,
   );
   return response.data as ExpenseCase;
 }
 
 export async function createCase(input: CreateCaseInput): Promise<ExpenseCase> {
-  const response = await httpClient.post<OperationResponse<'create'>>(
-    '/api/v1/expense-cases',
-    input satisfies OperationRequest<'create'>,
+  const response = await httpClient.post<OperationResponse<'create_1'>>(
+    FUND_APPLICATIONS_API,
+    input satisfies OperationRequest<'create_1'>,
   );
   return response.data as ExpenseCase;
 }
@@ -72,14 +74,14 @@ export async function updateCase(
   input: UpdateCaseInput,
 ): Promise<ExpenseCase> {
   const response = await httpClient.put<ExpenseCase>(
-    `/api/v1/expense-cases/${caseId}`,
+    `${FUND_APPLICATIONS_API}/${caseId}`,
     input,
   );
   return response.data;
 }
 
 export async function deleteCase(caseId: string): Promise<void> {
-  await httpClient.delete(`/api/v1/expense-cases/${caseId}`);
+  await httpClient.delete(`${FUND_APPLICATIONS_API}/${caseId}`);
 }
 
 export async function uploadCaseDocument(
@@ -91,7 +93,7 @@ export async function uploadCaseDocument(
   body.append('file', file);
   return (
     await httpClient.post<OperationResponse<'uploadDocument'>>(
-      `/api/v1/expense-cases/${caseId}/documents`,
+      `${FUND_APPLICATIONS_API}/${caseId}/documents`,
       body,
       {
         onUploadProgress: (event) => {
@@ -107,7 +109,7 @@ export async function analyzeCase(
 ): Promise<OperationResponse<'analyze'>> {
   return (
     await httpClient.post<OperationResponse<'analyze'>>(
-      `/api/v1/expense-cases/${caseId}/analyze`,
+      `${FUND_APPLICATIONS_API}/${caseId}/analyze`,
     )
   ).data;
 }
@@ -118,7 +120,7 @@ export async function runCaseWorkflow(
 ): Promise<OperationResponse<'runWorkflow'>> {
   return (
     await httpClient.post<OperationResponse<'runWorkflow'>>(
-      `/api/v1/expense-cases/${caseId}/workflow`,
+      `${FUND_APPLICATIONS_API}/${caseId}/workflow`,
       input satisfies OperationRequest<'runWorkflow'>,
     )
   ).data;
@@ -127,7 +129,7 @@ export async function runCaseWorkflow(
 export async function getCaseEvidence(caseId: string): Promise<CaseEvidence> {
   return (
     await httpClient.get<OperationResponse<'evidence'>>(
-      `/api/v1/expense-cases/${caseId}/evidence`,
+      `${FUND_APPLICATIONS_API}/${caseId}/evidence`,
     )
   ).data as CaseEvidence;
 }
@@ -137,7 +139,7 @@ export async function listCaseDocuments(
 ): Promise<ExpenseDocumentDetail[]> {
   return (
     await httpClient.get<OperationResponse<'documents'>>(
-      `/api/v1/expense-cases/${caseId}/documents`,
+      `${FUND_APPLICATIONS_API}/${caseId}/documents`,
     )
   ).data as ExpenseDocumentDetail[];
 }
@@ -150,7 +152,7 @@ export async function listReviewTasks(): Promise<ReviewTask[]> {
 
 export async function getReviewTask(taskId: string): Promise<ReviewTask> {
   return (
-    await httpClient.get<OperationResponse<'get'>>(
+    await httpClient.get<OperationResponse<'get_2'>>(
       `/api/v1/review-tasks/${taskId}`,
     )
   ).data as ReviewTask;
@@ -158,7 +160,7 @@ export async function getReviewTask(taskId: string): Promise<ReviewTask> {
 
 export async function getMoreInfoSuggestion(taskId: string): Promise<MoreInfoSuggestion> {
   return (
-    await httpClient.get<MoreInfoSuggestion>(
+    await httpClient.post<MoreInfoSuggestion>(
       `/api/v1/review-tasks/${taskId}/more-info-suggestion`,
     )
   ).data;
@@ -226,7 +228,7 @@ export async function getAgentSecurityEvaluationReport(): Promise<AgentSecurityE
 export async function getReviewReport(caseId: string): Promise<ReviewReport> {
   return (
     await httpClient.get<ReviewReport>(
-      `/api/v1/expense-cases/${caseId}/review-report`,
+      `${FUND_APPLICATIONS_API}/${caseId}/review-report`,
     )
   ).data;
 }
@@ -234,7 +236,7 @@ export async function getReviewReport(caseId: string): Promise<ReviewReport> {
 export async function generateReviewReport(caseId: string): Promise<ReviewReport> {
   return (
     await httpClient.post<ReviewReport>(
-      `/api/v1/expense-cases/${caseId}/review-report`,
+      `${FUND_APPLICATIONS_API}/${caseId}/review-report`,
     )
   ).data;
 }
@@ -245,7 +247,7 @@ export async function askEvidenceChat(
 ): Promise<EvidenceChatResponse> {
   return (
     await httpClient.post<EvidenceChatResponse>(
-      `/api/v1/expense-cases/${caseId}/evidence-chat`,
+      `${FUND_APPLICATIONS_API}/${caseId}/evidence-chat`,
       { question },
     )
   ).data;
@@ -254,7 +256,7 @@ export async function askEvidenceChat(
 export async function settleExpenseCase(caseId: string): Promise<SettlementResult> {
   return (
     await httpClient.post<OperationResponse<'settle'>>(
-      `/api/v1/expense-cases/${caseId}/settlement`,
+      `${FUND_APPLICATIONS_API}/${caseId}/posting`,
       { requestId: crypto.randomUUID() } satisfies OperationRequest<'settle'>,
     )
   ).data as SettlementResult;
@@ -289,7 +291,7 @@ export async function listModelCalls(limit = 50): Promise<ModelCallRecord[]> {
 export async function getCaseObservability(caseId: string): Promise<CaseObservability> {
   return (
     await httpClient.get<CaseObservability>(
-      `/api/v1/observability/cases/${caseId}`,
+      `/api/v1/observability/fund-applications/${caseId}`,
     )
   ).data;
 }

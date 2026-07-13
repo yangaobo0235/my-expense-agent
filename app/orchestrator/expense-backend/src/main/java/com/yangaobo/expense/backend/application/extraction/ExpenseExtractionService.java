@@ -10,8 +10,8 @@ import com.yangaobo.expense.backend.domain.model.ExpenseDocument;
 import com.yangaobo.expense.backend.domain.repository.ExpenseDocumentRepository;
 import com.yangaobo.expense.backend.domain.repository.StoredExtractionResult;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,14 +52,14 @@ public class ExpenseExtractionService {
         ExpenseCase expenseCase = caseService.getOwned(caseId, ownerSubject);
         if (expenseCase.status() != ExpenseCaseStatus.UPLOADED
                 && expenseCase.status() != ExpenseCaseStatus.FAILED) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
                     "Only UPLOADED or FAILED cases can start extraction");
         }
         List<ExpenseDocument> documents = documentRepository.findByCaseId(caseId);
         if (documents.isEmpty()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED,
                     "At least one document is required before extraction");
         }
 
@@ -108,9 +108,9 @@ public class ExpenseExtractionService {
                     document.sha256(),
                     elapsedMs(startedNanos),
                     0,
-                    exception instanceof ExpenseFlowException flowException
+                    exception instanceof CampusFundFlowException flowException
                             ? flowException.code().name()
-                            : ExpenseFlowErrorCode.INTERNAL_ERROR.name());
+                            : CampusFundFlowErrorCode.INTERNAL_ERROR.name());
             throw exception;
         }
         ExtractionValidationResult validation = validator.validate(candidate.document());

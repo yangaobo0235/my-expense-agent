@@ -22,7 +22,7 @@ public class OpenApiConfiguration {
     private static final String BEARER_AUTH = "bearerAuth";
 
     @Bean
-    OpenAPI expenseFlowOpenApi() {
+    OpenAPI campusFundFlowOpenApi() {
         Components components =
                 new Components()
                         .addSecuritySchemes(
@@ -34,10 +34,10 @@ public class OpenApiConfiguration {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("ExpenseFlow API")
+                                .title("CampusFundFlow API")
                                 .version("v1")
                                 .description(
-                                        "智能费用审核、人工复核和确定性结算 API"))
+                                        "校园项目经费报销、合规审核、人工复核和审批后入账 API"))
                 .components(components)
                 .addSecurityItem(new SecurityRequirement().addList(BEARER_AUTH));
     }

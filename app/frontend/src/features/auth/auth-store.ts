@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 
 export type UserRole =
-  | 'EMPLOYEE'
-  | 'REVIEWER'
+  | 'STUDENT'
+  | 'ADVISOR'
+  | 'COLLEGE_REVIEWER'
   | 'FINANCE_ADMIN'
   | 'PROMPT_AUTHOR'
   | 'PROMPT_REVIEWER'
@@ -34,3 +35,8 @@ export const hasAnyRole = (
   roles: UserRole[] | undefined,
   expected: UserRole[],
 ) => Boolean(roles?.some((role) => expected.includes(role)));
+
+export const hasOnlyRole = (
+  roles: UserRole[] | undefined,
+  expected: UserRole,
+) => roles?.length === 1 && roles[0] === expected;

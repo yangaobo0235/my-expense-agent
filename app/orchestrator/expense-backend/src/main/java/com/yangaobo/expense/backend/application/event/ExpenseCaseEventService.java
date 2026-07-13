@@ -1,8 +1,8 @@
 package com.yangaobo.expense.backend.application.event;
 
 import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import com.yangaobo.expense.common.event.ExpenseWorkflowEvent;
 import java.util.List;
 import java.util.UUID;
@@ -51,8 +51,8 @@ public class ExpenseCaseEventService {
         return eventRepository.findAfter(caseId, afterSequence, limit);
     }
 
-    private static ExpenseFlowException validation(String message) {
-        return new ExpenseFlowException(
-                ExpenseFlowErrorCode.VALIDATION_FAILED, message);
+    private static CampusFundFlowException validation(String message) {
+        return new CampusFundFlowException(
+                CampusFundFlowErrorCode.VALIDATION_FAILED, message);
     }
 }

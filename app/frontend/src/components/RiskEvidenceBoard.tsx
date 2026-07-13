@@ -33,7 +33,7 @@ export function RiskEvidenceBoard({
         <Alert
           showIcon
           type={task.debateAssistEnabled ? 'warning' : 'info'}
-          message={task.userFacingMessage}
+          title={task.userFacingMessage}
           description={`队列：${task.routingQueue ?? '-'} · SLA：${task.slaHours ?? '-'} 小时 · 处理角色：${task.assigneeRole ?? '-'}`}
         />
       )}

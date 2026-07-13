@@ -36,7 +36,7 @@ public record ExpenseMultiAgentPlan(
                         Map.entry("debateAssistScope", "HIGH_RISK_OR_CONFLICT_ONLY"),
                         Map.entry(
                                 "governance",
-                                "模型只生成证据和建议，审批、驳回和付款仍由确定性规则或人工决策控制")));
+                                "模型只生成证据和建议，审批、驳回和审批后入账仍由确定性规则或人工决策控制")));
         evidence.put(
                 "parallelGroups",
                 List.of(

@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.domain.model;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -13,7 +13,7 @@ public record ExpensePolicy(
         String name,
         String category,
         String region,
-        String employeeGrade,
+        String applicantType,
         String version,
         LocalDate effectiveFrom,
         LocalDate effectiveTo,
@@ -29,7 +29,7 @@ public record ExpensePolicy(
         name = required(name, "name", 256);
         category = required(category, "category", 64);
         region = required(region, "region", 64);
-        employeeGrade = required(employeeGrade, "employeeGrade", 64);
+        applicantType = required(applicantType, "applicantType", 64);
         version = required(version, "version", 32);
         Objects.requireNonNull(effectiveFrom, "effectiveFrom");
         Objects.requireNonNull(status, "status");
@@ -55,7 +55,7 @@ public record ExpensePolicy(
         return normalized;
     }
 
-    private static ExpenseFlowException validation(String message) {
-        return new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, message);
+    private static CampusFundFlowException validation(String message) {
+        return new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
     }
 }

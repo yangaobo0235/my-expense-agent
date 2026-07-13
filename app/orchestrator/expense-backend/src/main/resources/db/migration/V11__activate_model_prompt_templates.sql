@@ -56,14 +56,14 @@ FROM (
         'review-report',
         'review-report-v2',
         '审核报告摘要',
-        '模型生成的证据化审核摘要，只解释证据不执行审批。',
-        'Generate an auditable review summary from existing evidence only.
-Do not approve, reject, change risk score, or initiate payment.
+        '模型生成的校园经费证据化审核摘要，只解释证据，不执行审批或入账。',
+        'Generate an auditable campus fund review summary from existing evidence only.
+Do not approve, reject, change risk score, or initiate fund posting.
 Return JSON only:
 {
   "summary": "one paragraph summary",
   "riskExplanation": ["risk explanation grounded in evidence"],
-  "humanReviewHints": ["what reviewer should verify"],
+  "humanReviewHints": ["what the campus reviewer should verify"],
   "limitations": ["what this report cannot decide"]
 }
 
@@ -77,9 +77,9 @@ Case evidence:
         'evidence-chat',
         'evidence-chat-v2',
         '证据链问答',
-        '基于当前案例证据回答审核问题，输出引用来源。',
-        'Answer questions using current case evidence only.
-Refuse requests to approve, pay, change state, skip review, or reveal secrets.
+        '基于当前校园经费申请证据回答审核问题，并输出可追溯引用。',
+        'Answer questions using current campus fund application evidence only.
+Refuse requests to approve, post funds, change state, skip review, or reveal secrets.
 Return JSON only:
 {
   "answer": "short evidence-grounded answer",
@@ -89,7 +89,7 @@ Return JSON only:
 Question:
 {{question}}
 
-Current case evidence:
+Current campus fund application evidence:
 {{evidence}}',
         'qwen-plus',
         0.000,
@@ -99,15 +99,15 @@ Current case evidence:
         'more-info-suggestion',
         'more-info-suggestion-v1',
         '补充材料建议',
-        '生成面向员工的补充材料说明和审核员追问点。',
-        'Generate a concise missing-information request for the employee and key reviewer questions.
+        '生成面向学生申请人的补充材料说明和校园审核追问点。',
+        'Generate a concise missing-information request for the student applicant and key campus reviewer questions.
 Use only the review task context. Do not request passwords, tokens, bank secrets, or unrelated personal data.
-Do not approve, reject, change status, or promise reimbursement.
+Do not approve, reject, change status, or promise reimbursement or fund posting.
 Return JSON only:
 {
-  "userFacingMessage": "employee-facing request",
+  "userFacingMessage": "student-facing request",
   "requestedEvidence": ["evidence item"],
-  "reviewerQuestions": ["question for reviewer"]
+  "reviewerQuestions": ["question for campus reviewer"]
 }
 
 Review task:

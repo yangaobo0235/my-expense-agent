@@ -16,6 +16,6 @@ public class DefaultCaseNumberGenerator implements CaseNumberGenerator {
     @Override
     public String next(Instant now, UUID caseId) {
         String suffix = caseId.toString().replace("-", "").substring(0, 10).toUpperCase(Locale.ROOT);
-        return "EF-" + DATE.format(now) + "-" + suffix;
+        return "CF-" + DATE.format(now) + "-" + suffix;
     }
 }

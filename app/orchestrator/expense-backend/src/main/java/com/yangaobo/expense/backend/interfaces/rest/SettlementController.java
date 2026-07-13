@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/expense-cases")
+@RequestMapping("/api/v1/fund-applications")
 public class SettlementController {
 
     private final ExpenseSettlementService settlementService;
@@ -21,7 +21,7 @@ public class SettlementController {
         this.settlementService = settlementService;
     }
 
-    @PostMapping("/{caseId}/settlement")
+    @PostMapping("/{caseId}/posting")
     public ExpenseSettlementService.SettlementResult settle(
             @PathVariable UUID caseId,
             @Valid @RequestBody SettlementRequest request,

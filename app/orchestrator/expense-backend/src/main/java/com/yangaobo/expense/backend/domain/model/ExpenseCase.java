@@ -2,8 +2,9 @@ package com.yangaobo.expense.backend.domain.model;
 
 import com.yangaobo.expense.common.domain.ExpenseCaseStateMachine;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public record ExpenseCase(
         String caseNumber,
         String ownerSubject,
         String applicantName,
-        String departmentCode,
+        String projectCode,
         String title,
         Money claimedAmount,
         ExpenseCaseStatus status,
@@ -23,14 +24,15 @@ public record ExpenseCase(
         String failureReason,
         long version,
         Instant createdAt,
-        Instant updatedAt) {
+        Instant updatedAt)
+        implements Serializable {
 
     public ExpenseCase {
         Objects.requireNonNull(id, "id");
         caseNumber = required(caseNumber, "caseNumber", 32);
         ownerSubject = required(ownerSubject, "ownerSubject", 128);
         applicantName = required(applicantName, "applicantName", 128);
-        departmentCode = required(departmentCode, "departmentCode", 64);
+        projectCode = required(projectCode, "projectCode", 64);
         title = required(title, "title", 256);
         Objects.requireNonNull(claimedAmount, "claimedAmount");
         Objects.requireNonNull(status, "status");
@@ -55,7 +57,7 @@ public record ExpenseCase(
             String caseNumber,
             String ownerSubject,
             String applicantName,
-            String departmentCode,
+            String projectCode,
             String title,
             Money claimedAmount,
             Instant now) {
@@ -64,7 +66,7 @@ public record ExpenseCase(
                 caseNumber,
                 ownerSubject,
                 applicantName,
-                departmentCode,
+                projectCode,
                 title,
                 claimedAmount,
                 ExpenseCaseStatus.DRAFT,
@@ -87,7 +89,7 @@ public record ExpenseCase(
                 caseNumber,
                 ownerSubject,
                 applicantName,
-                departmentCode,
+                projectCode,
                 title,
                 claimedAmount,
                 next,
@@ -102,7 +104,7 @@ public record ExpenseCase(
 
     public ExpenseCase reviseDraft(
             String applicantName,
-            String departmentCode,
+            String projectCode,
             String title,
             Money claimedAmount,
             Instant now) {
@@ -114,7 +116,7 @@ public record ExpenseCase(
                 caseNumber,
                 ownerSubject,
                 required(applicantName, "applicantName", 128),
-                required(departmentCode, "departmentCode", 64),
+                required(projectCode, "projectCode", 64),
                 required(title, "title", 256),
                 Objects.requireNonNull(claimedAmount, "claimedAmount"),
                 status,
@@ -136,7 +138,7 @@ public record ExpenseCase(
                 caseNumber,
                 ownerSubject,
                 applicantName,
-                departmentCode,
+                projectCode,
                 title,
                 claimedAmount,
                 status,
@@ -157,7 +159,7 @@ public record ExpenseCase(
                 caseNumber,
                 ownerSubject,
                 applicantName,
-                departmentCode,
+                projectCode,
                 title,
                 claimedAmount,
                 next,
@@ -181,7 +183,7 @@ public record ExpenseCase(
         return normalized;
     }
 
-    private static ExpenseFlowException validation(String message) {
-        return new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, message);
+    private static CampusFundFlowException validation(String message) {
+        return new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
     }
 }

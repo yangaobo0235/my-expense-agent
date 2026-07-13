@@ -1,5 +1,6 @@
 package com.yangaobo.expense.backend.application.workflow;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 public interface WorkflowEvidenceGateway {
@@ -12,5 +13,6 @@ public interface WorkflowEvidenceGateway {
             String contentHash);
 
     record EvidenceResult(
-            boolean saved, String reference, String source) {}
+            boolean saved, String reference, String source)
+            implements Serializable {}
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.settlement.ApprovedExpenseWriter;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,6 +19,25 @@ public class McpApprovedExpenseWriter implements ApprovedExpenseWriter {
             ObjectMapper objectMapper) {
         this.writeService = writeService;
         this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public WriteResult debitProjectBudget(
+            UUID caseId,
+            BigDecimal amount,
+            String currency,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        var result =
+                writeService.debitProjectBudget(
+                        caseId,
+                        amount,
+                        currency,
+                        requestId,
+                        actorSubject,
+                        approvalReference);
+        return new WriteResult(result.success(), parse(result.resultText()));
     }
 
     @Override
@@ -54,6 +74,31 @@ public class McpApprovedExpenseWriter implements ApprovedExpenseWriter {
                         reimbursementId,
                         amount,
                         currency,
+                        requestId,
+                        actorSubject,
+                        approvalReference);
+        return new WriteResult(result.success(), parse(result.resultText()));
+    }
+
+    @Override
+    public WriteResult recordReimbursementHistory(
+            UUID caseId,
+            String sellerName,
+            BigDecimal amount,
+            String currency,
+            LocalDate expenseDate,
+            String documentSha256,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        var result =
+                writeService.recordReimbursementHistory(
+                        caseId,
+                        sellerName,
+                        amount,
+                        currency,
+                        expenseDate,
+                        documentSha256,
                         requestId,
                         actorSubject,
                         approvalReference);

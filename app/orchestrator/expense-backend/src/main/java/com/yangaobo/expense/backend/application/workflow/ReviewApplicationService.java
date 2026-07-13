@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.application.prompt.RenderedPrompt;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.ArrayList;
@@ -50,12 +50,34 @@ public class ReviewApplicationService {
         return reviewRepository.findOpenTasks();
     }
 
+    public List<ReviewRepository.ReviewTask> openTasks(Set<String> reviewerRoles) {
+        return reviewRepository.findOpenTasks().stream()
+                .filter(task -> canView(task, reviewerRoles))
+                .toList();
+    }
+
     public ReviewRepository.ReviewTask get(UUID taskId) {
         return reviewRepository.findById(taskId).orElseThrow(() -> notFound(taskId));
     }
 
+    public ReviewRepository.ReviewTask get(UUID taskId, Set<String> reviewerRoles) {
+        ReviewRepository.ReviewTask task = get(taskId);
+        ensureReviewerCanView(task, reviewerRoles);
+        return task;
+    }
+
     public MoreInfoSuggestion suggestMoreInfo(UUID taskId) {
         ReviewRepository.ReviewTask task = get(taskId);
+        return suggestMoreInfo(task);
+    }
+
+    public MoreInfoSuggestion suggestMoreInfo(UUID taskId, Set<String> reviewerRoles) {
+        ReviewRepository.ReviewTask task = get(taskId);
+        ensureReviewerCanHandle(task, reviewerRoles);
+        return suggestMoreInfo(task);
+    }
+
+    private MoreInfoSuggestion suggestMoreInfo(ReviewRepository.ReviewTask task) {
         try {
             String taskContext =
                     objectMapper.writeValueAsString(
@@ -160,14 +182,14 @@ public class ReviewApplicationService {
                         : approvedAmount;
         if (amount.signum() < 0
                 || amount.compareTo(expenseCase.claimedAmount().amount()) > 0) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED,
                     "批准金额必须处于 0 到申报金额之间");
         }
         if (amount.compareTo(expenseCase.claimedAmount().amount()) != 0
                 && (comment == null || comment.isBlank())) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED,
                     "修改批准金额时必须填写审核说明");
         }
         reviewRepository.completeTask(
@@ -200,8 +222,8 @@ public class ReviewApplicationService {
             return replay;
         }
         if (comment == null || comment.isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, "拒绝时必须填写审核说明");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, "拒绝时必须填写审核说明");
         }
         ReviewRepository.ReviewTask task = get(taskId);
         ensureReviewerCanHandle(task, reviewerRoles);
@@ -241,8 +263,8 @@ public class ReviewApplicationService {
             return replay;
         }
         if (comment == null || comment.isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, "要求补充材料时必须填写说明");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, "要求补充材料时必须填写说明");
         }
         ReviewRepository.ReviewTask task = get(taskId);
         ensureReviewerCanHandle(task, reviewerRoles);
@@ -296,8 +318,8 @@ public class ReviewApplicationService {
     private ExpenseCase waitingCase(UUID caseId) {
         ExpenseCase expenseCase = caseService.getById(caseId);
         if (expenseCase.status() != ExpenseCaseStatus.WAITING_HUMAN) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
                     "只有等待人工审核的案例可以处理");
         }
         return expenseCase;
@@ -305,12 +327,32 @@ public class ReviewApplicationService {
 
     private static void ensureReviewerCanHandle(
             ReviewRepository.ReviewTask task, Set<String> reviewerRoles) {
-        Set<String> roles = reviewerRoles == null ? Set.of() : reviewerRoles;
-        if ("FINANCE_ADMIN".equals(task.assigneeRole()) && !roles.contains("FINANCE_ADMIN")) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.ACCESS_DENIED,
-                    "高风险或疑似舞弊审核任务只能由财务管理员处理");
+        if (!canHandle(task, reviewerRoles)) {
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.ACCESS_DENIED,
+                    "当前角色不能处理该审核任务，任务要求角色：" + task.assigneeRole());
         }
+    }
+
+    private static void ensureReviewerCanView(
+            ReviewRepository.ReviewTask task, Set<String> reviewerRoles) {
+        if (!canView(task, reviewerRoles)) {
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.ACCESS_DENIED,
+                    "当前角色不能查看该审核任务，任务要求角色：" + task.assigneeRole());
+        }
+    }
+
+    private static boolean canView(
+            ReviewRepository.ReviewTask task, Set<String> reviewerRoles) {
+        Set<String> roles = reviewerRoles == null ? Set.of() : reviewerRoles;
+        return roles.contains("AUDITOR") || canHandle(task, roles);
+    }
+
+    private static boolean canHandle(
+            ReviewRepository.ReviewTask task, Set<String> reviewerRoles) {
+        Set<String> roles = reviewerRoles == null ? Set.of() : reviewerRoles;
+        return roles.contains("FINANCE_ADMIN") || roles.contains(task.assigneeRole());
     }
 
     private ExpenseCase replayedDecision(String requestId) {
@@ -323,8 +365,8 @@ public class ReviewApplicationService {
 
     private static void validateRequestId(String requestId) {
         if (requestId == null || requestId.isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, "requestId不能为空");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, "requestId不能为空");
         }
     }
 
@@ -354,9 +396,9 @@ public class ReviewApplicationService {
                 clock.instant());
     }
 
-    private static ExpenseFlowException notFound(UUID taskId) {
-        return new ExpenseFlowException(
-                ExpenseFlowErrorCode.EXPENSE_CASE_NOT_FOUND,
+    private static CampusFundFlowException notFound(UUID taskId) {
+        return new CampusFundFlowException(
+                CampusFundFlowErrorCode.EXPENSE_CASE_NOT_FOUND,
                 "审核任务 %s 不存在".formatted(taskId));
     }
 

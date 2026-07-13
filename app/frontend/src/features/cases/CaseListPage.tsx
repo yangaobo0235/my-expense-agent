@@ -33,7 +33,10 @@ export function CaseListPage() {
   const size = Number(params.get('size') ?? 20);
   const status = params.get('status') as ExpenseCaseStatus | null;
   const applicant = params.get('applicant') ?? undefined;
-  const canEditDraft = Boolean(user?.roles.includes('EMPLOYEE'));
+  const canEditDraft = Boolean(
+    user?.roles.some((role) => ['STUDENT', 'ADVISOR'].includes(role)),
+  );
+  const canSubmit = canEditDraft;
   const canDeleteAnyCase = Boolean(user?.roles.includes('FINANCE_ADMIN'));
   const query = useQuery({
     queryKey: ['cases', page, size, status, applicant],
@@ -42,7 +45,7 @@ export function CaseListPage() {
   const deleteMutation = useMutation({
     mutationFn: (caseId: string) => deleteCase(caseId),
     onSuccess: () => {
-      message.success(canDeleteAnyCase ? '案例已删除' : '草稿已删除');
+      message.success(canDeleteAnyCase ? '申请已删除' : '草稿已删除');
       void queryClient.invalidateQueries({ queryKey: ['cases'] });
     },
     onError: (error) => {
@@ -55,49 +58,58 @@ export function CaseListPage() {
   const columns = useMemo(
     () => [
       {
-        title: '案例',
+        title: '申请',
         key: 'case',
+        width: 240,
         render: (_: unknown, row: ExpenseCase) => (
           <Space orientation="vertical" size={0}>
-            <Typography.Text strong>{row.title}</Typography.Text>
-            <Typography.Text type="secondary">{row.caseNumber}</Typography.Text>
+            <Typography.Text strong ellipsis={{ tooltip: row.title }}>{row.title}</Typography.Text>
+            <Typography.Text type="secondary" className="case-list-nowrap">{row.caseNumber}</Typography.Text>
           </Space>
         ),
       },
       {
         title: '申请人',
         key: 'applicant',
+        width: 130,
         render: (_: unknown, row: ExpenseCase) => (
           <Space orientation="vertical" size={0}>
-            <span>{row.applicantName}</span>
-            <Typography.Text type="secondary">{row.departmentCode}</Typography.Text>
+            <span className="case-list-nowrap">{row.applicantName}</span>
+            <Typography.Text type="secondary" className="case-list-nowrap">{row.projectCode}</Typography.Text>
           </Space>
         ),
       },
       {
         title: '申报金额',
         key: 'amount',
-        render: (_: unknown, row: ExpenseCase) =>
-          new Intl.NumberFormat('zh-CN', { style: 'currency', currency: row.currency }).format(row.claimedAmount),
+        width: 120,
+        render: (_: unknown, row: ExpenseCase) => (
+          <span className="case-list-nowrap">
+            {new Intl.NumberFormat('zh-CN', { style: 'currency', currency: row.currency }).format(row.claimedAmount)}
+          </span>
+        ),
       },
-      { title: '状态', key: 'status', render: (_: unknown, row: ExpenseCase) => <StatusBadge status={row.status} /> },
-      { title: '风险', key: 'risk', render: (_: unknown, row: ExpenseCase) => <RiskBadge level={row.riskLevel} score={row.riskScore} /> },
+      { title: '状态', key: 'status', width: 100, render: (_: unknown, row: ExpenseCase) => <StatusBadge status={row.status} /> },
+      { title: '风险', key: 'risk', width: 120, render: (_: unknown, row: ExpenseCase) => <RiskBadge level={row.riskLevel} score={row.riskScore} /> },
       {
         title: '当前阶段',
         key: 'stage',
+        width: 260,
         render: (_: unknown, row: ExpenseCase) => <CaseQueueState expenseCase={row} />,
       },
       {
         title: '下一步',
         key: 'next',
+        width: 120,
         render: (_: unknown, row: ExpenseCase) => (
           <Tag color={nextActionColor(row)}>{nextActionLabel(row)}</Tag>
         ),
       },
-      { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt', render: (value: string) => new Date(value).toLocaleString('zh-CN') },
+      { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt', width: 170, render: (value: string) => new Date(value).toLocaleString('zh-CN') },
       {
         title: '操作',
         key: 'actions',
+        width: 160,
         render: (_: unknown, row: ExpenseCase) => {
           const canEditRow = canEditDraft && row.status === 'DRAFT';
           const canDeleteRow = canDeleteAnyCase || canEditRow;
@@ -117,10 +129,10 @@ export function CaseListPage() {
               )}
               {canDeleteRow && (
                 <Popconfirm
-                  title={canDeleteAnyCase ? '删除该案例？' : '删除草稿案例？'}
+                  title={canDeleteAnyCase ? '删除该申请？' : '删除草稿申请？'}
                   description={
                     canDeleteAnyCase
-                      ? '删除后该案例和相关票据、处理记录将不再显示。'
+                      ? '删除后该申请和相关票据、处理记录将不再显示。'
                       : '删除后该草稿不会再出现在列表中。'
                   }
                   okText="删除"
@@ -149,17 +161,17 @@ export function CaseListPage() {
     <Space orientation="vertical" size="large" className="page-stack">
       <div className="page-heading">
         <div>
-          <Typography.Title level={2}>费用案例</Typography.Title>
-          <Typography.Text type="secondary">查看报销案例进度，处理需要补充或重试的事项。</Typography.Text>
+          <Typography.Title level={2}>经费申请</Typography.Title>
+          <Typography.Text type="secondary">查看校园经费报销进度，处理需要补充或重试的事项。</Typography.Text>
         </div>
-        <Button type="primary" onClick={() => navigate('/cases/new')}>新建案例</Button>
+        {canSubmit && <Button type="primary" onClick={() => navigate('/cases/new')}>新建申请</Button>}
       </div>
       <Card>
         <Alert
           className="form-alert"
           type="info"
           showIcon
-          message="处理失败不会让案例作废"
+          title="处理失败不会让申请作废"
           description="进入详情后可以查看失败原因，并从出错的步骤继续处理。草稿填错时，也可以先修改或删除。"
         />
         <Space wrap className="filter-row">
@@ -186,11 +198,13 @@ export function CaseListPage() {
           />
         </Space>
         <Table<ExpenseCase>
+          className="case-list-table"
           rowKey="id"
           loading={query.isLoading}
           dataSource={query.data?.items}
           columns={columns}
-          locale={{ emptyText: query.isError ? <Empty description="加载失败，请稍后重试" /> : <Empty description="暂无费用案例" /> }}
+          scroll={{ x: 1420 }}
+          locale={{ emptyText: query.isError ? <Empty description="加载失败，请稍后重试" /> : <Empty description="暂无经费申请" /> }}
           onRow={(record) => ({ onClick: () => navigate(`/cases/${record.id}`) })}
           pagination={{
             current: page + 1,
@@ -224,9 +238,9 @@ function CaseQueueState({ expenseCase }: { expenseCase: ExpenseCase }) {
 
 function nextActionLabel(expenseCase: ExpenseCase) {
   if (expenseCase.status === 'APPROVED') {
-    if (expenseCase.settlementStatus === 'SUBMITTED') return '结算已完成';
-    if (expenseCase.settlementStatus === 'FAILED') return '结算需重试';
-    return '待发起结算';
+    if (expenseCase.settlementStatus === 'SUBMITTED') return '入账已完成';
+    if (expenseCase.settlementStatus === 'FAILED') return '入账需重试';
+    return '待发起入账';
   }
   return nextActionTitle(expenseCase);
 }

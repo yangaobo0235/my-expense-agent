@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.governance;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -25,8 +25,8 @@ public class AgentInputGuard {
                         violations.isEmpty() ? "LOW" : violations.size() > 1 ? "HIGH" : "MEDIUM",
                         violations);
         if (mode == GuardMode.BLOCK && !violations.isEmpty()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED,
                     "Agent 输入安全检查未通过：" + String.join("、", violations));
         }
         return result;
@@ -43,7 +43,7 @@ public class AgentInputGuard {
         return List.of(
                         Map.entry("PROMPT_INJECTION", List.of("忽略之前", "ignore previous", "越过规则", "绕过审批")),
                         Map.entry("UNAUTHORIZED_APPROVAL", List.of("直接批准", "approve all", "跳过人工", "skip human")),
-                        Map.entry("UNAUTHORIZED_PAYMENT", List.of("submit_payment", "直接付款", "发起付款")),
+                        Map.entry("UNAUTHORIZED_POSTING", List.of("submit_fund_posting", "直接入账", "发起入账")),
                         Map.entry("SECRET_EXFILTRATION", List.of("泄露 token", "leak token", "泄露密钥", "leak secret")))
                 .stream()
                 .filter(entry -> entry.getValue().stream().anyMatch(normalized::contains))

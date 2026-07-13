@@ -60,18 +60,40 @@ public class SecurityConfiguration {
                                                 org.springframework.http.HttpMethod.GET,
                                                 "/api/v1/policies",
                                                 "/api/v1/policies/search")
-                                        .hasAnyRole("REVIEWER", "FINANCE_ADMIN")
-                                        .requestMatchers("/api/v1/review-tasks/**")
-                                        .hasAnyRole("REVIEWER", "FINANCE_ADMIN")
+                                        .hasAnyRole(
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.GET,
+                                                "/api/v1/review-tasks/**")
+                                        .hasAnyRole(
+                                                "ADVISOR",
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.POST,
+                                                "/api/v1/review-tasks/**")
+                                        .hasAnyRole(
+                                                "ADVISOR",
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN")
                                         .requestMatchers("/api/v1/evaluation/**")
-                                        .hasAnyRole("REVIEWER", "FINANCE_ADMIN")
+                                        .hasAnyRole(
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
                                         .requestMatchers("/api/v1/observability/**")
-                                        .hasAnyRole("REVIEWER", "FINANCE_ADMIN")
+                                        .hasAnyRole(
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
                                         .requestMatchers(
                                                 org.springframework.http.HttpMethod.GET,
                                                 "/api/v1/prompts/**")
                                         .hasAnyRole(
-                                                "REVIEWER",
+                                                "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN",
                                                 "PROMPT_AUTHOR",
                                                 "PROMPT_REVIEWER",
@@ -103,12 +125,22 @@ public class SecurityConfiguration {
                                                 "FINANCE_ADMIN")
                                         .requestMatchers(
                                                 org.springframework.http.HttpMethod.POST,
-                                                "/api/v1/expense-cases/*/settlement")
+                                                "/api/v1/fund-applications/*/posting")
                                         .hasRole("FINANCE_ADMIN")
-                                        .requestMatchers("/api/v1/expense-cases/**")
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.GET,
+                                                "/api/v1/fund-applications/**")
                                         .hasAnyRole(
-                                                "EMPLOYEE",
-                                                "REVIEWER",
+                                                "STUDENT",
+                                                "ADVISOR",
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
+                                        .requestMatchers("/api/v1/fund-applications/**")
+                                        .hasAnyRole(
+                                                "STUDENT",
+                                                "ADVISOR",
+                                                "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN")
                                         .anyRequest()
                                         .authenticated())

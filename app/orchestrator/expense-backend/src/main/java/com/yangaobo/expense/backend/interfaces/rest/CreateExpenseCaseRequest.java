@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public record CreateExpenseCaseRequest(
         @NotBlank @Size(max = 128) String applicantName,
-        @NotBlank @Size(max = 64) String departmentCode,
+        @NotBlank @Size(max = 64) String projectCode,
         @NotBlank @Size(max = 256) String title,
         @NotNull @DecimalMin("0.00") @Digits(integer = 17, fraction = 2)
                 BigDecimal claimedAmount,

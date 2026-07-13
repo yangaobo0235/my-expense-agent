@@ -1,6 +1,6 @@
 package com.yangaobo.expense.common.error;
 
-public enum ExpenseFlowErrorCode {
+public enum CampusFundFlowErrorCode {
     VALIDATION_FAILED,
     EXPENSE_CASE_NOT_FOUND,
     INVALID_STATE_TRANSITION,

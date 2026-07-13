@@ -39,13 +39,13 @@ public class ExpenseExtractionJsonSchema {
                 {
                   "documentType": "INVOICE",
                   "invoiceNumber": "INV-2026-001",
-                  "sellerName": "测试酒店",
-                  "buyerName": "某某公司",
+                  "sellerName": "南京青奥酒店",
+                  "buyerName": "江南大学",
                   "issueDate": "2026-06-01",
                   "totalAmount": 580.00,
                   "currency": "CNY",
                   "items": [
-                    {"description": "住宿费", "quantity": 1, "unitPrice": 580.00, "amount": 580.00}
+                    {"description": "竞赛住宿费", "quantity": 1, "unitPrice": 580.00, "amount": 580.00}
                   ],
                   "confidence": 0.91,
                   "warnings": []

@@ -15,7 +15,7 @@ public interface ExpensePolicyRepository {
             float[] queryEmbedding,
             String category,
             String region,
-            String employeeGrade,
+            String applicantType,
             LocalDate expenseDate,
             int limit,
             double minimumScore);

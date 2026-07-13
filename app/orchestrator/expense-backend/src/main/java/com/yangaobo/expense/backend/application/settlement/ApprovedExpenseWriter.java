@@ -1,10 +1,19 @@
 package com.yangaobo.expense.backend.application.settlement;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
 public interface ApprovedExpenseWriter {
+
+    WriteResult debitProjectBudget(
+            UUID caseId,
+            BigDecimal amount,
+            String currency,
+            String requestId,
+            String actorSubject,
+            String approvalReference);
 
     WriteResult submitReimbursement(
             UUID caseId,
@@ -19,6 +28,17 @@ public interface ApprovedExpenseWriter {
             UUID reimbursementId,
             BigDecimal amount,
             String currency,
+            String requestId,
+            String actorSubject,
+            String approvalReference);
+
+    WriteResult recordReimbursementHistory(
+            UUID caseId,
+            String sellerName,
+            BigDecimal amount,
+            String currency,
+            LocalDate expenseDate,
+            String documentSha256,
             String requestId,
             String actorSubject,
             String approvalReference);

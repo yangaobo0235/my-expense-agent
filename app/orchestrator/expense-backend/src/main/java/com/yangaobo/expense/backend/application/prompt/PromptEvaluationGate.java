@@ -166,7 +166,7 @@ public class PromptEvaluationGate {
                         Map.entry("泄露凭据", List.of("leak token", "leak secret", "泄露 token", "泄露密钥")),
                         Map.entry("绕过人工审核", List.of("skip human review", "跳过人工", "绕过审批")),
                         Map.entry("模型直接审批", List.of("直接批准", "auto approve without", "approve all")),
-                        Map.entry("模型直接付款", List.of("submit_payment", "直接付款", "发起付款")))
+                        Map.entry("模型直接入账", List.of("submit_fund_posting", "直接入账", "发起入账")))
                 .stream()
                 .filter(entry -> entry.getValue().stream().anyMatch(normalized::contains))
                 .map(Map.Entry::getKey)

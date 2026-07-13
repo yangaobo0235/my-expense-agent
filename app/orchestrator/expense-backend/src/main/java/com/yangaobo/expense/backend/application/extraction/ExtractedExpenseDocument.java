@@ -1,5 +1,6 @@
 package com.yangaobo.expense.backend.application.extraction;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +16,8 @@ public record ExtractedExpenseDocument(
         String currency,
         List<ExtractedExpenseItem> items,
         double confidence,
-        List<String> warnings) {
+        List<String> warnings)
+        implements Serializable {
 
     public ExtractedExpenseDocument {
         items = items == null ? List.of() : List.copyOf(items);

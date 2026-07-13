@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/expense-cases")
+@RequestMapping("/api/v1/fund-applications")
 public class CaseEvidenceController {
 
     private final CaseEvidenceService evidenceService;
@@ -33,7 +33,8 @@ public class CaseEvidenceController {
                                         ::getAuthority)
                         .anyMatch(
                                 authority ->
-                                        "ROLE_REVIEWER".equals(authority)
-                                                || "ROLE_FINANCE_ADMIN".equals(authority));
+                                        "ROLE_COLLEGE_REVIEWER".equals(authority)
+                                                || "ROLE_FINANCE_ADMIN".equals(authority)
+                                                || "ROLE_AUDITOR".equals(authority));
     }
 }

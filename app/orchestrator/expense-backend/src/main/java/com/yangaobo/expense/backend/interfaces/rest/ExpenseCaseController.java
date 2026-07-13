@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.application.extraction.ExpenseExtractionServ
 import com.yangaobo.expense.backend.application.settlement.ToolCallRepository;
 import com.yangaobo.expense.backend.application.workflow.ExpenseCoordinator;
 import com.yangaobo.expense.backend.application.workflow.ExpenseWorkflowCommand;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/expense-cases")
+@RequestMapping("/api/v1/fund-applications")
 public class ExpenseCaseController {
 
     private final ExpenseCaseApplicationService applicationService;
@@ -69,11 +69,11 @@ public class ExpenseCaseController {
                         new CreateExpenseCaseCommand(
                                 subject,
                                 request.applicantName(),
-                                request.departmentCode(),
+                                request.projectCode(),
                                 request.title(),
                                 request.claimedAmount(),
                                 request.currency()));
-        return ResponseEntity.created(URI.create("/api/v1/expense-cases/" + created.id()))
+        return ResponseEntity.created(URI.create("/api/v1/fund-applications/" + created.id()))
                 .body(ExpenseCaseResponse.from(created));
     }
 
@@ -98,7 +98,7 @@ public class ExpenseCaseController {
                         new UpdateExpenseCaseCommand(
                                 subject,
                                 request.applicantName(),
-                                request.departmentCode(),
+                                request.projectCode(),
                                 request.title(),
                                 request.claimedAmount(),
                                 request.currency())));
@@ -151,20 +151,30 @@ public class ExpenseCaseController {
         var calls =
                 toolCallRepository.findByCaseId(caseId).stream()
                         .filter(call ->
-                                "submit_reimbursement".equals(call.toolName())
-                                        || "submit_payment".equals(call.toolName()))
+                                java.util.Set.of(
+                                                "debit_project_budget",
+                                                "submit_fund_reimbursement",
+                                                "submit_fund_posting",
+                                                "record_fund_reimbursement_history")
+                                        .contains(call.toolName()))
                         .toList();
-        boolean reimbursementSucceeded =
-                calls.stream()
-                        .anyMatch(call ->
-                                "submit_reimbursement".equals(call.toolName())
-                                        && "SUCCEEDED".equals(call.status()));
-        boolean paymentSucceeded =
-                calls.stream()
-                        .anyMatch(call ->
-                                "submit_payment".equals(call.toolName())
-                                        && "SUCCEEDED".equals(call.status()));
-        if (reimbursementSucceeded && paymentSucceeded) {
+        boolean requiredWritesSucceeded =
+                java.util.Set.of(
+                                "debit_project_budget",
+                                "submit_fund_reimbursement",
+                                "submit_fund_posting",
+                                "record_fund_reimbursement_history")
+                        .stream()
+                        .allMatch(
+                                toolName ->
+                                        calls.stream()
+                                                .anyMatch(
+                                                        call ->
+                                                                toolName.equals(call.toolName())
+                                                                        && "SUCCEEDED"
+                                                                                .equals(
+                                                                                        call.status())));
+        if (requiredWritesSucceeded) {
             return "SUBMITTED";
         }
         if (calls.stream().anyMatch(call -> "FAILED".equals(call.status()))) {
@@ -182,7 +192,7 @@ public class ExpenseCaseController {
                 documentUploadService.upload(caseId, authenticatedSubject(principal), file);
         return ResponseEntity.created(
                         URI.create(
-                                "/api/v1/expense-cases/%s/documents/%s"
+                                "/api/v1/fund-applications/%s/documents/%s"
                                         .formatted(caseId, document.id())))
                 .body(ExpenseDocumentResponse.from(document));
     }
@@ -218,21 +228,13 @@ public class ExpenseCaseController {
                         new ExpenseWorkflowCommand(
                                 request.requestId(),
                                 request.category(),
-                                request.region(),
-                                request.employeeGrade(),
-                                request.expenseDate(),
-                                request.duplicateDocument(),
-                                request.dateAnomaly(),
-                                request.sellerAnomaly(),
-                                request.policyLimitExceeded(),
-                                request.missingRequiredDocument(),
-                                request.forbiddenExpenseItem())));
+                                request.expenseDate())));
     }
 
     private static String authenticatedSubject(Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.ACCESS_DENIED, "Authentication is required");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.ACCESS_DENIED, "Authentication is required");
         }
         return principal.getName();
     }
@@ -245,8 +247,9 @@ public class ExpenseCaseController {
                 .map(org.springframework.security.core.GrantedAuthority::getAuthority)
                 .anyMatch(
                         authority ->
-                                "ROLE_REVIEWER".equals(authority)
-                                        || "ROLE_FINANCE_ADMIN".equals(authority));
+                                "ROLE_COLLEGE_REVIEWER".equals(authority)
+                                        || "ROLE_FINANCE_ADMIN".equals(authority)
+                                        || "ROLE_AUDITOR".equals(authority));
     }
 
     private static boolean financeAdmin(Principal principal) {

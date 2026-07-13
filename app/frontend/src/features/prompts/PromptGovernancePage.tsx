@@ -225,7 +225,7 @@ export function PromptGovernancePage() {
                       <Alert
                         type="info"
                         showIcon
-                        message="当前版本不可直接编辑，请新建草稿版本。"
+                        title="当前版本不可直接编辑，请新建草稿版本。"
                         style={{ marginBottom: 16 }}
                       />
                     )}
@@ -233,7 +233,7 @@ export function PromptGovernancePage() {
                       <Alert
                         type="warning"
                         showIcon
-                        message="当前账号不能创建或编辑 Prompt 草稿。"
+                        title="当前账号不能创建或编辑 Prompt 草稿。"
                         style={{ marginBottom: 16 }}
                       />
                     )}
@@ -273,7 +273,7 @@ export function PromptGovernancePage() {
                         onClick={() =>
                           Modal.confirm({
                             title: '提交审批',
-                            content: '自动门禁会扫描 Prompt 中的越权审批、付款和泄密风险。',
+                            content: '自动门禁会扫描 Prompt 中的越权审批、入账和泄密风险。',
                             onOk: () => submit.mutate('提交 Prompt 版本审批'),
                           })
                         }
@@ -365,7 +365,7 @@ function PromptEvaluationReportPanel({ change }: { change: PromptChangeRequest }
         <Alert
           type={passed ? 'success' : 'warning'}
           showIcon
-          message={passed ? '自动门禁通过' : '自动门禁未通过'}
+          title={passed ? '自动门禁通过' : '自动门禁未通过'}
           description={`风险等级：${change.riskLevel} · 变更摘要：${change.diffSummary || '未填写'}`}
         />
         <Descriptions bordered size="small" column={2}>

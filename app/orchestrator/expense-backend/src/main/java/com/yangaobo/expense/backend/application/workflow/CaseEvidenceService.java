@@ -84,10 +84,14 @@ public class CaseEvidenceService {
                 switch (step.name()) {
                     case "AGENT_PLAN" ->
                             selected(step.output(), "plan");
-                    case "MCP_EMPLOYEE_CONTEXT" ->
+                    case "MCP_APPLICANT_CONTEXT" ->
                             selected(step.output(), "context");
                     case "MCP_DUPLICATE_CHECK" ->
                             selected(step.output(), "check");
+                    case "MCP_PROJECT_BUDGET" ->
+                            selected(step.output(), "budget");
+                    case "MCP_REIMBURSEMENT_HISTORY" ->
+                            selected(step.output(), "history");
                     case "MCP_REVIEW_EVIDENCE" ->
                             selected(step.output(), "evidence");
                     case "PARALLEL_EVIDENCE_COLLECTION" ->
@@ -95,10 +99,16 @@ public class CaseEvidenceService {
                                     step.output(),
                                     List.of(
                                             "mode",
-                                            "employeeContext",
+                                            "applicantContext",
                                             "duplicateCheck",
+                                            "projectBudget",
+                                            "reimbursementHistory",
                                             "evidence",
                                             "policyFindings"));
+                    case "RISK_ASSESSMENT" ->
+                            selectedKeys(
+                                    step.output(),
+                                    List.of("assessment", "complianceFacts"));
                     case "RISK_ROUTING" ->
                             selectedKeys(
                                     step.output(),

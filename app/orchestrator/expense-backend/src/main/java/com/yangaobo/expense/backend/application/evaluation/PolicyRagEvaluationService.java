@@ -52,7 +52,7 @@ public class PolicyRagEvaluationService {
                                     testCase.query(),
                                     testCase.category(),
                                     testCase.region(),
-                                    testCase.employeeGrade(),
+                                    testCase.applicantType(),
                                     testCase.expenseDate(),
                                     5,
                                     0.25));
@@ -94,7 +94,7 @@ public class PolicyRagEvaluationService {
                                 && matches.stream()
                                         .noneMatch(
                                                 match ->
-                                                        match.content().contains("submit_payment")
+                                                        match.content().contains("submit_fund_posting")
                                                                 || match.content().contains("直接批准"));
             }
         }

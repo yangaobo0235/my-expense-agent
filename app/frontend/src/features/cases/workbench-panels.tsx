@@ -11,14 +11,19 @@ type EvidenceStep = CaseEvidence['steps'][number];
 
 const evidenceStepGroups = [
   {
-    title: '员工信息',
-    description: '员工等级、地区、账户和可报销范围。',
-    steps: ['MCP_EMPLOYEE_CONTEXT', 'PARALLEL_EVIDENCE_COLLECTION'],
+    title: '申请人信息',
+    description: '申请人类型、学院/项目组、账户和可报销范围。',
+    steps: ['MCP_APPLICANT_CONTEXT', 'PARALLEL_EVIDENCE_COLLECTION'],
   },
   {
     title: '历史重复检测',
-    description: '文件指纹、历史报销和疑似重复凭证。',
-    steps: ['MCP_DUPLICATE_CHECK', 'PARALLEL_EVIDENCE_COLLECTION'],
+    description: '文件指纹、历史经费报销和疑似重复凭证。',
+    steps: ['MCP_DUPLICATE_CHECK', 'MCP_REIMBURSEMENT_HISTORY', 'PARALLEL_EVIDENCE_COLLECTION'],
+  },
+  {
+    title: '项目预算',
+    description: '共享项目总额、可用余额和预算数据状态。',
+    steps: ['MCP_PROJECT_BUDGET', 'PARALLEL_EVIDENCE_COLLECTION'],
   },
   {
     title: '审核依据',
@@ -27,25 +32,31 @@ const evidenceStepGroups = [
   },
   {
     title: '处理计划',
-    description: '本次案例会按固定步骤核对票据、制度和风险。',
+    description: '本次申请会按固定步骤核对票据、制度和风险。',
     steps: ['AGENT_PLAN'],
   },
 ];
 
-export function EvidenceSourceBoard({ evidence }: { evidence?: CaseEvidence }) {
+export function EvidenceSourceBoard({ evidence, expenseCase }: { evidence?: CaseEvidence; expenseCase?: ExpenseCase }) {
   if (!evidence?.run) return <Empty description="尚未启动证据收集" />;
+  const terminal = expenseCase ? ['APPROVED', 'REJECTED'].includes(expenseCase.status) : false;
+  const activeFailures = !terminal && evidence.steps.some((step) => step.status === 'FAILED');
   return (
     <Space orientation="vertical" size="middle" className="page-stack">
       <Alert
-        type={evidence.steps.some((step) => step.status === 'FAILED') ? 'warning' : 'success'}
+        type={activeFailures ? 'warning' : 'success'}
         showIcon
-        message={evidence.steps.some((step) => step.status === 'FAILED') ? '部分依据收集失败' : '依据已收集完成'}
-        description="每个依据来源都会保留处理状态和失败原因。失败不会让案例作废，可在右侧处理状态中继续重试或交给人工确认。"
+        title={activeFailures ? '部分依据收集失败' : '依据已收集完成'}
+        description={
+          terminal
+            ? '历史异常已通过审核闭环处理，明细仍保留用于追溯。'
+            : '每个依据来源都会保留处理状态和失败原因。失败不会让申请作废，可在右侧处理状态中继续重试或交给人工确认。'
+        }
       />
       <div className="evidence-source-grid">
         {evidenceStepGroups.map((group) => {
           const steps = evidence.steps.filter((step) => group.steps.includes(step.name));
-          const failed = steps.filter((step) => step.status === 'FAILED');
+          const failed = terminal ? [] : steps.filter((step) => step.status === 'FAILED');
           const status = failed.length > 0 ? 'failed' : steps.length > 0 ? 'succeeded' : 'pending';
           return (
             <Card key={group.title} size="small" className={`evidence-source-card ${status}`}>
@@ -63,42 +74,47 @@ export function EvidenceSourceBoard({ evidence }: { evidence?: CaseEvidence }) {
                 ) : (
                   <Collapse
                     ghost
-                    items={steps.map((step) => ({
-                      key: step.id,
-                      label: (
-                        <Space wrap>
-                          <span>{workflowStepLabel(step.name)}</span>
-                          <Tag color={step.status === 'FAILED' ? 'red' : 'green'}>{runStatusLabel(step.status)}</Tag>
-                          <Typography.Text type="secondary">{step.durationMs ?? 0} ms</Typography.Text>
-                        </Space>
-                      ),
-                      children: (
-                        <Space orientation="vertical" className="page-stack">
-                          {step.errorMessage && (
-                            <Alert
-                              type="error"
-                              showIcon
-                              message={stepErrorTitle(step)}
-                              description={stepErrorDescription(step)}
-                            />
-                          )}
-                          {(hasEvidence(step) || step.errorCode || step.errorMessage) && (
-                            <Collapse
-                              ghost
-                              items={[{
-                                key: `${step.id}-detail`,
-                                label: '查看详细原因',
-                                children: (
-                                  <pre className="json-evidence">
-                                    {JSON.stringify(stepDetail(step), null, 2)}
-                                  </pre>
-                                ),
-                              }]}
-                            />
-                          )}
-                        </Space>
-                      ),
-                    }))}
+                    items={steps.map((step) => {
+                      const handled = terminal && step.status === 'FAILED';
+                      return {
+                        key: step.id,
+                        label: (
+                          <Space wrap>
+                            <span>{workflowStepLabel(step.name)}</span>
+                            <Tag color={handled ? 'green' : step.status === 'FAILED' ? 'red' : 'green'}>
+                              {handled ? '已处理' : runStatusLabel(step.status)}
+                            </Tag>
+                            <Typography.Text type="secondary">{step.durationMs ?? 0} ms</Typography.Text>
+                          </Space>
+                        ),
+                        children: (
+                          <Space orientation="vertical" className="page-stack">
+                            {step.errorMessage && (
+                              <Alert
+                                type={handled ? 'success' : 'error'}
+                                showIcon
+                                title={handled ? `${workflowStepLabel(step.name)}已人工处理` : stepErrorTitle(step)}
+                                description={handled ? '该历史异常已随审核结论闭环，保留明细用于追溯。' : stepErrorDescription(step)}
+                              />
+                            )}
+                            {(hasEvidence(step) || step.errorCode || step.errorMessage) && (
+                              <Collapse
+                                ghost
+                                items={[{
+                                  key: `${step.id}-detail`,
+                                  label: '查看详细原因',
+                                  children: (
+                                    <pre className="json-evidence">
+                                      {JSON.stringify(stepDetail(step, handled), null, 2)}
+                                    </pre>
+                                  ),
+                                }]}
+                              />
+                            )}
+                          </Space>
+                        ),
+                      };
+                    })}
                   />
                 )}
               </Space>
@@ -135,7 +151,7 @@ export function RiskExplanationPanel({
         </Card>
         <Card size="small" title="风险说明">
           <Typography.Paragraph>
-            风险分数由系统规则计算，智能分析只提供参考依据，不能直接批准、驳回或付款。
+            风险分数由系统规则计算，智能分析只提供参考依据，不能直接批准、驳回或入账。
           </Typography.Paragraph>
           <Typography.Text type="secondary">
             如果外部数据暂时不可用，系统会提示人工确认。
@@ -185,7 +201,7 @@ interface PolicySearchForm {
   query: string;
   category: string;
   region: string;
-  employeeGrade: string;
+  applicantType: string;
   expenseDate?: dayjs.Dayjs;
 }
 
@@ -198,7 +214,7 @@ export function PolicyEvidenceWorkbench({
 }) {
   const [form] = Form.useForm<PolicySearchForm>();
   const values = Form.useWatch([], form);
-  const canSearch = Boolean(values?.query && values.category && values.region && values.employeeGrade);
+  const canSearch = Boolean(values?.query && values.category && values.region && values.applicantType);
   const matches = useQuery({
     queryKey: ['case-policy-manual-search', expenseCase.id, values],
     queryFn: () =>
@@ -206,7 +222,7 @@ export function PolicyEvidenceWorkbench({
         query: values!.query,
         category: values!.category,
         region: values!.region,
-        employeeGrade: values!.employeeGrade,
+        applicantType: values!.applicantType,
         expenseDate: values?.expenseDate?.format('YYYY-MM-DD'),
         limit: 8,
         minimumScore: 0.45,
@@ -219,10 +235,10 @@ export function PolicyEvidenceWorkbench({
       <Alert
         type={(evidence?.policyFindings ?? []).length > 0 ? 'success' : 'warning'}
         showIcon
-        message={(evidence?.policyFindings ?? []).length > 0 ? '已找到制度依据' : '暂无自动命中的制度依据'}
-        description="系统会按费用类别、地区、员工等级和费用日期匹配可用制度，再找出最相关的依据。"
+        title={(evidence?.policyFindings ?? []).length > 0 ? '已找到制度依据' : '暂无自动命中的制度依据'}
+        description="系统会按经费科目、校区/地区、申请人类型和支出日期匹配可用制度，再找出最相关的依据。"
       />
-      <Card size="small" title="本案例命中的制度依据">
+      <Card size="small" title="本申请命中的制度依据">
         <PolicyMatchList
           matches={(evidence?.policyFindings ?? []).map((item) => ({
             chunkId: item.chunkId,
@@ -231,7 +247,7 @@ export function PolicyEvidenceWorkbench({
             score: item.score,
             category: '',
             region: '',
-            employeeGrade: '',
+            applicantType: '',
             chunkIndex: 0,
             policyCode: item.policyCode,
             policyName: item.policyName,
@@ -247,22 +263,22 @@ export function PolicyEvidenceWorkbench({
         <Form<PolicySearchForm>
           form={form}
           layout="vertical"
-          initialValues={{ region: 'CN', employeeGrade: 'ALL' }}
+          initialValues={{ region: 'CN', applicantType: 'ALL' }}
         >
           <div className="policy-search-form-grid">
             <Form.Item name="query" label="检索问题" rules={[{ required: true }]}>
-              <Input placeholder="例如：住宿费每晚上限" />
+              <Input placeholder="例如：竞赛住宿费每晚上限" />
             </Form.Item>
-            <Form.Item name="category" label="费用类别" rules={[{ required: true }]}>
-              <Input placeholder="住宿费 / 餐饮费 / 差旅费" />
+            <Form.Item name="category" label="经费科目" rules={[{ required: true }]}>
+              <Input placeholder="竞赛差旅费 / 实验耗材费 / 活动物料费" />
             </Form.Item>
-            <Form.Item name="region" label="地区" rules={[{ required: true }]}>
+            <Form.Item name="region" label="校区 / 地区" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="employeeGrade" label="员工等级" rules={[{ required: true }]}>
+            <Form.Item name="applicantType" label="申请人类型" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="expenseDate" label="费用日期">
+            <Form.Item name="expenseDate" label="支出日期">
               <DatePicker />
             </Form.Item>
           </div>
@@ -297,7 +313,12 @@ export function SettlementWorkbench({
   onSettle: () => void;
 }) {
   const settlementCalls = (evidence?.toolCalls ?? []).filter((call) =>
-    ['submit_reimbursement', 'submit_payment'].includes(call.toolName),
+    [
+      'debit_project_budget',
+      'submit_fund_reimbursement',
+      'submit_fund_posting',
+      'record_fund_reimbursement_history',
+    ].includes(call.toolName),
   );
   const failedCalls = settlementCalls.filter((call) => call.status === 'FAILED');
   const pendingApproval = expenseCase.status !== 'APPROVED';
@@ -307,37 +328,37 @@ export function SettlementWorkbench({
       <Alert
         type={settlementCompleted ? 'success' : failedCalls.length > 0 ? 'error' : pendingApproval ? 'warning' : 'info'}
         showIcon
-        message={
+        title={
           settlementCompleted
-            ? '结算已提交'
+            ? '入账已提交'
             : failedCalls.length > 0
-              ? '结算提交失败'
+              ? '入账提交失败'
               : pendingApproval
-                ? '审批通过后可结算'
-                : '可以发起结算'
+                ? '审批通过后可入账'
+                : '可以发起入账'
         }
-        description="结算是审核通过后的独立步骤。即使提交失败，也可以单独重试，不会改变审核决定。"
+        description="入账是审核通过后的独立步骤。即使提交失败，也可以单独重试，不会改变审核决定。"
       />
       <div className="settlement-summary-grid">
         <Card size="small" title="审批状态">
           <Descriptions size="small" column={1}>
-            <Descriptions.Item label="案例状态"><StatusBadge status={expenseCase.status} /></Descriptions.Item>
+            <Descriptions.Item label="申请状态"><StatusBadge status={expenseCase.status} /></Descriptions.Item>
             <Descriptions.Item label="金额">{expenseCase.claimedAmount} {expenseCase.currency}</Descriptions.Item>
             <Descriptions.Item label="风险"><RiskBadge level={expenseCase.riskLevel} score={expenseCase.riskScore} /></Descriptions.Item>
           </Descriptions>
         </Card>
         <Card size="small" title="补偿建议">
           {settlementCompleted ? (
-            <Typography.Text type="success">结算已经提交成功，无需补偿处理。</Typography.Text>
+            <Typography.Text type="success">入账已经提交成功，无需补偿处理。</Typography.Text>
           ) : failedCalls.length > 0 ? (
             <Space orientation="vertical">
               <Typography.Text>{settlementFailureMessage(latestFailedCall?.errorCode, latestFailedCall?.toolName)}</Typography.Text>
-              {canSettle && <Button type="primary" loading={settling} onClick={onSettle}>重试结算</Button>}
+              {canSettle && <Button type="primary" loading={settling} onClick={onSettle}>重试入账</Button>}
             </Space>
           ) : canSettle ? (
-            <Button type="primary" loading={settling} onClick={onSettle}>发起结算</Button>
+            <Button type="primary" loading={settling} onClick={onSettle}>发起入账</Button>
           ) : (
-            <Typography.Text type="secondary">当前账号或案例状态不允许发起结算。</Typography.Text>
+            <Typography.Text type="secondary">当前账号或申请状态不允许发起入账。</Typography.Text>
           )}
         </Card>
       </div>
@@ -345,7 +366,7 @@ export function SettlementWorkbench({
         rowKey="id"
         pagination={false}
         dataSource={settlementCalls}
-        locale={{ emptyText: '尚无结算提交记录' }}
+        locale={{ emptyText: '尚无入账提交记录' }}
         className="settlement-table"
         scroll={{ x: 760 }}
         columns={[
@@ -379,7 +400,7 @@ export function SettlementWorkbench({
                   : row.status === 'FAILED'
                   ? settlementFailureMessage(row.errorCode, row.toolName)
                   : row.status === 'SUCCEEDED'
-                    ? '已提交到结算系统'
+                    ? '已提交到入账系统'
                     : '正在处理'}
               </Typography.Text>
             ),
@@ -414,7 +435,7 @@ function PolicyMatchList({
     score: number;
     category: string;
     region: string;
-    employeeGrade: string;
+    applicantType: string;
     chunkIndex: number;
     policyCode: string;
     policyName: string;
@@ -443,7 +464,7 @@ function PolicyMatchList({
           <Space orientation="vertical" className="page-stack">
             <Typography.Paragraph>{match.content}</Typography.Paragraph>
             <Typography.Text type="secondary">
-              {match.category || '本案例引用'} · {match.region || '-'} · {match.employeeGrade || '-'} · 引用 #{match.chunkIndex}
+              {match.category || '本申请引用'} · {match.region || '-'} · {match.applicantType || '-'} · 引用 #{match.chunkIndex}
             </Typography.Text>
           </Space>
         ),
@@ -466,12 +487,12 @@ function hasEvidence(step: EvidenceStep) {
   return Object.keys(step.evidence ?? {}).length > 0;
 }
 
-function stepDetail(step: EvidenceStep) {
+function stepDetail(step: EvidenceStep, handled = false) {
   return {
     步骤: workflowStepLabel(step.name),
-    状态: runStatusLabel(step.status),
+    状态: handled ? '已处理' : runStatusLabel(step.status),
     问题类型: errorCodeLabel(step.errorCode),
-    情况说明: step.errorMessage ? stepErrorDescription(step) : '该步骤已处理完成。',
+    情况说明: handled ? '该历史异常已通过审核闭环处理。' : step.errorMessage ? stepErrorDescription(step) : '该步骤已处理完成。',
     处理依据: sanitizeEvidence(step.evidence),
   };
 }
@@ -514,7 +535,9 @@ function sanitizeInternalText(value: string) {
   }
   return value
     .replaceAll('save_review_evidence', '保存审核依据')
-    .replaceAll('get_employee_profile', '员工信息核对')
+    .replaceAll('debit_project_budget', '扣减项目预算')
+    .replaceAll('record_fund_reimbursement_history', '回写报销历史')
+    .replaceAll('get_applicant_profile', '申请人信息核对')
     .replaceAll('check_duplicate_document', '历史重复检测')
     .replaceAll('calculate_allowed_amount', '制度额度核对');
 }
@@ -541,26 +564,30 @@ function stepErrorTitle(step: EvidenceStep) {
 function stepErrorDescription(step: EvidenceStep) {
   const service = serviceLabel(step);
   if (step.errorCode === 'DEPENDENCY_UNAVAILABLE') {
-    return `${service}暂时没有返回结果。案例已保留当前进度，可以稍后从右侧“当前处理状态”继续重试，或交给人工确认。`;
+    return `${service}暂时没有返回结果。申请已保留当前进度，可以稍后从右侧“当前处理状态”继续重试，或交给人工确认。`;
   }
-  return '该步骤未处理完成。案例已保留当前进度，可以稍后重试或交给人工确认。';
+  return '该步骤未处理完成。申请已保留当前进度，可以稍后重试或交给人工确认。';
 }
 
 function serviceLabel(step: EvidenceStep) {
   const raw = `${step.errorMessage ?? ''} ${JSON.stringify(step.evidence ?? {})}`;
-  if (raw.includes('get_employee_profile')) return '员工信息服务';
+  if (raw.includes('get_applicant_profile')) return '申请人信息服务';
   if (raw.includes('check_duplicate_document')) return '历史重复检测服务';
   if (raw.includes('save_review_evidence')) return '审核依据保存服务';
   if (raw.includes('calculate_allowed_amount')) return '制度核对服务';
-  if (raw.includes('submit_reimbursement')) return '报销提交服务';
-  if (raw.includes('submit_payment')) return '付款提交服务';
+  if (raw.includes('submit_fund_reimbursement')) return '报销登记服务';
+  if (raw.includes('submit_fund_posting')) return '经费入账服务';
+  if (raw.includes('debit_project_budget')) return '项目预算服务';
+  if (raw.includes('record_fund_reimbursement_history')) return '报销历史服务';
   return workflowStepLabel(step.name);
 }
 
 function settlementOperationLabel(toolName: string) {
   const labels: Record<string, string> = {
-    submit_reimbursement: '提交报销',
-    submit_payment: '提交付款',
+    debit_project_budget: '扣减项目预算',
+    submit_fund_reimbursement: '提交报销登记',
+    submit_fund_posting: '提交经费入账',
+    record_fund_reimbursement_history: '回写报销历史',
     save_review_evidence: '保存审核依据',
   };
   return labels[toolName] ?? toolName;
@@ -568,9 +595,9 @@ function settlementOperationLabel(toolName: string) {
 
 function settlementErrorLabel(errorCode?: string) {
   const labels: Record<string, string> = {
-    DEPENDENCY_UNAVAILABLE: '结算服务暂不可用',
-    NON_RETRYABLE_DEPENDENCY_FAILURE: '结算服务暂不可用',
-    RETRYABLE_DEPENDENCY_FAILURE: '结算服务暂不可用',
+    DEPENDENCY_UNAVAILABLE: '入账服务暂不可用',
+    NON_RETRYABLE_DEPENDENCY_FAILURE: '入账服务暂不可用',
+    RETRYABLE_DEPENDENCY_FAILURE: '入账服务暂不可用',
     VALIDATION_FAILED: '信息校验未通过',
     INVALID_STATE_TRANSITION: '状态暂不允许',
   };
@@ -580,15 +607,17 @@ function settlementErrorLabel(errorCode?: string) {
 function settlementFailureMessage(errorCode?: string, toolName?: string) {
   if (
     errorCode?.includes('DEPENDENCY') ||
-    toolName === 'submit_reimbursement' ||
-    toolName === 'submit_payment'
+    toolName === 'debit_project_budget' ||
+    toolName === 'submit_fund_reimbursement' ||
+    toolName === 'submit_fund_posting' ||
+    toolName === 'record_fund_reimbursement_history'
   ) {
-    return '结算服务暂时不可用，审核结果已保留。请稍后重试结算，或联系管理员检查结算服务。';
+    return '入账服务暂时不可用，审核结果已保留。请稍后重试入账，或联系管理员检查入账服务。';
   }
   if (errorCode === 'VALIDATION_FAILED') {
-    return '结算信息校验未通过，请确认金额、员工和审批结果后再提交。';
+    return '入账信息校验未通过，请确认金额、申请人和审批结果后再提交。';
   }
-  return '结算提交失败，请稍后重试。';
+  return '入账提交失败，请稍后重试。';
 }
 
 function shortId(value?: string) {

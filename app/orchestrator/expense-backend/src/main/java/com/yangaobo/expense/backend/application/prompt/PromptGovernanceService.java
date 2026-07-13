@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.prompt;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -50,8 +50,8 @@ public class PromptGovernanceService {
             int maxTokens,
             String actor) {
         if (repository.findByKeyAndVersion(required(promptKey, "promptKey"), required(version, "version")).isPresent()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt key/version 已存在");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt key/version 已存在");
         }
         Instant now = clock.instant();
         PromptTemplate template =
@@ -152,14 +152,14 @@ public class PromptGovernanceService {
     public PromptChangeRequest approve(UUID requestId, String comment, String actor) {
         PromptChangeRequest request = changeRequest(requestId);
         if (request.status() != PromptChangeRequestStatus.PENDING) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.INVALID_STATE_TRANSITION, "审批单不是待审批状态");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.INVALID_STATE_TRANSITION, "审批单不是待审批状态");
         }
         if (sameActor(request.submittedBy(), actor)) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 提交人不能审批自己的变更");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 提交人不能审批自己的变更");
         }
         requireComment(comment, "审批");
         if (!evaluationGate.passed(request.evaluationReport())) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 自动门禁未通过，不能审批");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 自动门禁未通过，不能审批");
         }
         PromptTemplate current = template(request.promptTemplateId());
         requireStatus(current, PromptStatus.IN_REVIEW);
@@ -210,10 +210,10 @@ public class PromptGovernanceService {
     public PromptChangeRequest reject(UUID requestId, String comment, String actor) {
         PromptChangeRequest request = changeRequest(requestId);
         if (request.status() != PromptChangeRequestStatus.PENDING) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.INVALID_STATE_TRANSITION, "审批单不是待审批状态");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.INVALID_STATE_TRANSITION, "审批单不是待审批状态");
         }
         if (sameActor(request.submittedBy(), actor)) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 提交人不能驳回自己的变更");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 提交人不能驳回自己的变更");
         }
         requireComment(comment, "驳回");
         PromptTemplate current = template(request.promptTemplateId());
@@ -242,7 +242,7 @@ public class PromptGovernanceService {
         PromptTemplate current = template(templateId);
         requireStatus(current, PromptStatus.APPROVED, PromptStatus.DEPRECATED);
         if (sameActor(current.approvedBy(), actor)) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 审批人不能激活同一版本");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 审批人不能激活同一版本");
         }
         repository.deactivateActive(current.promptKey(), current.version());
         PromptTemplate active =
@@ -280,16 +280,16 @@ public class PromptGovernanceService {
         return repository.findById(id)
                 .orElseThrow(
                         () ->
-                                new ExpenseFlowException(
-                                        ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 不存在"));
+                                new CampusFundFlowException(
+                                        CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 不存在"));
     }
 
     private PromptChangeRequest changeRequest(UUID id) {
         return repository.findChangeRequest(id)
                 .orElseThrow(
                         () ->
-                                new ExpenseFlowException(
-                                        ExpenseFlowErrorCode.VALIDATION_FAILED, "Prompt 审批单不存在"));
+                                new CampusFundFlowException(
+                                        CampusFundFlowErrorCode.VALIDATION_FAILED, "Prompt 审批单不存在"));
     }
 
     private static PromptTemplate withStatus(
@@ -329,22 +329,22 @@ public class PromptGovernanceService {
                 return;
             }
         }
-        throw new ExpenseFlowException(
-                ExpenseFlowErrorCode.INVALID_STATE_TRANSITION,
+        throw new CampusFundFlowException(
+                CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
                 "Prompt 当前状态不允许执行该操作：" + template.status());
     }
 
     private static String required(String value, String field) {
         if (value == null || value.isBlank()) {
-            throw new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, field + "不能为空");
+            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, field + "不能为空");
         }
         return value.trim();
     }
 
     private static void requireComment(String comment, String action) {
         if (comment == null || comment.isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, action + " Prompt 时必须填写意见");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, action + " Prompt 时必须填写意见");
         }
     }
 

@@ -59,7 +59,7 @@ public class ObservabilityController {
         return modelCallRepository.summary();
     }
 
-    @GetMapping("/cases/{caseId}")
+    @GetMapping("/fund-applications/{caseId}")
     public CaseObservabilityResponse caseObservability(
             @PathVariable UUID caseId,
             @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit,
@@ -154,7 +154,7 @@ public class ObservabilityController {
                                         ::getAuthority)
                         .anyMatch(
                                 authority ->
-                                        "ROLE_REVIEWER".equals(authority)
+                                        "ROLE_COLLEGE_REVIEWER".equals(authority)
                                                 || "ROLE_FINANCE_ADMIN".equals(authority)
                                                 || "ROLE_AUDITOR".equals(authority));
     }

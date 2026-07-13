@@ -11,7 +11,7 @@ public record PolicyCatalogEntry(
         String name,
         String category,
         String region,
-        String employeeGrade,
+        String applicantType,
         String version,
         LocalDate effectiveFrom,
         LocalDate effectiveTo,

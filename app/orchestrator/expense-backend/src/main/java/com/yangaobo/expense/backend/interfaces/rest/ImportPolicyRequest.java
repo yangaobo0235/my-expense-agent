@@ -11,7 +11,7 @@ public record ImportPolicyRequest(
         @NotBlank @Size(max = 256) String name,
         @NotBlank @Size(max = 64) String category,
         @NotBlank @Size(max = 64) String region,
-        @NotBlank @Size(max = 64) String employeeGrade,
+        @NotBlank @Size(max = 64) String applicantType,
         @NotBlank @Size(max = 32) String version,
         @NotNull LocalDate effectiveFrom,
         LocalDate effectiveTo,

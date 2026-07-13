@@ -25,7 +25,7 @@ import { isValidExpenseFile } from './file-validation';
 
 interface CaseForm {
   applicantName: string;
-  departmentCode: string;
+  projectCode: string;
   title: string;
   claimedAmount: number;
   currency: string;
@@ -82,9 +82,9 @@ export function NewCasePage() {
     <Space orientation="vertical" size="large" className="page-stack">
       <div className="page-heading">
         <div>
-          <Typography.Title level={2}>新建费用案例</Typography.Title>
+          <Typography.Title level={2}>新建经费报销申请</Typography.Title>
           <Typography.Text type="secondary">
-            填写报销信息并上传票据，系统会自动识别票据内容。单文件最大 10 MB。
+            填写校园项目经费信息并上传票据或佐证材料，系统会自动识别票据内容。单文件最大 10 MB。
           </Typography.Text>
         </div>
       </div>
@@ -112,17 +112,17 @@ export function NewCasePage() {
               <Input maxLength={128} />
             </Form.Item>
             <Form.Item
-              name="departmentCode"
-              label="部门编码"
-              rules={[{ required: true, message: '请输入部门编码' }]}
+              name="projectCode"
+              label="经费项目编码"
+              rules={[{ required: true, message: '请输入学院或项目组编码' }]}
             >
               <Input maxLength={64} />
             </Form.Item>
           </div>
           <Form.Item
             name="title"
-            label="费用标题"
-            rules={[{ required: true, message: '请输入费用标题' }]}
+            label="报销事项"
+            rules={[{ required: true, message: '请输入报销事项' }]}
           >
             <Input maxLength={256} />
           </Form.Item>
@@ -161,7 +161,7 @@ export function NewCasePage() {
             <Alert
               type="error"
               showIcon
-              message="存在不支持或超过 10 MB 的文件"
+              title="存在不支持或超过 10 MB 的文件"
               description={fileErrors.map((file) => file.name).join('、')}
             />
           )}
@@ -182,20 +182,20 @@ export function NewCasePage() {
               className="form-alert"
               type="warning"
               showIcon
-              message="案例已创建，后续处理未完成"
+              title="申请已创建，后续处理未完成"
               description={
                 <Space orientation="vertical" size="small">
                   <Typography.Text>
-                    案例和已上传票据已保存在后端，可进入详情页查看票据状态并继续处理。
+                    申请和已上传票据已保存在后端，可进入详情页查看票据状态并继续处理。
                   </Typography.Text>
                   {mutationErrorMessage && (
                     <Typography.Text type="secondary">{mutationErrorMessage}</Typography.Text>
                   )}
                   <Space wrap>
                     <Button type="primary" onClick={() => navigate(`/cases/${createdCase.id}`)}>
-                      查看案例详情
+                      查看申请详情
                     </Button>
-                    <Button onClick={() => navigate('/cases')}>返回案例列表</Button>
+                    <Button onClick={() => navigate('/cases')}>返回申请列表</Button>
                   </Space>
                 </Space>
               }
@@ -206,8 +206,8 @@ export function NewCasePage() {
               className="form-alert"
               type="error"
               showIcon
-              message="创建失败"
-              description={mutationErrorMessage ?? '案例未创建，请检查后端服务和表单内容后重试。'}
+              title="创建失败"
+              description={mutationErrorMessage ?? '申请未创建，请检查后端服务和表单内容后重试。'}
             />
           )}
           <Button

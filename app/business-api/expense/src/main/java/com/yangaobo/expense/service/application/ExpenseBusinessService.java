@@ -42,7 +42,7 @@ public class ExpenseBusinessService {
             String requestId, UUID caseId, BigDecimal amount, String currency) {
         String normalizedRequestId = required(requestId, "requestId");
         if (caseId == null || amount == null || amount.signum() < 0) {
-            throw new IllegalArgumentException("案例和金额参数不合法");
+            throw new IllegalArgumentException("经费申请和金额参数不合法");
         }
         return findSubmission(normalizedRequestId)
                 .orElseGet(
@@ -59,7 +59,7 @@ public class ExpenseBusinessService {
                             jdbcClient
                                     .sql(
                                             """
-                                            INSERT INTO expense_business_reimbursement (
+                                            INSERT INTO campus_fund_reimbursement_record (
                                                 reimbursement_id, request_id, case_id, amount, currency, status, submitted_at
                                             ) VALUES (
                                                 :reimbursementId, :requestId, :caseId, :amount, :currency, :status, :submittedAt
@@ -78,18 +78,18 @@ public class ExpenseBusinessService {
     }
 
     @Transactional
-    public PaymentResult submitPayment(
+    public PostingResult submitFundPosting(
             String requestId, UUID reimbursementId, BigDecimal amount, String currency) {
         String normalizedRequestId = required(requestId, "requestId");
         if (reimbursementId == null || amount == null || amount.signum() < 0) {
-            throw new IllegalArgumentException("报销单和金额参数不合法");
+            throw new IllegalArgumentException("报销登记和金额参数不合法");
         }
         ensureReimbursementExists(reimbursementId);
-        return findPayment(normalizedRequestId)
+        return findPosting(normalizedRequestId)
                 .orElseGet(
                         () -> {
-                            PaymentResult created =
-                                    new PaymentResult(
+                            PostingResult created =
+                                    new PostingResult(
                                             UUID.randomUUID(),
                                             normalizedRequestId,
                                             reimbursementId,
@@ -100,19 +100,19 @@ public class ExpenseBusinessService {
                             jdbcClient
                                     .sql(
                                             """
-                                            INSERT INTO expense_business_payment (
-                                                payment_id, request_id, reimbursement_id, amount, currency, status, paid_at
+                                            INSERT INTO campus_fund_posting_record (
+                                                posting_id, request_id, reimbursement_id, amount, currency, status, posted_at
                                             ) VALUES (
-                                                :paymentId, :requestId, :reimbursementId, :amount, :currency, :status, :paidAt
+                                                :postingId, :requestId, :reimbursementId, :amount, :currency, :status, :postedAt
                                             )
                                             """)
-                                    .param("paymentId", created.paymentId())
+                                    .param("postingId", created.postingId())
                                     .param("requestId", created.requestId())
                                     .param("reimbursementId", created.reimbursementId())
                                     .param("amount", created.amount())
                                     .param("currency", created.currency())
                                     .param("status", created.status())
-                                    .param("paidAt", Timestamp.from(created.paidAt()))
+                                    .param("postedAt", Timestamp.from(created.postedAt()))
                                     .update();
                             return created;
                         });
@@ -123,7 +123,7 @@ public class ExpenseBusinessService {
                 .sql(
                         """
                         SELECT reimbursement_id, request_id, case_id, amount, currency, status, submitted_at
-                        FROM expense_business_reimbursement
+                        FROM campus_fund_reimbursement_record
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
@@ -140,25 +140,25 @@ public class ExpenseBusinessService {
                 .optional();
     }
 
-    private java.util.Optional<PaymentResult> findPayment(String requestId) {
+    private java.util.Optional<PostingResult> findPosting(String requestId) {
         return jdbcClient
                 .sql(
                         """
-                        SELECT payment_id, request_id, reimbursement_id, amount, currency, status, paid_at
-                        FROM expense_business_payment
+                        SELECT posting_id, request_id, reimbursement_id, amount, currency, status, posted_at
+                        FROM campus_fund_posting_record
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
                 .query(
                         (rs, rowNum) ->
-                                new PaymentResult(
-                                        rs.getObject("payment_id", UUID.class),
+                                new PostingResult(
+                                        rs.getObject("posting_id", UUID.class),
                                         rs.getString("request_id"),
                                         rs.getObject("reimbursement_id", UUID.class),
                                         rs.getBigDecimal("amount"),
                                         rs.getString("currency"),
                                         rs.getString("status"),
-                                        rs.getTimestamp("paid_at").toInstant()))
+                                        rs.getTimestamp("posted_at").toInstant()))
                 .optional();
     }
 
@@ -169,7 +169,7 @@ public class ExpenseBusinessService {
                                 """
                                 SELECT EXISTS (
                                     SELECT 1
-                                    FROM expense_business_reimbursement
+                                    FROM campus_fund_reimbursement_record
                                     WHERE reimbursement_id = :reimbursementId
                                 )
                                 """)
@@ -177,7 +177,7 @@ public class ExpenseBusinessService {
                         .query(Boolean.class)
                         .single();
         if (!Boolean.TRUE.equals(exists)) {
-            throw new IllegalArgumentException("报销单不存在，不能提交付款");
+            throw new IllegalArgumentException("报销登记不存在，不能提交入账");
         }
     }
 
@@ -202,12 +202,14 @@ public class ExpenseBusinessService {
             String currency,
             String status,
             Instant submittedAt) {}
-    public record PaymentResult(
-            UUID paymentId,
+    public record PostingResult(
+            UUID postingId,
             String requestId,
             UUID reimbursementId,
             BigDecimal amount,
             String currency,
             String status,
-            Instant paidAt) {}
+            Instant postedAt) {
+
+    }
 }

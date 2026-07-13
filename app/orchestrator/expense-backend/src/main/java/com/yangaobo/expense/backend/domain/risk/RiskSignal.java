@@ -1,5 +1,6 @@
 package com.yangaobo.expense.backend.domain.risk;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -7,7 +8,8 @@ public record RiskSignal(
         RiskSignalCode code,
         int score,
         String message,
-        Map<String, String> evidence) {
+        Map<String, String> evidence)
+        implements Serializable {
 
     public RiskSignal {
         Objects.requireNonNull(code, "code");

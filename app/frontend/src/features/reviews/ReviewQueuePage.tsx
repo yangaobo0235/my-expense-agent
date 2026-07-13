@@ -43,8 +43,8 @@ export function ReviewQueuePage() {
           className="form-alert"
           type="info"
           showIcon
-          message="优先处理需要人工判断的案例"
-          description="列表已按系统判断生成待办。金额超标、疑似重复、依据缺失的案例建议进入工作台查看票据、制度和风险说明后再决定。"
+          title="优先处理需要人工判断的经费申请"
+          description="列表已按系统判断生成待办。预算超标、疑似重复、依据缺失的申请建议进入工作台查看票据、制度和风险说明后再决定。"
         />
         <List
           loading={query.isLoading}
@@ -63,7 +63,7 @@ export function ReviewQueuePage() {
               <List.Item.Meta
                 title={
                   <Space wrap>
-                    <Typography.Text strong>案例 {shortCaseId(task.caseId)}</Typography.Text>
+                    <Typography.Text strong>申请 {shortCaseId(task.caseId)}</Typography.Text>
                     <Tag color={task.status === 'MORE_INFO' ? 'orange' : 'blue'}>{taskStatusLabel(task.status)}</Tag>
                     <Tag color={queueColor(task.routingQueue)}>{queueLabel(task.routingQueue)}</Tag>
                     {task.slaHours && <Tag color="orange">{task.slaHours} 小时内处理</Tag>}
@@ -72,7 +72,7 @@ export function ReviewQueuePage() {
                 description={
                   <Space orientation="vertical" size={4}>
                     <Typography.Text>
-                      {businessMessage(task.userFacingMessage) || '该案例需要人工复核后决定。'}
+                      {businessMessage(task.userFacingMessage) || '该申请需要人工复核后决定。'}
                     </Typography.Text>
                     <Typography.Text type="secondary">
                       关注点：{reasonLabels(task.reasonCodes).join('、') || '系统建议人工确认'}
@@ -171,7 +171,7 @@ function reasonLabel(code: string) {
     DUPLICATE_DOCUMENT: '疑似重复报销',
     MISSING_REQUIRED_DOCUMENT: '缺少必要凭证',
     FORBIDDEN_EXPENSE_ITEM: '可能包含不可报销项目',
-    DATE_ANOMALY: '费用日期异常',
+    DATE_ANOMALY: '支出日期异常',
     SELLER_ANOMALY: '收款方需要确认',
   };
   return labels[code] ?? '';
@@ -183,7 +183,7 @@ function requiredEvidenceLabel(value: string) {
     CACHED_EVIDENCE: '缓存依据',
     ORIGINAL_DOCUMENT: '原始票据',
     POLICY_CITATION: '制度依据',
-    PAYMENT_PROOF: '付款证明',
+    PAYMENT_PROOF: '支付或垫付证明',
   };
   return labels[value] ?? value.replaceAll('_', ' ').toLowerCase();
 }
@@ -191,7 +191,7 @@ function requiredEvidenceLabel(value: string) {
 function routingActionLabel(value?: string) {
   const labels: Record<string, string> = {
     REVIEW: '请审核员复核后决定',
-    MORE_INFO: '建议要求员工补充材料',
+    MORE_INFO: '建议要求申请人补充材料',
     APPROVE: '可考虑批准',
     REJECT: '可考虑拒绝',
   };

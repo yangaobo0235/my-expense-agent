@@ -5,8 +5,8 @@ import com.yangaobo.expense.backend.domain.model.Money;
 import com.yangaobo.expense.backend.domain.model.RiskLevel;
 import com.yangaobo.expense.backend.domain.repository.ExpenseCaseRepository;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -37,11 +37,11 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                 .sql(
                         """
                         INSERT INTO expense_case (
-                            id, case_number, owner_subject, applicant_name, department_code,
+                            id, case_number, owner_subject, applicant_name, project_code,
                             title, currency, claimed_amount, status, risk_level, risk_score,
                             failure_stage, failure_reason, version, created_at, updated_at
                         ) VALUES (
-                            :id, :caseNumber, :ownerSubject, :applicantName, :departmentCode,
+                            :id, :caseNumber, :ownerSubject, :applicantName, :projectCode,
                             :title, :currency, :claimedAmount, :status, :riskLevel, :riskScore,
                             :failureStage, :failureReason, :version, :createdAt, :updatedAt
                         )
@@ -50,7 +50,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                 .param("caseNumber", expenseCase.caseNumber())
                 .param("ownerSubject", expenseCase.ownerSubject())
                 .param("applicantName", expenseCase.applicantName())
-                .param("departmentCode", expenseCase.departmentCode())
+                .param("projectCode", expenseCase.projectCode())
                 .param("title", expenseCase.title())
                 .param("currency", expenseCase.claimedAmount().currency())
                 .param("claimedAmount", expenseCase.claimedAmount().amount())
@@ -71,7 +71,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
         return jdbcClient
                 .sql(
                         """
-                        SELECT id, case_number, owner_subject, applicant_name, department_code,
+                        SELECT id, case_number, owner_subject, applicant_name, project_code,
                                title, currency, claimed_amount, status, risk_level, risk_score,
                                failure_stage, failure_reason, version, created_at, updated_at
                         FROM expense_case
@@ -107,7 +107,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
         var dataQuery =
                 jdbcClient.sql(
                         """
-                        SELECT id, case_number, owner_subject, applicant_name, department_code,
+                        SELECT id, case_number, owner_subject, applicant_name, project_code,
                                title, currency, claimed_amount, status, risk_level, risk_score,
                                failure_stage, failure_reason, version, created_at, updated_at
                         FROM expense_case
@@ -136,7 +136,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                                 """
                                 UPDATE expense_case
                                 SET applicant_name = :applicantName,
-                                    department_code = :departmentCode,
+                                    project_code = :projectCode,
                                     title = :title,
                                     currency = :currency,
                                     claimed_amount = :claimedAmount,
@@ -150,7 +150,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                                 WHERE id = :id AND version = :expectedVersion
                                 """)
                         .param("applicantName", expenseCase.applicantName())
-                        .param("departmentCode", expenseCase.departmentCode())
+                        .param("projectCode", expenseCase.projectCode())
                         .param("title", expenseCase.title())
                         .param("currency", expenseCase.claimedAmount().currency())
                         .param("claimedAmount", expenseCase.claimedAmount().amount())
@@ -165,8 +165,8 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (updated != 1) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "Expense case changed while it was being processed");
         }
         return expenseCase;
@@ -185,8 +185,8 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (deleted != 1) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "Expense case changed while it was being deleted");
         }
     }
@@ -200,7 +200,7 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                 resultSet.getString("case_number"),
                 resultSet.getString("owner_subject"),
                 resultSet.getString("applicant_name"),
-                resultSet.getString("department_code"),
+                resultSet.getString("project_code"),
                 resultSet.getString("title"),
                 new Money(
                         resultSet.getBigDecimal("claimed_amount"),

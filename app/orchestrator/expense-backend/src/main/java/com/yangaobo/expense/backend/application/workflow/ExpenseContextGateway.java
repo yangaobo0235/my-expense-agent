@@ -1,36 +1,67 @@
 package com.yangaobo.expense.backend.application.workflow;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public interface ExpenseContextGateway {
 
-    EmployeeContext employeeContext(
-            String employeeId,
-            String fallbackRegion,
-            String fallbackEmployeeGrade);
+    ApplicantContext applicantContext(
+            String applicantId,
+            String projectCode);
+
+    ProjectBudget projectBudget(String applicantId, String projectCode);
+
+    ReimbursementHistory reimbursementHistory(String applicantId);
 
     DuplicateCheck duplicateCheck(
             UUID currentCaseId,
-            List<String> documentSha256,
-            boolean fallbackDuplicate);
+            List<String> documentSha256);
 
-    record EmployeeContext(
-            String employeeId,
-            String departmentCode,
-            String employeeGrade,
+    record ApplicantContext(
+            String applicantId,
+            String projectCode,
+            String applicantType,
             String region,
-            List<String> paymentMethods,
+            List<String> reimbursementAccounts,
             String source,
             boolean dependencyFailure,
-            String failureReason) {
+            String failureReason)
+            implements Serializable {
 
-        public EmployeeContext {
-            paymentMethods =
-                    paymentMethods == null
+        public ApplicantContext {
+            reimbursementAccounts =
+                    reimbursementAccounts == null
                             ? List.of()
-                            : List.copyOf(paymentMethods);
+                            : List.copyOf(reimbursementAccounts);
+        }
+    }
+
+    record ProjectBudget(
+            String applicantId,
+            String projectCode,
+            BigDecimal total,
+            BigDecimal available,
+            String currency,
+            long version,
+            Instant updatedAt,
+            String source,
+            boolean dependencyFailure,
+            String failureReason)
+            implements Serializable {}
+
+    record ReimbursementHistory(
+            List<Map<String, Object>> items,
+            String source,
+            boolean dependencyFailure,
+            String failureReason)
+            implements Serializable {
+
+        public ReimbursementHistory {
+            items = items == null ? List.of() : List.copyOf(items);
         }
     }
 
@@ -40,7 +71,8 @@ public interface ExpenseContextGateway {
             Map<String, Object> evidence,
             String source,
             boolean dependencyFailure,
-            String failureReason) {
+            String failureReason)
+            implements Serializable {
 
         public DuplicateCheck {
             duplicateSha256 =

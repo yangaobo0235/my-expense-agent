@@ -4,6 +4,38 @@
  */
 
 export interface paths {
+    "/api/v1/prompts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put: operations["update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fund-applications/{caseId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_1"];
+        put: operations["updateDraft"];
+        post?: never;
+        delete: operations["deleteDraft"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/review-tasks/{taskId}/request-more-info": {
         parameters: {
             query?: never;
@@ -36,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/review-tasks/{taskId}/more-info-suggestion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["moreInfoSuggestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/review-tasks/{taskId}/approve": {
         parameters: {
             query?: never;
@@ -52,7 +100,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/policies": {
+    "/api/v1/prompts": {
         parameters: {
             query?: never;
             header?: never;
@@ -61,6 +109,86 @@ export interface paths {
         };
         get: operations["list"];
         put?: never;
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/{id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/changes/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reject_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/changes/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approve_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_1"];
+        put?: never;
         post: operations["importPolicy"];
         delete?: never;
         options?: never;
@@ -68,7 +196,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases": {
+    "/api/v1/fund-applications": {
         parameters: {
             query?: never;
             header?: never;
@@ -77,14 +205,14 @@ export interface paths {
         };
         get: operations["search"];
         put?: never;
-        post: operations["create"];
+        post: operations["create_1"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/workflow": {
+    "/api/v1/fund-applications/{caseId}/workflow": {
         parameters: {
             query?: never;
             header?: never;
@@ -100,23 +228,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/settlement": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["settle"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/expense-cases/{caseId}/review-report": {
+    "/api/v1/fund-applications/{caseId}/review-report": {
         parameters: {
             query?: never;
             header?: never;
@@ -132,7 +244,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/evidence-chat": {
+    "/api/v1/fund-applications/{caseId}/posting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["settle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fund-applications/{caseId}/evidence-chat": {
         parameters: {
             query?: never;
             header?: never;
@@ -148,7 +276,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/documents": {
+    "/api/v1/fund-applications/{caseId}/documents": {
         parameters: {
             query?: never;
             header?: never;
@@ -164,7 +292,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/analyze": {
+    "/api/v1/fund-applications/{caseId}/analyze": {
         parameters: {
             query?: never;
             header?: never;
@@ -219,7 +347,39 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get"];
+        get: operations["get_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prompts/{id}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["changes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -292,14 +452,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}": {
+    "/api/v1/observability/fund-applications/{caseId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["get_1"];
+        get: operations["caseObservability"];
         put?: never;
         post?: never;
         delete?: never;
@@ -308,7 +468,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/evidence": {
+    "/api/v1/fund-applications/{caseId}/evidence": {
         parameters: {
             query?: never;
             header?: never;
@@ -324,7 +484,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/expense-cases/{caseId}/events": {
+    "/api/v1/fund-applications/{caseId}/events": {
         parameters: {
             query?: never;
             header?: never;
@@ -392,19 +552,63 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ReviewDecisionRequest: {
-            requestId: string;
-            /** Format: int64 */
-            version?: number;
-            approvedAmount?: number;
-            comment?: string;
+        PromptTemplateRequest: {
+            promptKey: string;
+            version: string;
+            name: string;
+            description?: string;
+            content: string;
+            variableSchema?: {
+                [key: string]: unknown;
+            };
+            modelName: string;
+            temperature?: number;
+            /** Format: int32 */
+            maxTokens?: number;
+        };
+        PromptTemplateResponse: {
+            /** Format: uuid */
+            id?: string;
+            promptKey?: string;
+            version?: string;
+            name?: string;
+            description?: string;
+            content?: string;
+            variableSchema?: {
+                [key: string]: unknown;
+            };
+            modelName?: string;
+            temperature?: number;
+            /** Format: int32 */
+            maxTokens?: number;
+            status?: string;
+            promptHash?: string;
+            createdBy?: string;
+            updatedBy?: string;
+            approvedBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: date-time */
+            activatedAt?: string;
+            replacedVersion?: string;
+        };
+        UpdateExpenseCaseRequest: {
+            applicantName: string;
+            projectCode: string;
+            title: string;
+            claimedAmount: number;
+            currency: string;
         };
         ExpenseCaseResponse: {
             /** Format: uuid */
             id?: string;
             caseNumber?: string;
             applicantName?: string;
-            departmentCode?: string;
+            projectCode?: string;
             title?: string;
             claimedAmount?: number;
             currency?: string;
@@ -415,6 +619,7 @@ export interface components {
             riskScore?: number;
             failureStage?: string;
             failureReason?: string;
+            settlementStatus?: string;
             /** Format: int64 */
             version?: number;
             /** Format: date-time */
@@ -422,12 +627,50 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
+        ReviewDecisionRequest: {
+            requestId: string;
+            /** Format: int64 */
+            version?: number;
+            approvedAmount?: number;
+            comment?: string;
+        };
+        MoreInfoSuggestion: {
+            userFacingMessage?: string;
+            requestedEvidence?: string[];
+            reviewerQuestions?: string[];
+        };
+        PromptSubmitRequest: {
+            diffSummary?: string;
+        };
+        PromptChangeRequestResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            promptTemplateId?: string;
+            requestType?: string;
+            status?: string;
+            diffSummary?: string;
+            riskLevel?: string;
+            evaluationReport?: {
+                [key: string]: unknown;
+            };
+            reviewComment?: string;
+            submittedBy?: string;
+            reviewedBy?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            reviewedAt?: string;
+        };
+        PromptReviewRequest: {
+            comment?: string;
+        };
         ImportPolicyRequest: {
             policyCode: string;
             name: string;
             category: string;
             region: string;
-            employeeGrade: string;
+            applicantType: string;
             version: string;
             /** Format: date */
             effectiveFrom: string;
@@ -450,7 +693,7 @@ export interface components {
         };
         CreateExpenseCaseRequest: {
             applicantName: string;
-            departmentCode: string;
+            projectCode: string;
             title: string;
             claimedAmount: number;
             currency: string;
@@ -458,16 +701,8 @@ export interface components {
         ExpenseWorkflowRequest: {
             requestId: string;
             category: string;
-            region: string;
-            employeeGrade: string;
             /** Format: date */
             expenseDate: string;
-            duplicateDocument?: boolean;
-            dateAnomaly?: boolean;
-            sellerAnomaly?: boolean;
-            policyLimitExceeded?: boolean;
-            missingRequiredDocument?: boolean;
-            forbiddenExpenseItem?: boolean;
         };
         ExpenseWorkflowResponse: {
             /** Format: uuid */
@@ -489,27 +724,13 @@ export interface components {
         };
         RiskSignal: {
             /** @enum {string} */
-            code?: "DUPLICATE_DOCUMENT" | "AMOUNT_MISMATCH" | "DATE_ANOMALY" | "SELLER_ANOMALY" | "POLICY_LIMIT_EXCEEDED" | "MISSING_REQUIRED_DOCUMENT" | "LOW_EXTRACTION_CONFIDENCE" | "FORBIDDEN_EXPENSE_ITEM" | "DEPENDENCY_UNAVAILABLE";
+            code?: "DUPLICATE_DOCUMENT" | "AMOUNT_MISMATCH" | "DATE_ANOMALY" | "SELLER_ANOMALY" | "POLICY_LIMIT_EXCEEDED" | "MISSING_REQUIRED_DOCUMENT" | "LOW_EXTRACTION_CONFIDENCE" | "FORBIDDEN_EXPENSE_ITEM" | "PROJECT_BUDGET_EXCEEDED" | "POLICY_EVIDENCE_MISSING" | "DEPENDENCY_UNAVAILABLE";
             /** Format: int32 */
             score?: number;
             message?: string;
             evidence?: {
                 [key: string]: string;
             };
-        };
-        SettlementRequest: {
-            requestId: string;
-        };
-        SettlementResult: {
-            /** Format: uuid */
-            caseId?: string;
-            /** Format: uuid */
-            reimbursementId?: string;
-            /** Format: uuid */
-            paymentId?: string;
-            amount?: number;
-            currency?: string;
-            status?: string;
         };
         PolicyCitation: {
             policyCode?: string;
@@ -530,6 +751,23 @@ export interface components {
             promptVersion?: string;
             /** Format: date-time */
             createdAt?: string;
+        };
+        SettlementRequest: {
+            requestId: string;
+        };
+        SettlementResult: {
+            /** Format: uuid */
+            caseId?: string;
+            /** Format: uuid */
+            budgetDebitId?: string;
+            /** Format: uuid */
+            reimbursementId?: string;
+            /** Format: uuid */
+            postingId?: string;
+            historyRecordIds?: string[];
+            amount?: number;
+            currency?: string;
+            status?: string;
         };
         EvidenceChatRequest: {
             question: string;
@@ -622,6 +860,91 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
+        PromptAuditEvent: {
+            /** Format: uuid */
+            id?: string;
+            promptKey?: string;
+            version?: string;
+            action?: string;
+            actorSubject?: string;
+            payload?: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            occurredAt?: string;
+        };
+        PromptChangeRequest: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            promptTemplateId?: string;
+            /** @enum {string} */
+            requestType?: "CREATE" | "UPDATE" | "ACTIVATE" | "ROLLBACK" | "DEPRECATE";
+            /** @enum {string} */
+            status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+            diffSummary?: string;
+            riskLevel?: string;
+            evaluationReport?: {
+                [key: string]: unknown;
+            };
+            reviewComment?: string;
+            submittedBy?: string;
+            reviewedBy?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            reviewedAt?: string;
+        };
+        PromptDiff: {
+            /** Format: int32 */
+            activeLineCount?: number;
+            /** Format: int32 */
+            candidateLineCount?: number;
+            /** Format: int32 */
+            lineDelta?: number;
+            changedFields?: string[];
+            contentChanged?: boolean;
+            rollbackCandidate?: boolean;
+            currentlyActive?: boolean;
+        };
+        PromptTemplate: {
+            /** Format: uuid */
+            id?: string;
+            promptKey?: string;
+            version?: string;
+            name?: string;
+            description?: string;
+            content?: string;
+            variableSchema?: {
+                [key: string]: unknown;
+            };
+            modelName?: string;
+            temperature?: number;
+            /** Format: int32 */
+            maxTokens?: number;
+            /** @enum {string} */
+            status?: "DRAFT" | "IN_REVIEW" | "APPROVED" | "ACTIVE" | "REJECTED" | "DEPRECATED";
+            promptHash?: string;
+            createdBy?: string;
+            updatedBy?: string;
+            approvedBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: date-time */
+            activatedAt?: string;
+            replacedVersion?: string;
+        };
+        PromptVersionReview: {
+            candidate?: components["schemas"]["PromptTemplate"];
+            active?: components["schemas"]["PromptTemplate"];
+            diff?: components["schemas"]["PromptDiff"];
+            changes?: components["schemas"]["PromptChangeRequest"][];
+            auditEvents?: components["schemas"]["PromptAuditEvent"][];
+        };
         PolicyCatalogResponse: {
             /** Format: uuid */
             id?: string;
@@ -629,7 +952,7 @@ export interface components {
             name?: string;
             category?: string;
             region?: string;
-            employeeGrade?: string;
+            applicantType?: string;
             version?: string;
             /** Format: date */
             effectiveFrom?: string;
@@ -653,7 +976,7 @@ export interface components {
             policyVersion?: string;
             category?: string;
             region?: string;
-            employeeGrade?: string;
+            applicantType?: string;
             /** Format: date */
             effectiveFrom?: string;
             /** Format: date */
@@ -737,6 +1060,52 @@ export interface components {
             errorCode?: string;
             /** Format: date-time */
             createdAt?: string;
+        };
+        AuditEvent: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            caseId?: string;
+            actorSubject?: string;
+            actorType?: string;
+            action?: string;
+            resourceType?: string;
+            resourceId?: string;
+            requestId?: string;
+            metadata?: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            occurredAt?: string;
+        };
+        CaseObservabilityResponse: {
+            latestRun?: components["schemas"]["ObservableRunResponse"];
+            steps?: components["schemas"]["WorkflowStep"][];
+            modelCalls?: components["schemas"]["ModelCallRecord"][];
+            auditEvents?: components["schemas"]["AuditEvent"][];
+            /** Format: int32 */
+            modelCallCount?: number;
+            /** Format: int64 */
+            totalTokens?: number;
+            /** Format: int64 */
+            failedStepCount?: number;
+        };
+        WorkflowStep: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            /** Format: int32 */
+            attempt?: number;
+            status?: string;
+            output?: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            startedAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            errorCode?: string;
+            errorMessage?: string;
         };
         ExpenseCasePageResponse: {
             items?: components["schemas"]["ExpenseCaseResponse"][];
@@ -931,6 +1300,347 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptTemplateResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromptTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptTemplateResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ExpenseCaseResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    updateDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateExpenseCaseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ExpenseCaseResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     requestMoreInfo: {
         parameters: {
             query?: never;
@@ -1073,6 +1783,73 @@ export interface operations {
             };
         };
     };
+    moreInfoSuggestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MoreInfoSuggestion"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     approve: {
         parameters: {
             query?: never;
@@ -1145,6 +1922,422 @@ export interface operations {
         };
     };
     list: {
+        parameters: {
+            query?: {
+                promptKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptTemplateResponse"][];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromptTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptTemplateResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PromptSubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptChangeRequestResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    activate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptTemplateResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    reject_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PromptReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptChangeRequestResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    approve_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PromptReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptChangeRequestResponse"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    list_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -1351,7 +2544,7 @@ export interface operations {
             };
         };
     };
-    create: {
+    create_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -1491,77 +2684,6 @@ export interface operations {
             };
         };
     };
-    settle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                caseId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SettlementRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SettlementResult"];
-                };
-            };
-            /** @description Bearer Token 缺失或无效 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description 当前身份没有访问权限 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description 状态冲突、乐观锁冲突或重复请求 */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description 请求或业务字段校验失败 */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description 外部依赖暂时不可用 */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
-    };
     latest: {
         parameters: {
             query?: never;
@@ -1647,6 +2769,77 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ReviewReport"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    settle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettlementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SettlementResult"];
                 };
             };
             /** @description Bearer Token 缺失或无效 */
@@ -2105,7 +3298,7 @@ export interface operations {
             };
         };
     };
-    get: {
+    get_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -2172,13 +3365,147 @@ export interface operations {
             };
         };
     };
+    review: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptVersionReview"];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    changes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PromptChangeRequestResponse"][];
+                };
+            };
+            /** @description Bearer Token 缺失或无效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     search_1: {
         parameters: {
             query: {
                 query: string;
                 category: string;
                 region: string;
-                employeeGrade: string;
+                applicantType: string;
                 expenseDate?: string;
                 limit?: number;
                 minimumScore?: number;
@@ -2444,9 +3771,11 @@ export interface operations {
             };
         };
     };
-    get_1: {
+    caseObservability: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+            };
             header?: never;
             path: {
                 caseId: string;
@@ -2461,7 +3790,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ExpenseCaseResponse"];
+                    "*/*": components["schemas"]["CaseObservabilityResponse"];
                 };
             };
             /** @description Bearer Token 缺失或无效 */

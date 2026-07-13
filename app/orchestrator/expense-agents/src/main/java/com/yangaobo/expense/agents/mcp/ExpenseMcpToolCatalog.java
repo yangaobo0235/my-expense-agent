@@ -7,18 +7,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum ExpenseMcpToolCatalog {
-    GET_EMPLOYEE_PROFILE("account", "get_employee_profile", Access.READ),
-    GET_PAYMENT_METHODS("account", "get_payment_methods", Access.READ),
-    GET_ACCOUNT_BALANCE("account", "get_account_balance", Access.READ),
+    GET_APPLICANT_PROFILE("account", "get_applicant_profile", Access.READ),
+    GET_REIMBURSEMENT_ACCOUNTS("account", "get_reimbursement_accounts", Access.READ),
+    GET_PROJECT_BUDGET_BALANCE("account", "get_project_budget_balance", Access.READ),
+    DEBIT_PROJECT_BUDGET("account", "debit_project_budget", Access.WRITE),
     VALIDATE_INVOICE_NUMBER("expense", "validate_invoice_number", Access.READ),
     CALCULATE_ALLOWED_AMOUNT("expense", "calculate_allowed_amount", Access.READ),
-    SUBMIT_REIMBURSEMENT("expense", "submit_reimbursement", Access.WRITE),
-    SUBMIT_PAYMENT("expense", "submit_payment", Access.WRITE),
+    SUBMIT_FUND_REIMBURSEMENT("expense", "submit_fund_reimbursement", Access.WRITE),
+    SUBMIT_FUND_POSTING("expense", "submit_fund_posting", Access.WRITE),
     CHECK_DUPLICATE_DOCUMENT(
             "audit-history", "check_duplicate_document", Access.READ),
-    GET_EXPENSE_HISTORY("audit-history", "get_expense_history", Access.READ),
+    GET_FUND_REIMBURSEMENT_HISTORY("audit-history", "get_fund_reimbursement_history", Access.READ),
     SAVE_REVIEW_EVIDENCE(
-            "audit-history", "save_review_evidence", Access.WRITE);
+            "audit-history", "save_review_evidence", Access.WRITE),
+    RECORD_FUND_REIMBURSEMENT_HISTORY(
+            "audit-history", "record_fund_reimbursement_history", Access.WRITE);
 
     private static final Map<String, ExpenseMcpToolCatalog> BY_NAME =
             Arrays.stream(values())

@@ -22,7 +22,7 @@ interface SearchValues {
   query: string;
   category: string;
   region: string;
-  employeeGrade: string;
+  applicantType: string;
   expenseDate?: dayjs.Dayjs;
 }
 
@@ -45,9 +45,9 @@ export function PolicyCatalogPage() {
     <Space orientation="vertical" size="large" className="page-stack">
       <div className="page-heading">
         <div>
-          <Typography.Title level={2}>制度管理与索引</Typography.Title>
+          <Typography.Title level={2}>校园制度库</Typography.Title>
           <Typography.Text type="secondary">
-            查看制度版本、生效范围和向量分块状态，并用业务 metadata 验证召回结果。
+            查看校园经费制度版本、生效范围和向量分块状态，并用业务 metadata 验证召回结果。
           </Typography.Text>
         </div>
         <Tag color="cyan">metadata 过滤 + PGVector</Tag>
@@ -79,7 +79,7 @@ export function PolicyCatalogPage() {
             {
               title: '适用范围',
               key: 'scope',
-              render: (_, row) => `${row.region} · ${row.employeeGrade}`,
+              render: (_, row) => `${row.region} · ${row.applicantType}`,
             },
             { title: '版本', dataIndex: 'version', key: 'version' },
             {
@@ -122,23 +122,23 @@ export function PolicyCatalogPage() {
       <Card title="制度召回验证">
         <Form<SearchValues>
           layout="inline"
-          initialValues={{ region: 'CN', employeeGrade: 'ALL' }}
+          initialValues={{ region: 'CN', applicantType: 'ALL' }}
           onFinish={setSearch}
         >
           <Form.Item name="query" rules={[{ required: true, message: '请输入检索问题' }]}>
-            <Input placeholder="例如：住宿费每晚上限" />
+            <Input placeholder="例如：竞赛住宿费每晚上限" />
           </Form.Item>
-          <Form.Item name="category" rules={[{ required: true, message: '请输入费用类别' }]}>
-            <Input placeholder="费用类别，例如 住宿费" />
+          <Form.Item name="category" rules={[{ required: true, message: '请输入经费科目' }]}>
+            <Input placeholder="经费科目，例如 竞赛差旅费" />
           </Form.Item>
           <Form.Item name="region" rules={[{ required: true }]}>
-            <Input placeholder="地区" />
+            <Input placeholder="校区 / 地区" />
           </Form.Item>
-          <Form.Item name="employeeGrade" rules={[{ required: true }]}>
-            <Input placeholder="员工等级" />
+          <Form.Item name="applicantType" rules={[{ required: true }]}>
+            <Input placeholder="申请人类型" />
           </Form.Item>
           <Form.Item name="expenseDate">
-            <DatePicker placeholder="费用日期" />
+            <DatePicker placeholder="支出日期" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={matches.isFetching}>
@@ -163,7 +163,7 @@ export function PolicyCatalogPage() {
                     <Space orientation="vertical">
                       <Typography.Paragraph>{match.content}</Typography.Paragraph>
                       <Typography.Text type="secondary">
-                        {match.category} · {match.region} · {match.employeeGrade} · 分块 #{match.chunkIndex}
+                        {match.category} · {match.region} · {match.applicantType} · 分块 #{match.chunkIndex}
                       </Typography.Text>
                     </Space>
                   ),

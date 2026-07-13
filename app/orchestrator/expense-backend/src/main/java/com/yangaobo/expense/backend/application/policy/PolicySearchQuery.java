@@ -6,7 +6,7 @@ public record PolicySearchQuery(
         String query,
         String category,
         String region,
-        String employeeGrade,
+        String applicantType,
         LocalDate expenseDate,
         int limit,
         double minimumScore) {}

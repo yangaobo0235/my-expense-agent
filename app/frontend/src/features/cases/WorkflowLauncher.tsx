@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, DatePicker, Form, Input, Modal, Select, Space, message } from 'antd';
+import { Alert, Button, DatePicker, Form, Modal, Select, message } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,10 +6,7 @@ import { runCaseWorkflow } from '../../api/expense-api';
 
 interface WorkflowForm {
   category: string;
-  region: string;
-  employeeGrade: string;
   expenseDate: dayjs.Dayjs;
-  flags?: string[];
 }
 
 export function WorkflowLauncher({
@@ -31,19 +28,10 @@ export function WorkflowLauncher({
   const [form] = Form.useForm<WorkflowForm>();
   const mutation = useMutation({
     mutationFn: (values: WorkflowForm) => {
-      const flags = new Set(values.flags ?? []);
       return runCaseWorkflow(caseId, {
         requestId,
         category: values.category,
-        region: values.region,
-        employeeGrade: values.employeeGrade,
         expenseDate: values.expenseDate.format('YYYY-MM-DD'),
-        duplicateDocument: flags.has('duplicateDocument'),
-        dateAnomaly: flags.has('dateAnomaly'),
-        sellerAnomaly: flags.has('sellerAnomaly'),
-        policyLimitExceeded: flags.has('policyLimitExceeded'),
-        missingRequiredDocument: flags.has('missingRequiredDocument'),
-        forbiddenExpenseItem: flags.has('forbiddenExpenseItem'),
       });
     },
     onSuccess: () => {
@@ -61,7 +49,7 @@ export function WorkflowLauncher({
     <>
       <Button type={buttonType} onClick={() => setOpen(true)}>{buttonText}</Button>
       <Modal
-        title={recoveryMode ? '从失败处继续处理' : '开始费用审核'}
+        title={recoveryMode ? '从失败处继续处理' : '开始经费合规审核'}
         open={open}
         onCancel={() => setOpen(false)}
         okText={recoveryMode ? '重试失败环节' : '开始审核'}
@@ -71,42 +59,22 @@ export function WorkflowLauncher({
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ region: 'CN', employeeGrade: 'ALL', expenseDate: dayjs(), flags: [] }}
+          initialValues={{ expenseDate: dayjs() }}
         >
-          <Form.Item name="category" label="费用类别" rules={[{ required: true }]}>
-            <Select options={['住宿费', '餐饮费', '差旅费', '市内交通费', '业务招待费'].map((value) => ({ value }))} />
+          <Form.Item name="category" label="经费科目" rules={[{ required: true }]}>
+            <Select options={['竞赛差旅费', '会议注册费', '实验耗材费', '活动物料费', '打印装订费', '市内交通费'].map((value) => ({ value }))} />
           </Form.Item>
-          <Space className="page-stack">
-            <Form.Item name="region" label="地区" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="employeeGrade" label="员工等级" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="expenseDate" label="费用日期" rules={[{ required: true }]}>
-              <DatePicker />
-            </Form.Item>
-          </Space>
-          <Form.Item name="flags" label="补充情况">
-            <Checkbox.Group>
-              <Space orientation="vertical">
-                <Checkbox value="duplicateDocument">已知重复凭证</Checkbox>
-                <Checkbox value="dateAnomaly">日期异常</Checkbox>
-                <Checkbox value="sellerAnomaly">销售方异常</Checkbox>
-                <Checkbox value="policyLimitExceeded">制度额度超标</Checkbox>
-                <Checkbox value="missingRequiredDocument">缺少必要凭证</Checkbox>
-                <Checkbox value="forbiddenExpenseItem">包含禁止报销项目</Checkbox>
-              </Space>
-            </Checkbox.Group>
+          <Form.Item name="expenseDate" label="申报支出日期" rules={[{ required: true }]}>
+            <DatePicker className="full-width" />
           </Form.Item>
           <Alert
             type={recoveryMode ? 'warning' : 'info'}
             showIcon
-            message={recoveryMode ? '将从上次失败的位置继续' : '系统会保留处理进度'}
+            title={recoveryMode ? '将从上次失败的位置继续' : '合规事实由系统自动核验'}
             description={
               recoveryMode
                 ? '已经完成的步骤不会重复处理，只会重新执行失败的部分。'
-                : '如果中途失败，案例不会作废，后续可以回到详情页继续处理。'
+                : '重复票据、项目预算、制度依据、商户、日期和票据明细均以服务端证据为准。'
             }
           />
           {mutation.isError && <div className="error-text">处理失败，请保留当前页面并再次提交。</div>}

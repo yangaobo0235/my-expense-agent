@@ -14,14 +14,14 @@ export async function consumeCaseEvents({
   onEvent,
   onResetRequired,
 }: EventStreamOptions) {
-  let lastEventId = sessionStorage.getItem(`expense-event:${caseId}`) ?? undefined;
+  let lastEventId = sessionStorage.getItem(`campus-fund-event:${caseId}`) ?? undefined;
   let lastSequence = 0;
   const seen = new Set<string>();
 
   while (!signal.aborted) {
     const token = await getAccessToken();
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1/expense-cases/${caseId}/events`,
+      `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1/fund-applications/${caseId}/events`,
       {
         headers: {
           Accept: 'text/event-stream',
@@ -32,7 +32,7 @@ export async function consumeCaseEvents({
       },
     );
     if (response.status === 422) {
-      sessionStorage.removeItem(`expense-event:${caseId}`);
+      sessionStorage.removeItem(`campus-fund-event:${caseId}`);
       lastEventId = undefined;
       onResetRequired();
       continue;
@@ -50,7 +50,7 @@ export async function consumeCaseEvents({
       seen.add(id);
       lastSequence = Math.max(lastSequence, event.sequence);
       lastEventId = id;
-      sessionStorage.setItem(`expense-event:${caseId}`, id);
+      sessionStorage.setItem(`campus-fund-event:${caseId}`, id);
       onEvent(event);
     }
     await new Promise((resolve) => setTimeout(resolve, 1500));

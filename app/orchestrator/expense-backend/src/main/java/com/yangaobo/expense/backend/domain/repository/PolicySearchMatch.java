@@ -10,7 +10,7 @@ public record PolicySearchMatch(
         String policyVersion,
         String category,
         String region,
-        String employeeGrade,
+        String applicantType,
         LocalDate effectiveFrom,
         LocalDate effectiveTo,
         String sourceUri,

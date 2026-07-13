@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.domain.risk.DeterministicRiskEngine;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessmentInput;
 import com.yangaobo.expense.backend.domain.risk.RiskSignal;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
@@ -229,9 +229,9 @@ public class RiskEvaluationService {
         }
     }
 
-    private static ExpenseFlowException unavailable(String message, Exception cause) {
-        return new ExpenseFlowException(
-                ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+    private static CampusFundFlowException unavailable(String message, Exception cause) {
+        return new CampusFundFlowException(
+                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
                 cause == null ? message : message + "：" + cause.getMessage());
     }
 }

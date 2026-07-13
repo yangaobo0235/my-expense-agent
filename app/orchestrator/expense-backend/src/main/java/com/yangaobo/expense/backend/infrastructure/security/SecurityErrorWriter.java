@@ -2,7 +2,7 @@ package com.yangaobo.expense.backend.infrastructure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.common.api.ApiErrorResponse;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class SecurityErrorWriter {
         objectMapper.writeValue(
                 response.getOutputStream(),
                 new ApiErrorResponse(
-                        ExpenseFlowErrorCode.ACCESS_DENIED.name(),
+                        CampusFundFlowErrorCode.ACCESS_DENIED.name(),
                         message,
                         requestId(request),
                         Map.of()));

@@ -8,8 +8,8 @@ import com.yangaobo.expense.backend.domain.repository.PolicySearchMatch;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.application.governance.SensitiveDataMasker;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,7 +66,7 @@ public class PolicyRetrievalService {
                         masker.mask(command.name()),
                         command.category(),
                         command.region(),
-                        command.employeeGrade(),
+                        command.applicantType(),
                         command.version(),
                         command.effectiveFrom(),
                         command.effectiveTo(),
@@ -86,7 +86,7 @@ public class PolicyRetrievalService {
                                                     "policy_version", policy.version(),
                                                     "expense_type", policy.category(),
                                                     "region", policy.region(),
-                                                    "employee_level", policy.employeeGrade(),
+                                                    "applicant_type", policy.applicantType(),
                                                     "section", draft.section());
                                     return new PolicyChunk(
                                             UUID.randomUUID(),
@@ -118,7 +118,7 @@ public class PolicyRetrievalService {
                         .sanitizedInput();
         String category = required(query.category(), "category");
         String region = required(query.region(), "region");
-        String employeeGrade = required(query.employeeGrade(), "employeeGrade");
+        String applicantType = required(query.applicantType(), "applicantType");
         LocalDate expenseDate =
                 query.expenseDate() == null ? LocalDate.now(clock) : query.expenseDate();
         int limit = query.limit() <= 0 ? 5 : Math.min(query.limit(), 20);
@@ -128,7 +128,7 @@ public class PolicyRetrievalService {
                 embeddingModel.embed(text),
                 category,
                 region,
-                employeeGrade,
+                applicantType,
                 expenseDate,
                 limit,
                 minimumScore);
@@ -140,8 +140,8 @@ public class PolicyRetrievalService {
 
     private static String required(String value, String field) {
         if (value == null || value.isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, field + "不能为空");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, field + "不能为空");
         }
         return value.trim();
     }

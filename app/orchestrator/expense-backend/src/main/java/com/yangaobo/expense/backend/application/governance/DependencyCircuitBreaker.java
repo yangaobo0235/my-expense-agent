@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.governance;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -27,8 +27,8 @@ public class DependencyCircuitBreaker {
         Instant now = clock.instant();
         synchronized (state) {
             if (state.openedAt != null && now.isBefore(state.openedAt.plus(openDuration))) {
-                throw new ExpenseFlowException(
-                        ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+                throw new CampusFundFlowException(
+                        CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
                         "依赖熔断中：" + dependency);
             }
             if (state.openedAt != null) {

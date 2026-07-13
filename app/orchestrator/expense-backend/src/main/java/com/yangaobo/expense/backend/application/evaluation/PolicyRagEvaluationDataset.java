@@ -11,7 +11,7 @@ public record PolicyRagEvaluationDataset(
             String query,
             String category,
             String region,
-            String employeeGrade,
+            String applicantType,
             LocalDate expenseDate,
             String expectedPolicyCode,
             List<String> expectedSections,

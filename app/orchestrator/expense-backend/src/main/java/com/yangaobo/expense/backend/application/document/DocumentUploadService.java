@@ -6,8 +6,8 @@ import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.backend.domain.model.ExpenseDocument;
 import com.yangaobo.expense.backend.domain.repository.ExpenseDocumentRepository;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Clock;
@@ -112,7 +112,7 @@ public class DocumentUploadService {
             }
             return content;
         } catch (IOException exception) {
-            ExpenseFlowException failure =
+            CampusFundFlowException failure =
                     rejected("Could not read the uploaded document");
             failure.initCause(exception);
             throw failure;
@@ -138,7 +138,7 @@ public class DocumentUploadService {
         return filename.length() <= 512 ? filename : filename.substring(filename.length() - 512);
     }
 
-    private static ExpenseFlowException rejected(String message) {
-        return new ExpenseFlowException(ExpenseFlowErrorCode.DOCUMENT_REJECTED, message);
+    private static CampusFundFlowException rejected(String message) {
+        return new CampusFundFlowException(CampusFundFlowErrorCode.DOCUMENT_REJECTED, message);
     }
 }

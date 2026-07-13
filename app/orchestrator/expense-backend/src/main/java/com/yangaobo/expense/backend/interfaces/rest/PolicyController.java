@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.interfaces.rest;
 import com.yangaobo.expense.backend.application.policy.ImportPolicyCommand;
 import com.yangaobo.expense.backend.application.policy.PolicyRetrievalService;
 import com.yangaobo.expense.backend.application.policy.PolicySearchQuery;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -44,7 +44,7 @@ public class PolicyController {
                                 request.name(),
                                 request.category(),
                                 request.region(),
-                                request.employeeGrade(),
+                                request.applicantType(),
                                 request.version(),
                                 request.effectiveFrom(),
                                 request.effectiveTo(),
@@ -66,7 +66,7 @@ public class PolicyController {
             @RequestParam @NotBlank String query,
             @RequestParam @NotBlank String category,
             @RequestParam @NotBlank String region,
-            @RequestParam @NotBlank String employeeGrade,
+            @RequestParam @NotBlank String applicantType,
             @RequestParam(required = false) LocalDate expenseDate,
             @RequestParam(defaultValue = "5") @Min(1) @Max(20) int limit,
             @RequestParam(defaultValue = "0.55") @Min(0) @Max(1) double minimumScore,
@@ -78,7 +78,7 @@ public class PolicyController {
                                 query,
                                 category,
                                 region,
-                                employeeGrade,
+                                applicantType,
                                 expenseDate,
                                 limit,
                                 minimumScore))
@@ -89,8 +89,8 @@ public class PolicyController {
 
     private static String authenticatedSubject(Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.ACCESS_DENIED, "需要先完成身份认证");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.ACCESS_DENIED, "需要先完成身份认证");
         }
         return principal.getName();
     }

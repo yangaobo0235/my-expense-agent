@@ -1,9 +1,10 @@
 package com.yangaobo.expense.backend.infrastructure.mcp;
 
 import com.yangaobo.expense.backend.application.settlement.ApprovedExpenseWriter;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,17 @@ import org.springframework.stereotype.Component;
         matchIfMissing = false)
 public class DisabledApprovedExpenseWriter
         implements ApprovedExpenseWriter {
+
+    @Override
+    public WriteResult debitProjectBudget(
+            UUID caseId,
+            BigDecimal amount,
+            String currency,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        throw unavailable();
+    }
 
     @Override
     public WriteResult submitReimbursement(
@@ -40,9 +52,23 @@ public class DisabledApprovedExpenseWriter
         throw unavailable();
     }
 
-    private static ExpenseFlowException unavailable() {
-        return new ExpenseFlowException(
-                ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
-                "MCP Client 未启用，无法执行结算");
+    @Override
+    public WriteResult recordReimbursementHistory(
+            UUID caseId,
+            String sellerName,
+            BigDecimal amount,
+            String currency,
+            LocalDate expenseDate,
+            String documentSha256,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        throw unavailable();
+    }
+
+    private static CampusFundFlowException unavailable() {
+        return new CampusFundFlowException(
+                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+                "MCP Client 未启用，无法执行审批后入账");
     }
 }

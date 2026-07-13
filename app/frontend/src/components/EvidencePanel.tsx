@@ -19,10 +19,12 @@ type EvidenceStep = CaseEvidence['steps'][number];
 
 const stepLabels: Record<string, string> = {
   AGENT_PLAN: '处理计划',
-  MCP_EMPLOYEE_CONTEXT: '员工信息核对',
+  MCP_APPLICANT_CONTEXT: '申请人信息核对',
   MCP_DUPLICATE_CHECK: '历史重复检测',
+  MCP_PROJECT_BUDGET: '项目预算核对',
+  MCP_REIMBURSEMENT_HISTORY: '历史报销核对',
   MCP_REVIEW_EVIDENCE: '审核证据保存',
-  POLICY_RETRIEVAL: '费用制度核对',
+  POLICY_RETRIEVAL: '经费制度核对',
   RISK_ASSESSMENT: '风险评估',
   FINALIZE: '形成审核意见',
 };
@@ -50,7 +52,7 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
         <Alert
           type="error"
           showIcon
-          message="部分处理失败"
+          title="部分处理失败"
           description={safeErrorDescription(undefined, evidence.run.errorCode, evidence.run.errorMessage)}
         />
       )}
@@ -96,7 +98,7 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
                 {step.errorMessage && (
                   <Alert
                     type="error"
-                    message={safeErrorTitle(step)}
+                    title={safeErrorTitle(step)}
                     description={safeErrorDescription(step, step.errorCode, step.errorMessage)}
                     showIcon
                   />
@@ -146,12 +148,12 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
           ]}
         />
       </Card>
-      <Card title="结算提交记录">
+      <Card title="入账提交记录">
         <Table
           rowKey="id"
           pagination={false}
           dataSource={evidence.toolCalls}
-          locale={{ emptyText: '尚无结算提交记录' }}
+          locale={{ emptyText: '尚无入账提交记录' }}
           columns={[
             { title: '操作', dataIndex: 'toolName', render: (value: string) => settlementOperationLabel(value) },
             { title: '状态', dataIndex: 'status', render: (value: string) => runStatusLabel(value) },
@@ -225,17 +227,17 @@ function safeErrorTitle(step: EvidenceStep) {
 function safeErrorDescription(step: EvidenceStep | undefined, errorCode?: string, errorMessage?: string) {
   if (errorCode === 'DEPENDENCY_UNAVAILABLE' || errorMessage?.includes('MCP 调用失败')) {
     const service = step ? serviceLabel(step, errorMessage) : '外部服务';
-    return `${service}暂时没有返回结果。案例已保留当前进度，可以稍后重试或交给人工确认。`;
+    return `${service}暂时没有返回结果。申请已保留当前进度，可以稍后重试或交给人工确认。`;
   }
   if (errorMessage?.includes('_') || errorMessage?.includes('NON_RETRYABLE')) {
-    return '该步骤未处理完成。案例已保留当前进度，可以稍后重试或交给人工确认。';
+    return '该步骤未处理完成。申请已保留当前进度，可以稍后重试或交给人工确认。';
   }
   return errorMessage ?? '该步骤未处理完成。';
 }
 
 function serviceLabel(step: EvidenceStep, errorMessage?: string) {
   const raw = `${errorMessage ?? ''} ${JSON.stringify(step.evidence ?? {})}`;
-  if (raw.includes('get_employee_profile')) return '员工信息服务';
+  if (raw.includes('get_applicant_profile')) return '申请人信息服务';
   if (raw.includes('check_duplicate_document')) return '历史重复检测服务';
   if (raw.includes('save_review_evidence')) return '审核依据保存服务';
   if (raw.includes('calculate_allowed_amount')) return '制度核对服务';
@@ -244,8 +246,10 @@ function serviceLabel(step: EvidenceStep, errorMessage?: string) {
 
 function settlementOperationLabel(toolName: string) {
   const labels: Record<string, string> = {
-    submit_reimbursement: '提交报销',
-    submit_payment: '提交付款',
+    debit_project_budget: '扣减项目预算',
+    submit_fund_reimbursement: '提交报销登记',
+    submit_fund_posting: '提交经费入账',
+    record_fund_reimbursement_history: '回写报销历史',
     save_review_evidence: '保存审核依据',
   };
   return labels[toolName] ?? toolName;
@@ -257,6 +261,8 @@ function riskSignalLabel(code: string) {
     POLICY_LIMIT_EXCEEDED: '超过制度额度',
     MISSING_REQUIRED_DOCUMENT: '缺少必要凭证',
     FORBIDDEN_EXPENSE_ITEM: '包含不可报销项目',
+    PROJECT_BUDGET_EXCEEDED: '项目可用预算不足或币种不一致',
+    POLICY_EVIDENCE_MISSING: '缺少可追溯制度依据',
     DATE_ANOMALY: '日期异常',
     SELLER_ANOMALY: '销售方异常',
     DEPENDENCY_UNAVAILABLE: '外部数据暂不可用',
@@ -267,11 +273,11 @@ function riskSignalLabel(code: string) {
 function roleLabel(role?: string) {
   const labels: Record<string, string> = {
     RECEIPT_EXTRACTION_AGENT: '票据识别',
-    MCP_CONTEXT_AGENT: '员工信息核对',
+    MCP_CONTEXT_AGENT: '申请人信息核对',
     POLICY_RAG_AGENT: '制度依据核对',
     RISK_RULE_AGENT: '风险评估',
     REVIEW_SUMMARY_AGENT: '审核意见整理',
-    APPROVED_SETTLEMENT_AGENT: '审批后结算',
+    APPROVED_SETTLEMENT_AGENT: '审批后入账',
   };
   return role ? labels[role] ?? role.replaceAll('_', ' ') : '-';
 }

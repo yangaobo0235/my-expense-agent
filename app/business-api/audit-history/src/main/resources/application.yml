@@ -6,7 +6,7 @@ spring:
       - optional:file:.env.local[.properties]
       - optional:file:../../../.env.local[.properties]
   application:
-    name: audit-history
+    name: campus-fund-audit-history
   datasource:
     url: ${EXPENSE_DATASOURCE_URL}
     username: ${EXPENSE_DATASOURCE_USERNAME}
@@ -16,14 +16,14 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    table: flyway_schema_history_audit_history
+    table: flyway_schema_history_campus_fund_audit
     baseline-on-migrate: true
     baseline-version: 0
 expense:
   mcp:
     security:
-      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/expense-flow}
-      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/certs}
+      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/campus-fund-flow}
+      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/campus-fund-flow/protocol/openid-connect/certs}
       jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
       audiences:
         - ${AUDIT_HISTORY_MCP_AUDIENCE:audit-history-mcp}

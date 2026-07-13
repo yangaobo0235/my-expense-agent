@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class TimeConfiguration {
 
     @Bean
-    Clock expenseFlowClock() {
+    Clock campusFundFlowClock() {
         return Clock.systemUTC();
     }
 }

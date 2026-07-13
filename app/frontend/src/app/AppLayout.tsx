@@ -19,21 +19,30 @@ export function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
-  const canReview = hasAnyRole(user?.roles, ['REVIEWER', 'FINANCE_ADMIN']);
+  const canSubmit = hasAnyRole(user?.roles, ['STUDENT', 'ADVISOR']);
+  const canReview = hasAnyRole(user?.roles, ['ADVISOR', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN']);
+  const canViewPolicyAndEvaluation = hasAnyRole(user?.roles, [
+    'COLLEGE_REVIEWER',
+    'FINANCE_ADMIN',
+    'AUDITOR',
+  ]);
   const canUsePromptGovernance = hasAnyRole(user?.roles, [
     'PROMPT_AUTHOR',
     'PROMPT_REVIEWER',
     'PROMPT_PUBLISHER',
     'FINANCE_ADMIN',
+    'AUDITOR',
   ]);
-  const canObserve = hasAnyRole(user?.roles, ['REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']);
+  const canObserve = hasAnyRole(user?.roles, ['COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']);
   const items = [
-    { key: '/cases', icon: <FolderOpenOutlined />, label: '费用案例' },
-    { key: '/cases/new', icon: <PlusOutlined />, label: '新建上传' },
+    { key: '/cases', icon: <FolderOpenOutlined />, label: '经费申请' },
+    ...(canSubmit ? [{ key: '/cases/new', icon: <PlusOutlined />, label: '新建报销' }] : []),
     ...(canReview
+      ? [{ key: '/reviews', icon: <AuditOutlined />, label: '人工审核' }]
+      : []),
+    ...(canViewPolicyAndEvaluation
       ? [
-          { key: '/reviews', icon: <AuditOutlined />, label: '人工审核' },
-          { key: '/policies', icon: <FileSearchOutlined />, label: '制度索引' },
+          { key: '/policies', icon: <FileSearchOutlined />, label: '制度库' },
           { key: '/evaluation', icon: <BarChartOutlined />, label: '评测报告' },
         ]
       : []),
@@ -41,19 +50,19 @@ export function AppLayout() {
       ? [{ key: '/prompts', icon: <ProfileOutlined />, label: 'Prompt 审批' }]
       : []),
     ...(canObserve
-      ? [{ key: '/observability', icon: <RadarChartOutlined />, label: '可观测性' }]
+      ? [{ key: '/observability', icon: <RadarChartOutlined />, label: '审计观测' }]
       : []),
   ];
   const selected = items.find((item) => location.pathname.startsWith(item.key))?.key;
 
   return (
     <Layout className="app-shell">
-      <Sider width={232} className="app-sider">
+      <Sider width={232} breakpoint="lg" collapsedWidth={0} className="app-sider">
         <div className="brand">
-          <div className="brand-mark">EF</div>
+          <div className="brand-mark">CF</div>
           <div>
-            <strong>ExpenseFlow</strong>
-            <span>智能费用审核</span>
+            <strong>CampusFundFlow</strong>
+            <span>校园经费合规审核</span>
           </div>
         </div>
         <Menu
@@ -65,12 +74,12 @@ export function AppLayout() {
       </Sider>
       <Layout>
         <Header className="app-header">
-          <Typography.Text type="secondary">确定性工作流 · Agent 证据 · 人工决策</Typography.Text>
-          <Space>
-            {user?.roles.map((role) => <Tag key={role}>{role}</Tag>)}
+          <Typography.Text type="secondary" className="header-context">校园制度检索 · Agent 证据 · 人工复核</Typography.Text>
+          <Space className="header-user">
+            <span className="header-roles">{user?.roles.map((role) => <Tag key={role}>{role}</Tag>)}</span>
             <Avatar>{user?.displayName.slice(0, 1)}</Avatar>
-            <span>{user?.displayName}</span>
-            <Button type="text" icon={<LogoutOutlined />} onClick={() => void logout()}>
+            <span className="header-user-name">{user?.displayName}</span>
+            <Button className="logout-button" type="text" icon={<LogoutOutlined />} onClick={() => void logout()}>
               退出
             </Button>
           </Space>

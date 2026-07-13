@@ -75,6 +75,20 @@ public class DeterministicRiskEngine {
                             40,
                             "票据包含制度明确禁止报销的项目"));
         }
+        if (input.projectBudgetExceeded()) {
+            signals.add(
+                    signal(
+                            RiskSignalCode.PROJECT_BUDGET_EXCEEDED,
+                            45,
+                            "申请金额超过共享项目可用预算或预算币种不匹配"));
+        }
+        if (input.policyEvidenceMissing()) {
+            signals.add(
+                    signal(
+                            RiskSignalCode.POLICY_EVIDENCE_MISSING,
+                            30,
+                            "未检索到可追溯的适用校园经费制度证据"));
+        }
 
         int score =
                 Math.min(

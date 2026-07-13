@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/expense-tools")
+@RequestMapping("/api/v1/fund-tools")
 public class ExpenseBusinessController {
 
     private final ExpenseBusinessService service;
@@ -38,9 +38,9 @@ public class ExpenseBusinessController {
                 request.requestId(), request.caseId(), request.amount(), request.currency());
     }
 
-    @PostMapping("/payments")
+    @PostMapping("/postings")
     public Object pay(@RequestBody PaymentRequest request) {
-        return service.submitPayment(
+        return service.submitFundPosting(
                 request.requestId(),
                 request.reimbursementId(),
                 request.amount(),

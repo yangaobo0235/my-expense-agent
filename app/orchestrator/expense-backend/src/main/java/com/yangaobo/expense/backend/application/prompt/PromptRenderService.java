@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.prompt;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.application.governance.SensitiveDataMasker;
@@ -77,8 +77,8 @@ public class PromptRenderService {
             String key = matcher.group(1);
             Object value = variables.get(key);
             if (value == null) {
-                throw new ExpenseFlowException(
-                        ExpenseFlowErrorCode.VALIDATION_FAILED,
+                throw new CampusFundFlowException(
+                        CampusFundFlowErrorCode.VALIDATION_FAILED,
                         "Prompt 变量缺失：" + key);
             }
             matcher.appendReplacement(rendered, java.util.regex.Matcher.quoteReplacement(String.valueOf(value)));

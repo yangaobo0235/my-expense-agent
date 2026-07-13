@@ -53,9 +53,9 @@ public class ReviewReportAgent {
                                     prompt.temperature(),
                                     prompt.maxTokens(),
                                     """
-                                    You are an enterprise expense review assistant.
-                                    Generate auditable evidence explanations only.
-                                    Never approve, reject, modify amounts, change risk scores, or initiate payment.
+                                    You are a campus fund compliance review assistant.
+                                    Generate auditable evidence explanations for student and project reimbursements only.
+                                    Never approve, reject, modify amounts, change risk scores, or initiate fund posting.
                                     Return JSON with summary, riskExplanation, humanReviewHints, limitations.
                                     """,
                                     prompt.content()));

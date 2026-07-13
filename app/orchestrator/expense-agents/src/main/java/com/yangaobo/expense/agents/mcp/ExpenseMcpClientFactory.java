@@ -33,7 +33,7 @@ public final class ExpenseMcpClientFactory {
                         .build();
         return DefaultMcpClient.builder()
                 .key(key)
-                .clientName("expense-backend")
+                .clientName("campus-fund-backend")
                 .clientVersion("1.0.0")
                 .protocolVersion(PROTOCOL_VERSION)
                 .transport(transport)

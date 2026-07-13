@@ -8,8 +8,8 @@ import com.yangaobo.expense.backend.domain.model.PolicyStatus;
 import com.yangaobo.expense.backend.domain.repository.ExpensePolicyRepository;
 import com.yangaobo.expense.backend.domain.repository.PolicyCatalogEntry;
 import com.yangaobo.expense.backend.domain.repository.PolicySearchMatch;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +37,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                 .sql(
                         """
                         SELECT p.id, p.policy_code, p.name, p.category, p.region,
-                               p.employee_grade, p.version, p.effective_from,
+                               p.applicant_type, p.version, p.effective_from,
                                p.effective_to, p.status, p.source_uri, p.updated_at,
                                COUNT(c.id) AS chunk_count,
                                COUNT(c.id) FILTER (WHERE c.embedding IS NOT NULL)
@@ -59,11 +59,11 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                     .sql(
                             """
                             INSERT INTO expense_policy (
-                                id, policy_code, name, category, region, employee_grade,
+                                id, policy_code, name, category, region, applicant_type,
                                 version, effective_from, effective_to, status, source_uri,
                                 content_hash, created_at, updated_at
                             ) VALUES (
-                                :id, :policyCode, :name, :category, :region, :employeeGrade,
+                                :id, :policyCode, :name, :category, :region, :applicantType,
                                 :version, :effectiveFrom, :effectiveTo, :status, :sourceUri,
                                 :contentHash, :createdAt, :updatedAt
                             )
@@ -73,7 +73,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                     .param("name", policy.name())
                     .param("category", policy.category())
                     .param("region", policy.region())
-                    .param("employeeGrade", policy.employeeGrade())
+                    .param("applicantType", policy.applicantType())
                     .param("version", policy.version())
                     .param("effectiveFrom", Date.valueOf(policy.effectiveFrom()))
                     .param(
@@ -92,8 +92,8 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
             }
             return policy;
         } catch (DataIntegrityViolationException exception) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.DUPLICATE_REQUEST,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.DUPLICATE_REQUEST,
                     "相同制度编码和版本已经存在");
         }
     }
@@ -103,7 +103,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
             float[] queryEmbedding,
             String category,
             String region,
-            String employeeGrade,
+            String applicantType,
             LocalDate expenseDate,
             int limit,
             double minimumScore) {
@@ -112,7 +112,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                         """
                         SELECT p.id AS policy_id, p.policy_code, p.name AS policy_name,
                                p.version AS policy_version, p.category, p.region,
-                               p.employee_grade, p.effective_from, p.effective_to,
+                               p.applicant_type, p.effective_from, p.effective_to,
                                p.source_uri, c.id AS chunk_id, c.chunk_index, c.section,
                                c.content, 1 - (c.embedding <=> CAST(:embedding AS vector)) AS score
                         FROM expense_policy_chunk c
@@ -120,7 +120,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                         WHERE p.status = 'ACTIVE'
                           AND p.category = :category
                           AND p.region IN (:region, 'ALL')
-                          AND p.employee_grade IN (:employeeGrade, 'ALL')
+                          AND p.applicant_type IN (:applicantType, 'ALL')
                           AND p.effective_from <= :expenseDate
                           AND (p.effective_to IS NULL OR p.effective_to >= :expenseDate)
                           AND c.embedding IS NOT NULL
@@ -131,7 +131,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                 .param("embedding", vectorLiteral(queryEmbedding))
                 .param("category", category)
                 .param("region", region)
-                .param("employeeGrade", employeeGrade)
+                .param("applicantType", applicantType)
                 .param("expenseDate", Date.valueOf(expenseDate))
                 .param("minimumScore", minimumScore)
                 .param("limit", limit)
@@ -173,8 +173,8 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
 
     private static String vectorLiteral(float[] vector) {
         if (vector.length != 1024) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.VALIDATION_FAILED, "制度向量维度必须为 1024");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.VALIDATION_FAILED, "制度向量维度必须为 1024");
         }
         StringBuilder builder = new StringBuilder(vector.length * 10).append('[');
         for (int index = 0; index < vector.length; index++) {
@@ -196,7 +196,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                 resultSet.getString("policy_version"),
                 resultSet.getString("category"),
                 resultSet.getString("region"),
-                resultSet.getString("employee_grade"),
+                resultSet.getString("applicant_type"),
                 resultSet.getDate("effective_from").toLocalDate(),
                 effectiveTo == null ? null : effectiveTo.toLocalDate(),
                 resultSet.getString("source_uri"),
@@ -216,7 +216,7 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
                 resultSet.getString("name"),
                 resultSet.getString("category"),
                 resultSet.getString("region"),
-                resultSet.getString("employee_grade"),
+                resultSet.getString("applicant_type"),
                 resultSet.getString("version"),
                 resultSet.getDate("effective_from").toLocalDate(),
                 effectiveTo == null ? null : effectiveTo.toLocalDate(),

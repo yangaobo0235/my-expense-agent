@@ -1,8 +1,8 @@
 package com.yangaobo.expense.backend.interfaces.rest;
 
 import com.yangaobo.expense.common.api.ApiErrorResponse;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
@@ -22,9 +22,9 @@ public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ExpenseFlowException.class)
-    ResponseEntity<ApiErrorResponse> handleExpenseFlow(
-            ExpenseFlowException exception, HttpServletRequest request) {
+    @ExceptionHandler(CampusFundFlowException.class)
+    ResponseEntity<ApiErrorResponse> handleCampusFundFlow(
+            CampusFundFlowException exception, HttpServletRequest request) {
         String requestId = requestId(request);
         HttpStatus status =
                 switch (exception.code()) {
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.unprocessableEntity()
                 .body(
                         new ApiErrorResponse(
-                                ExpenseFlowErrorCode.VALIDATION_FAILED.name(),
+                                CampusFundFlowErrorCode.VALIDATION_FAILED.name(),
                                 "Request validation failed",
                                 requestId(request),
                                 details));
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.unprocessableEntity()
                 .body(
                         new ApiErrorResponse(
-                                ExpenseFlowErrorCode.VALIDATION_FAILED.name(),
+                                CampusFundFlowErrorCode.VALIDATION_FAILED.name(),
                                 "请求参数校验失败",
                                 requestId(request),
                                 details));
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.internalServerError()
                 .body(
                         new ApiErrorResponse(
-                                ExpenseFlowErrorCode.INTERNAL_ERROR.name(),
+                                CampusFundFlowErrorCode.INTERNAL_ERROR.name(),
                                 "An unexpected error occurred",
                                 requestId,
                                 Map.of()));
@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body(
                         new ApiErrorResponse(
-                                ExpenseFlowErrorCode.DOCUMENT_REJECTED.name(),
+                                CampusFundFlowErrorCode.DOCUMENT_REJECTED.name(),
                                 "Upload exceeds the configured size limit",
                                 requestId(request),
                                 Map.of()));

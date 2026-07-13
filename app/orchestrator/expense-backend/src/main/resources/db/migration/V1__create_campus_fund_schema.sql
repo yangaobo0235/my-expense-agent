@@ -5,7 +5,7 @@ CREATE TABLE expense_case (
     case_number VARCHAR(32) NOT NULL UNIQUE,
     owner_subject VARCHAR(128) NOT NULL,
     applicant_name VARCHAR(128) NOT NULL,
-    department_code VARCHAR(64) NOT NULL,
+    project_code VARCHAR(64) NOT NULL,
     title VARCHAR(256) NOT NULL,
     currency CHAR(3) NOT NULL,
     claimed_amount NUMERIC(19, 2) NOT NULL CHECK (claimed_amount >= 0),
@@ -75,7 +75,7 @@ CREATE TABLE expense_policy (
     name VARCHAR(256) NOT NULL,
     category VARCHAR(64) NOT NULL,
     region VARCHAR(64) NOT NULL,
-    employee_grade VARCHAR(64) NOT NULL,
+    applicant_type VARCHAR(64) NOT NULL,
     version VARCHAR(32) NOT NULL,
     effective_from DATE NOT NULL,
     effective_to DATE,
@@ -89,7 +89,7 @@ CREATE TABLE expense_policy (
 );
 
 CREATE INDEX idx_expense_policy_lookup
-    ON expense_policy (category, region, employee_grade, status, effective_from);
+    ON expense_policy (category, region, applicant_type, status, effective_from);
 
 CREATE TABLE expense_policy_chunk (
     id UUID PRIMARY KEY,
@@ -202,7 +202,7 @@ CREATE TABLE expense_decision (
     )
 );
 
-CREATE TABLE expense_audit_log (
+CREATE TABLE campus_fund_audit_log (
     id UUID PRIMARY KEY,
     case_id UUID REFERENCES expense_case(id) ON DELETE SET NULL,
     actor_subject VARCHAR(128) NOT NULL,
@@ -217,8 +217,8 @@ CREATE TABLE expense_audit_log (
     occurred_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE INDEX idx_expense_audit_case ON expense_audit_log (case_id, occurred_at DESC);
-CREATE INDEX idx_expense_audit_request ON expense_audit_log (request_id);
+CREATE INDEX idx_campus_fund_audit_case ON campus_fund_audit_log (case_id, occurred_at DESC);
+CREATE INDEX idx_campus_fund_audit_request ON campus_fund_audit_log (request_id);
 
 CREATE TABLE expense_eval_case (
     id UUID PRIMARY KEY,

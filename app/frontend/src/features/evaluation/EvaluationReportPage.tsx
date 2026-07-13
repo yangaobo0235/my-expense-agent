@@ -115,7 +115,7 @@ function RiskReportPanel({
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>
         <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="黄金案例" value={data?.caseCount ?? 0} suffix="条" /></Col>
+          <Col span={4}><Statistic title="黄金样本" value={data?.caseCount ?? 0} suffix="条" /></Col>
           <Col span={4}><Statistic title="精确率" value={percent(data?.metrics.precision ?? 0)} suffix="%" /></Col>
           <Col span={4}><Statistic title="召回率" value={percent(data?.metrics.recall ?? 0)} suffix="%" /></Col>
           <Col span={4}><Statistic title="综合得分" value={percent(data?.metrics.f1 ?? 0)} suffix="%" /></Col>
@@ -133,7 +133,7 @@ function RiskReportPanel({
             数据集 SHA-256：<Typography.Text code copyable>{data?.datasetSha256}</Typography.Text>
           </Typography.Text>
         </Card>
-        <Card title="案例分布">
+        <Card title="申请场景分布">
           <Table
             rowKey="category"
             pagination={false}
@@ -141,7 +141,7 @@ function RiskReportPanel({
             dataSource={Object.entries(data?.categoryCounts ?? {}).map(([category, count]) => ({ category, count }))}
             columns={[
               { title: '场景', dataIndex: 'category', key: 'category' },
-              { title: '案例数', dataIndex: 'count', key: 'count' },
+              { title: '样本数', dataIndex: 'count', key: 'count' },
             ]}
           />
         </Card>
@@ -152,7 +152,7 @@ function RiskReportPanel({
                 写 Tool 隔离{governance?.writeToolIsolationPassed ? '通过' : '待确认'}
               </Tag>
               <Tag color={governance?.settlementWriteRetryProtected ? 'green' : 'orange'}>
-                审批写入幂等重试{governance?.settlementWriteRetryProtected ? '已保护' : '待确认'}
+                审批后入账幂等重试{governance?.settlementWriteRetryProtected ? '已保护' : '待确认'}
               </Tag>
               <Tag color="blue">{governance?.planVersion ?? '未生成 Agent 计划'}</Tag>
             </Space>
@@ -168,14 +168,14 @@ function RiskReportPanel({
         </Card>
       </div>
 
-      <Card title={`失败案例（${data?.failures.length ?? 0}）`}>
+      <Card title={`失败样本（${data?.failures.length ?? 0}）`}>
         <Table
           rowKey="caseId"
           pagination={false}
           dataSource={data?.failures}
-          locale={{ emptyText: <Empty description="当前基线没有回归失败案例" /> }}
+          locale={{ emptyText: <Empty description="当前基线没有回归失败样本" /> }}
           columns={[
-            { title: '案例', dataIndex: 'caseId', key: 'caseId' },
+            { title: '样本', dataIndex: 'caseId', key: 'caseId' },
             { title: '期望信号', dataIndex: 'expectedSignals', key: 'expectedSignals', render: (values: string[]) => values.join('、') },
             { title: '实际信号', dataIndex: 'actualSignals', key: 'actualSignals', render: (values: string[]) => values.join('、') },
             { title: '期望等级', dataIndex: 'expectedRiskLevel', key: 'expectedRiskLevel' },
@@ -196,12 +196,12 @@ function PolicyRagPanel({
   loading: boolean;
   error: boolean;
 }) {
-  if (error) return <Alert type="warning" showIcon message="制度 RAG 评测报告加载失败" />;
+  if (error) return <Alert type="warning" showIcon title="制度 RAG 评测报告加载失败" />;
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>
         <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="总案例数" value={data?.caseCount ?? 0} /></Col>
+          <Col span={4}><Statistic title="总样本数" value={data?.caseCount ?? 0} /></Col>
           <Col span={4}><Statistic title="前 5 条召回率" value={percent(data?.metrics.recallAt5 ?? 0)} suffix="%" /></Col>
           <Col span={4}><Statistic title="前 5 条精确率" value={percent(data?.metrics.precisionAt5 ?? 0)} suffix="%" /></Col>
           <Col span={4}><Statistic title="制度命中率" value={percent(data?.metrics.expectedPolicyHitRate ?? 0)} suffix="%" /></Col>
@@ -232,12 +232,12 @@ function AgentSecurityPanel({
   loading: boolean;
   error: boolean;
 }) {
-  if (error) return <Alert type="warning" showIcon message="Agent 安全评测报告加载失败" />;
+  if (error) return <Alert type="warning" showIcon title="Agent 安全评测报告加载失败" />;
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>
         <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="安全案例" value={data?.caseCount ?? 0} /></Col>
+          <Col span={4}><Statistic title="安全样本" value={data?.caseCount ?? 0} /></Col>
           <Col span={5}><Statistic title="阻断写 Tool" value={data?.metrics.blockedWriteToolCount ?? 0} /></Col>
           <Col span={5}><Statistic title="越权写 Tool" value={data?.metrics.unsafeWriteToolCallCount ?? 0} /></Col>
           <Col span={5}><Statistic title="注入识别" value={data?.metrics.injectionDetectedCount ?? 0} /></Col>
@@ -251,7 +251,7 @@ function AgentSecurityPanel({
           dataSource={data?.failures}
           locale={{ emptyText: <Empty description="安全评测全部通过" /> }}
           columns={[
-            { title: '案例', dataIndex: 'caseId', key: 'caseId' },
+            { title: '样本', dataIndex: 'caseId', key: 'caseId' },
             { title: '原因', dataIndex: 'reason', key: 'reason' },
             { title: '恶意文本', dataIndex: 'maliciousText', key: 'maliciousText' },
           ]}
@@ -263,14 +263,14 @@ function AgentSecurityPanel({
 
 function FailureTable({ failures }: { failures: PolicyRagEvaluationReport['failures'] }) {
   return (
-    <Card title={`失败案例（${failures.length}）`}>
+    <Card title={`失败样本（${failures.length}）`}>
       <Table
         rowKey="caseId"
         pagination={false}
         dataSource={failures}
         locale={{ emptyText: <Empty description="制度 RAG 评测全部通过" /> }}
         columns={[
-          { title: '案例', dataIndex: 'caseId', key: 'caseId' },
+          { title: '样本', dataIndex: 'caseId', key: 'caseId' },
           { title: 'Query', dataIndex: 'query', key: 'query' },
           { title: '期望制度', dataIndex: 'expectedPolicyCode', key: 'expectedPolicyCode' },
           { title: '期望章节', dataIndex: 'expectedSections', key: 'expectedSections', render: (values: string[]) => values.join('、') },

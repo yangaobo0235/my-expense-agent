@@ -1,14 +1,15 @@
 package com.yangaobo.expense.backend.domain.model;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-public record Money(BigDecimal amount, String currency) {
+public record Money(BigDecimal amount, String currency) implements Serializable {
 
     public Money {
         Objects.requireNonNull(amount, "amount");
@@ -28,8 +29,8 @@ public record Money(BigDecimal amount, String currency) {
         }
     }
 
-    private static ExpenseFlowException validation(String message) {
-        return new ExpenseFlowException(ExpenseFlowErrorCode.VALIDATION_FAILED, message);
+    private static CampusFundFlowException validation(String message) {
+        return new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
     }
 
     private static String requiredCurrency(String currency) {

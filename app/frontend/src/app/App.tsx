@@ -43,22 +43,28 @@ export function App() {
             <Route index element={<Navigate to="/cases" replace />} />
             <Route path="/cases" element={<CaseListPage />} />
             <Route path="/cases/:caseId" element={<CaseDetailPage />} />
-            <Route path="/cases/new" element={<NewCasePage />} />
+            <Route element={<ProtectedRoute roles={['STUDENT', 'ADVISOR']} />}>
+              <Route path="/cases/new" element={<NewCasePage />} />
+            </Route>
             <Route
-              element={<ProtectedRoute roles={['REVIEWER', 'FINANCE_ADMIN']} />}
+              element={<ProtectedRoute roles={['ADVISOR', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN']} />}
             >
               <Route path="/reviews" element={<ReviewQueuePage />} />
               <Route path="/reviews/:taskId" element={<ReviewTaskDetailPage />} />
+            </Route>
+            <Route
+              element={<ProtectedRoute roles={['COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']} />}
+            >
               <Route path="/policies" element={<PolicyCatalogPage />} />
               <Route path="/evaluation" element={<EvaluationReportPage />} />
             </Route>
             <Route
-              element={<ProtectedRoute roles={['PROMPT_AUTHOR', 'PROMPT_REVIEWER', 'PROMPT_PUBLISHER', 'FINANCE_ADMIN']} />}
+              element={<ProtectedRoute roles={['PROMPT_AUTHOR', 'PROMPT_REVIEWER', 'PROMPT_PUBLISHER', 'FINANCE_ADMIN', 'AUDITOR']} />}
             >
               <Route path="/prompts" element={<PromptGovernancePage />} />
             </Route>
             <Route
-              element={<ProtectedRoute roles={['REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']} />}
+              element={<ProtectedRoute roles={['COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']} />}
             >
               <Route path="/observability" element={<ObservabilityPage />} />
             </Route>

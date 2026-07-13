@@ -9,10 +9,11 @@ import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import dev.langchain4j.service.tool.ToolExecutionResult;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,12 +67,41 @@ public class ApprovedMcpWriteService {
             throw validation("报销金额必须处于 0 到申报金额之间");
         }
         return execute(
-                "submit_reimbursement",
+                "submit_fund_reimbursement",
                 Map.of(
                         "requestId",
                         required(requestId, "requestId"),
                         "caseId",
                         caseId.toString(),
+                        "amount",
+                        amount,
+                        "currency",
+                        required(currency, "currency")),
+                requestId,
+                actorSubject,
+                approvalReference);
+    }
+
+    public McpWriteResult debitProjectBudget(
+            UUID caseId,
+            BigDecimal amount,
+            String currency,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        ExpenseCase expenseCase = requireApproved(caseId);
+        validateApprovedAmount(expenseCase, amount, "预算扣减金额");
+        return execute(
+                "debit_project_budget",
+                Map.of(
+                        "requestId",
+                        required(requestId, "requestId"),
+                        "caseId",
+                        caseId.toString(),
+                        "projectCode",
+                        expenseCase.projectCode(),
+                        "applicantId",
+                        expenseCase.ownerSubject(),
                         "amount",
                         amount,
                         "currency",
@@ -98,10 +128,10 @@ public class ApprovedMcpWriteService {
                 || amount.compareTo(
                                 expenseCase.claimedAmount().amount())
                         > 0) {
-            throw validation("付款金额必须处于 0 到申报金额之间");
+            throw validation("入账金额必须处于 0 到申报金额之间");
         }
         return execute(
-                "submit_payment",
+                "submit_fund_posting",
                 Map.of(
                         "requestId",
                         required(requestId, "requestId"),
@@ -111,6 +141,44 @@ public class ApprovedMcpWriteService {
                         amount,
                         "currency",
                         required(currency, "currency")),
+                requestId,
+                actorSubject,
+                approvalReference);
+    }
+
+    public McpWriteResult recordReimbursementHistory(
+            UUID caseId,
+            String sellerName,
+            BigDecimal amount,
+            String currency,
+            LocalDate expenseDate,
+            String documentSha256,
+            String requestId,
+            String actorSubject,
+            String approvalReference) {
+        ExpenseCase expenseCase = requireApproved(caseId);
+        if (amount == null || amount.signum() < 0 || expenseDate == null) {
+            throw validation("历史记录金额和支出日期不合法");
+        }
+        return execute(
+                "record_fund_reimbursement_history",
+                Map.of(
+                        "requestId",
+                        required(requestId, "requestId"),
+                        "caseId",
+                        caseId.toString(),
+                        "applicantId",
+                        expenseCase.ownerSubject(),
+                        "sellerName",
+                        required(sellerName, "sellerName"),
+                        "amount",
+                        amount,
+                        "currency",
+                        required(currency, "currency"),
+                        "expenseDate",
+                        expenseDate.toString(),
+                        "documentSha256",
+                        required(documentSha256, "documentSha256")),
                 requestId,
                 actorSubject,
                 approvalReference);
@@ -130,8 +198,8 @@ public class ApprovedMcpWriteService {
         if (expenseCase.status() == ExpenseCaseStatus.UPLOADED
                 || expenseCase.status()
                         == ExpenseCaseStatus.EXTRACTING) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
                     "票据提取完成前不能保存审核证据");
         }
         return execute(
@@ -156,11 +224,20 @@ public class ApprovedMcpWriteService {
         }
         ExpenseCase expenseCase = caseService.getById(caseId);
         if (expenseCase.status() != ExpenseCaseStatus.APPROVED) {
-            throw new ExpenseFlowException(
-                    ExpenseFlowErrorCode.INVALID_STATE_TRANSITION,
-                    "只有已批准的费用案例才能执行报销或付款 Tool");
+            throw new CampusFundFlowException(
+                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+                    "只有已批准的经费申请才能执行报销登记或入账 Tool");
         }
         return expenseCase;
+    }
+
+    private static void validateApprovedAmount(
+            ExpenseCase expenseCase, BigDecimal amount, String field) {
+        if (amount == null
+                || amount.signum() <= 0
+                || amount.compareTo(expenseCase.claimedAmount().amount()) > 0) {
+            throw validation(field + "必须大于 0 且不超过申报金额");
+        }
     }
 
     private McpWriteResult execute(
@@ -203,9 +280,9 @@ public class ApprovedMcpWriteService {
         return value.trim();
     }
 
-    private static ExpenseFlowException validation(String message) {
-        return new ExpenseFlowException(
-                ExpenseFlowErrorCode.VALIDATION_FAILED, message);
+    private static CampusFundFlowException validation(String message) {
+        return new CampusFundFlowException(
+                CampusFundFlowErrorCode.VALIDATION_FAILED, message);
     }
 
     public record McpWriteResult(

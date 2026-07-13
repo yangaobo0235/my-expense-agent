@@ -9,12 +9,12 @@ export function LoginPage() {
   return (
     <div className="login-page">
       <Card className="login-card">
-        <div className="brand-mark large">EF</div>
+        <div className="brand-mark large">CF</div>
         <Space orientation="vertical" size="large">
           <div>
-            <Typography.Title level={2}>ExpenseFlow</Typography.Title>
+            <Typography.Title level={2}>CampusFundFlow</Typography.Title>
             <Typography.Paragraph type="secondary">
-              登录后查看费用处理进度、审核证据与人工复核任务。
+              登录后查看校园经费申请进度、合规证据与人工复核任务。
             </Typography.Paragraph>
           </div>
           <Button type="primary" size="large" block onClick={() => void login()}>

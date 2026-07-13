@@ -4,6 +4,8 @@ import com.yangaobo.expense.backend.domain.model.RiskLevel;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.backend.domain.risk.RiskSignal;
 import com.yangaobo.expense.backend.domain.risk.RiskSignalCode;
+
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,8 @@ public record RiskRoutingDecision(
         List<String> requiredEvidence,
         String userFacingMessage,
         String fallbackStrategy,
-        List<String> reasons) {
+        List<String> reasons)
+        implements Serializable {
 
     public RiskRoutingDecision {
         if (action == null) {
@@ -51,32 +54,6 @@ public record RiskRoutingDecision(
     static RiskRoutingDecision from(RiskAssessment risk) {
         List<RiskSignalCode> codes = risk.signals().stream().map(RiskSignal::code).toList();
         List<String> reasons = codes.stream().map(Enum::name).toList();
-        if (codes.contains(RiskSignalCode.DEPENDENCY_UNAVAILABLE)) {
-            return new RiskRoutingDecision(
-                    RiskRoutingAction.DEPENDENCY_FAILURE_HUMAN_REVIEW,
-                    true,
-                    false,
-                    "DEPENDENCY_RECOVERY",
-                    "REVIEWER",
-                    24,
-                    List.of("依赖失败详情", "缓存证据", "原始票据"),
-                    "外部依赖暂不可用，已转人工核验证据。",
-                    "RETRY_AFTER_COOLDOWN_OR_HUMAN_REVIEW",
-                    reasons);
-        }
-        if (codes.contains(RiskSignalCode.MISSING_REQUIRED_DOCUMENT)) {
-            return new RiskRoutingDecision(
-                    RiskRoutingAction.MISSING_INFO_REQUEST_MORE,
-                    true,
-                    false,
-                    "MISSING_INFO",
-                    "REVIEWER",
-                    48,
-                    List.of("缺失材料清单", "票据原件", "员工补充说明"),
-                    "当前材料不足，需要补充后继续审核。",
-                    "REQUEST_MORE_INFO",
-                    reasons);
-        }
         if (codes.contains(RiskSignalCode.DUPLICATE_DOCUMENT)
                 || codes.contains(RiskSignalCode.SELLER_ANOMALY)
                 || codes.contains(RiskSignalCode.FORBIDDEN_EXPENSE_ITEM)) {
@@ -92,20 +69,6 @@ public record RiskRoutingDecision(
                     "ESCALATE_FRAUD_REVIEW",
                     reasons);
         }
-        if (codes.contains(RiskSignalCode.POLICY_LIMIT_EXCEEDED)
-                || codes.contains(RiskSignalCode.AMOUNT_MISMATCH)) {
-            return new RiskRoutingDecision(
-                    RiskRoutingAction.POLICY_CONFLICT_MANUAL_REVIEW,
-                    true,
-                    false,
-                    "POLICY_CONFLICT_REVIEW",
-                    "REVIEWER",
-                    24,
-                    List.of("制度条款引用", "申报金额", "票据金额", "审批上限计算"),
-                    "该案例存在制度或金额冲突，需要人工确认可报销金额。",
-                    "MANUAL_POLICY_RECONCILIATION",
-                    reasons);
-        }
         if (risk.level() == RiskLevel.HIGH) {
             return new RiskRoutingDecision(
                     RiskRoutingAction.HIGH_RISK_ESCALATE_WITH_DEBATE_ASSIST,
@@ -119,16 +82,60 @@ public record RiskRoutingDecision(
                     "ESCALATE_WITH_DEBATE_ASSIST",
                     reasons);
         }
+        if (codes.contains(RiskSignalCode.DEPENDENCY_UNAVAILABLE)) {
+            return new RiskRoutingDecision(
+                    RiskRoutingAction.DEPENDENCY_FAILURE_HUMAN_REVIEW,
+                    true,
+                    false,
+                    "DEPENDENCY_RECOVERY",
+                    "COLLEGE_REVIEWER",
+                    24,
+                    List.of("依赖失败详情", "缓存证据", "原始票据"),
+                    "外部依赖暂不可用，已转人工核验证据。",
+                    "RETRY_AFTER_COOLDOWN_OR_HUMAN_REVIEW",
+                    reasons);
+        }
+        if (codes.contains(RiskSignalCode.POLICY_LIMIT_EXCEEDED)
+                || codes.contains(RiskSignalCode.PROJECT_BUDGET_EXCEEDED)
+                || codes.contains(RiskSignalCode.POLICY_EVIDENCE_MISSING)
+                || codes.contains(RiskSignalCode.AMOUNT_MISMATCH)) {
+            return new RiskRoutingDecision(
+                    RiskRoutingAction.POLICY_CONFLICT_MANUAL_REVIEW,
+                    true,
+                    false,
+                    "POLICY_CONFLICT_REVIEW",
+                    "COLLEGE_REVIEWER",
+                    24,
+                    List.of("制度条款引用", "项目预算余额", "申报金额", "票据金额", "审批上限计算"),
+                    "该申请存在制度证据、项目预算或金额冲突，需要人工确认可报销金额。",
+                    "MANUAL_POLICY_RECONCILIATION",
+                    reasons);
+        }
+        if (codes.contains(RiskSignalCode.MISSING_REQUIRED_DOCUMENT)
+                || codes.contains(RiskSignalCode.LOW_EXTRACTION_CONFIDENCE)
+                || codes.contains(RiskSignalCode.DATE_ANOMALY)) {
+            return new RiskRoutingDecision(
+                    RiskRoutingAction.MISSING_INFO_REQUEST_MORE,
+                    true,
+                    false,
+                    "MISSING_INFO",
+                    "ADVISOR",
+                    48,
+                    List.of("缺失材料清单", "票据原件", "学生补充说明"),
+                    "当前材料、票据识别结果或日期信息需要补充核验。",
+                    "REQUEST_MORE_INFO",
+                    reasons);
+        }
         if (risk.requiresHumanReview()) {
             return new RiskRoutingDecision(
                     RiskRoutingAction.MEDIUM_RISK_HUMAN_REVIEW,
                     true,
                     false,
                     "STANDARD_REVIEW",
-                    "REVIEWER",
+                    "ADVISOR",
                     48,
                     List.of("风险信号", "制度引用", "MCP 证据"),
-                    "该案例需要人工复核后决定。",
+                    "该经费申请需要指导老师复核项目相关性和材料完整性。",
                     "HUMAN_REVIEW",
                     reasons);
         }

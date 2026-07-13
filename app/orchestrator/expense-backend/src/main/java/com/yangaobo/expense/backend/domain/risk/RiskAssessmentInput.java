@@ -12,7 +12,33 @@ public record RiskAssessmentInput(
         boolean sellerAnomaly,
         boolean policyLimitExceeded,
         boolean missingRequiredDocument,
-        boolean forbiddenExpenseItem) {
+        boolean forbiddenExpenseItem,
+        boolean projectBudgetExceeded,
+        boolean policyEvidenceMissing) {
+
+    public RiskAssessmentInput(
+            BigDecimal claimedAmount,
+            BigDecimal extractedAmount,
+            double extractionConfidence,
+            boolean duplicateDocument,
+            boolean dateAnomaly,
+            boolean sellerAnomaly,
+            boolean policyLimitExceeded,
+            boolean missingRequiredDocument,
+            boolean forbiddenExpenseItem) {
+        this(
+                claimedAmount,
+                extractedAmount,
+                extractionConfidence,
+                duplicateDocument,
+                dateAnomaly,
+                sellerAnomaly,
+                policyLimitExceeded,
+                missingRequiredDocument,
+                forbiddenExpenseItem,
+                false,
+                false);
+    }
 
     public RiskAssessmentInput {
         Objects.requireNonNull(claimedAmount, "claimedAmount");

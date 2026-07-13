@@ -31,7 +31,7 @@ export interface ExpenseCase {
   id: RequiredField<ExpenseCaseResponse, 'id'>;
   caseNumber: RequiredField<ExpenseCaseResponse, 'caseNumber'>;
   applicantName: RequiredField<ExpenseCaseResponse, 'applicantName'>;
-  departmentCode: RequiredField<ExpenseCaseResponse, 'departmentCode'>;
+  projectCode: RequiredField<ExpenseCaseResponse, 'projectCode'>;
   title: RequiredField<ExpenseCaseResponse, 'title'>;
   claimedAmount: RequiredField<ExpenseCaseResponse, 'claimedAmount'>;
   currency: RequiredField<ExpenseCaseResponse, 'currency'>;
@@ -188,7 +188,7 @@ export interface PolicyCatalogEntry {
   name: RequiredField<PolicyCatalogResponse, 'name'>;
   category: RequiredField<PolicyCatalogResponse, 'category'>;
   region: RequiredField<PolicyCatalogResponse, 'region'>;
-  employeeGrade: RequiredField<PolicyCatalogResponse, 'employeeGrade'>;
+  applicantType: RequiredField<PolicyCatalogResponse, 'applicantType'>;
   version: RequiredField<PolicyCatalogResponse, 'version'>;
   effectiveFrom: RequiredField<PolicyCatalogResponse, 'effectiveFrom'>;
   effectiveTo?: PolicyCatalogResponse['effectiveTo'];
@@ -206,7 +206,7 @@ export interface PolicySearchMatch {
   policyVersion: RequiredField<PolicySearchResponse, 'policyVersion'>;
   category: RequiredField<PolicySearchResponse, 'category'>;
   region: RequiredField<PolicySearchResponse, 'region'>;
-  employeeGrade: RequiredField<PolicySearchResponse, 'employeeGrade'>;
+  applicantType: RequiredField<PolicySearchResponse, 'applicantType'>;
   effectiveFrom: RequiredField<PolicySearchResponse, 'effectiveFrom'>;
   effectiveTo?: PolicySearchResponse['effectiveTo'];
   sourceUri?: PolicySearchResponse['sourceUri'];

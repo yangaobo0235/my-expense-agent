@@ -31,7 +31,7 @@ import { analyzeCase, askEvidenceChat, deleteCase, generateReviewReport, getCase
 import { CaseObservabilityPanel } from '../../components/CaseObservabilityPanel';
 import { RiskBadge } from '../../components/RiskBadge';
 import { StatusBadge } from '../../components/StatusBadge';
-import { useAuthStore } from '../auth/auth-store';
+import { hasOnlyRole, useAuthStore } from '../auth/auth-store';
 import {
   CaseDiagnosis,
   CaseStage,
@@ -45,7 +45,7 @@ import { WorkflowLauncher } from './WorkflowLauncher';
 
 interface CaseEditForm {
   applicantName: string;
-  departmentCode: string;
+  projectCode: string;
   title: string;
   claimedAmount: number;
   currency: string;
@@ -104,7 +104,7 @@ export function CaseDetailPage() {
   const deleteMutation = useMutation({
     mutationFn: () => deleteCase(caseId),
     onSuccess: () => {
-      message.success(user?.roles.includes('FINANCE_ADMIN') ? '案例已删除' : '草稿已删除');
+      message.success(user?.roles.includes('FINANCE_ADMIN') ? '申请已删除' : '草稿已删除');
       void queryClient.invalidateQueries({ queryKey: ['cases'] });
       navigate('/cases');
     },
@@ -151,12 +151,15 @@ export function CaseDetailPage() {
   const settlementMutation = useMutation({
     mutationFn: () => settleExpenseCase(caseId),
     onSuccess: (result) => {
-      message.success(`结算完成，付款状态：${result.status ?? '已提交'}`);
+      message.success(`入账提交完成，状态：${result.status ?? '已提交'}`);
+      void queryClient.invalidateQueries({ queryKey: ['case', caseId] });
+      void queryClient.invalidateQueries({ queryKey: ['cases'] });
       void queryClient.invalidateQueries({ queryKey: ['case-evidence', caseId] });
+      void queryClient.invalidateQueries({ queryKey: ['case-observability', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['observable-runs'] });
     },
     onError: (error) => {
-      const fallback = '结算提交失败，请稍后重试。';
+      const fallback = '入账提交失败，请稍后重试。';
       const apiMessage = axios.isAxiosError(error)
         ? (error.response?.data as { message?: string } | undefined)?.message
         : undefined;
@@ -183,8 +186,12 @@ export function CaseDetailPage() {
     return () => controller.abort();
   }, [caseId, query.data?.status, queryClient]);
 
-  const canEditDraft =
-    Boolean(user?.roles.includes('EMPLOYEE')) && query.data?.status === 'DRAFT';
+  const isApplicant = Boolean(
+    user?.roles.some((role) => ['STUDENT', 'ADVISOR'].includes(role)),
+  );
+  const isReadOnlyAuditor = hasOnlyRole(user?.roles, 'AUDITOR');
+  const canOperateCase = !isReadOnlyAuditor && Boolean(user?.roles.length);
+  const canEditDraft = isApplicant && query.data?.status === 'DRAFT';
   const canDeleteCase =
     Boolean(user?.roles.includes('FINANCE_ADMIN')) || canEditDraft;
 
@@ -215,9 +222,9 @@ export function CaseDetailPage() {
   function confirmDeleteDraft() {
     const adminDelete = Boolean(user?.roles.includes('FINANCE_ADMIN'));
     modal.confirm({
-      title: adminDelete ? '删除该案例？' : '删除草稿案例？',
+      title: adminDelete ? '删除该申请？' : '删除草稿申请？',
       content: adminDelete
-        ? '删除后该案例和相关票据、处理记录将不再显示。请确认这是一条误建或测试记录。'
+        ? '删除后该申请和相关票据、处理记录将不再显示。请确认这是一条误建或测试记录。'
         : '删除后该草稿不会再出现在列表中。',
       okText: '删除',
       cancelText: '取消',
@@ -227,14 +234,9 @@ export function CaseDetailPage() {
   }
 
   if (query.isLoading) return <Spin />;
-  if (!query.data) return <Empty description="案例不存在或无权访问" />;
+  if (!query.data) return <Empty description="申请不存在或无权访问" />;
   const expenseCase = query.data;
-  const settlementCompleted = evidenceQuery.data?.toolCalls.some(
-    (call) =>
-      call.writeOperation &&
-      call.status === 'SUCCEEDED' &&
-      ['submit_reimbursement', 'submit_payment'].includes(call.toolName),
-  );
+  const settlementCompleted = expenseCase.settlementStatus === 'SUBMITTED';
   const canSettle =
     user?.roles.includes('FINANCE_ADMIN') &&
     expenseCase.status === 'APPROVED' &&
@@ -256,7 +258,7 @@ export function CaseDetailPage() {
           <Space>
             <StatusBadge status={expenseCase.status} />
             <RiskBadge level={expenseCase.riskLevel} score={expenseCase.riskScore} />
-            {settlementCompleted && <Tag color="green">结算已提交</Tag>}
+            {settlementCompleted && <Tag color="green">入账已提交</Tag>}
             {canEditDraft && (
               <>
                 <Button onClick={() => openDraftEditor(expenseCase)}>修改草稿</Button>
@@ -264,7 +266,7 @@ export function CaseDetailPage() {
             )}
             {canDeleteCase && (
               <Button danger loading={deleteMutation.isPending} onClick={confirmDeleteDraft}>
-                {user?.roles.includes('FINANCE_ADMIN') ? '删除案例' : '删除草稿'}
+                {user?.roles.includes('FINANCE_ADMIN') ? '删除申请' : '删除草稿'}
               </Button>
             )}
             {canSettle && (
@@ -273,10 +275,10 @@ export function CaseDetailPage() {
                 loading={settlementMutation.isPending}
                 onClick={() => settlementMutation.mutate()}
               >
-                发起结算
+                发起入账
               </Button>
             )}
-            {user?.roles.includes('EMPLOYEE') &&
+            {isApplicant &&
               expenseCase.status === 'UPLOADED' && (
                 <Button
                   loading={extractionMutation.isPending}
@@ -285,7 +287,7 @@ export function CaseDetailPage() {
                   重新识别票据
                 </Button>
               )}
-            {user?.roles.includes('EMPLOYEE') &&
+            {isApplicant &&
               expenseCase.status === 'EXTRACTED' && (
                 <WorkflowLauncher caseId={caseId} />
               )}
@@ -295,14 +297,14 @@ export function CaseDetailPage() {
           <Alert
             type="info"
             showIcon
-            message="该案例仍是草稿，可以修改或删除"
-            description="上传票据后案例会进入处理链路，后续更正应通过补充材料和人工审核完成。"
+            title="该申请仍是草稿，可以修改或删除"
+            description="上传票据后申请会进入处理链路，后续更正应通过补充材料和人工审核完成。"
           />
         )}
-        {streamError && <Alert type="warning" showIcon message="实时连接暂时不可用" description={streamError} />}
+        {streamError && <Alert type="warning" showIcon title="实时连接暂时不可用" description={streamError} />}
         <div className="case-workbench-grid">
           <StageRail stages={stages} activeStage={activeStage} onSelect={setActiveStage} />
-          <Card className="stage-workspace" title={stages.find((stage) => stage.key === activeStage)?.title ?? '案例详情'}>
+          <Card className="stage-workspace" title={stages.find((stage) => stage.key === activeStage)?.title ?? '申请详情'}>
             <StageWorkspace
               stage={activeStage}
               expenseCase={expenseCase}
@@ -319,6 +321,7 @@ export function CaseDetailPage() {
               settling={settlementMutation.isPending}
               onSettle={() => settlementMutation.mutate()}
               settlementCompleted={Boolean(settlementCompleted)}
+              readOnly={isReadOnlyAuditor}
             />
           </Card>
           <DiagnosisSidebar
@@ -329,11 +332,12 @@ export function CaseDetailPage() {
             onRetryExtraction={() => extractionMutation.mutate()}
             observability={observabilityQuery.data}
             observabilityLoading={observabilityQuery.isLoading}
+            canRetry={canOperateCase}
           />
         </div>
       </Space>
       <Modal
-        title="修改草稿案例"
+        title="修改草稿申请"
         open={editOpen}
         onCancel={closeDraftEditor}
         onOk={() => editForm.submit()}
@@ -354,16 +358,16 @@ export function CaseDetailPage() {
             <Input maxLength={128} />
           </Form.Item>
           <Form.Item
-            name="departmentCode"
-            label="部门编码"
-            rules={[{ required: true, message: '请输入部门编码' }]}
+            name="projectCode"
+            label="经费项目编码"
+            rules={[{ required: true, message: '请输入学院或项目组编码' }]}
           >
             <Input maxLength={64} />
           </Form.Item>
           <Form.Item
             name="title"
-            label="费用标题"
-            rules={[{ required: true, message: '请输入费用标题' }]}
+            label="报销事项"
+            rules={[{ required: true, message: '请输入报销事项' }]}
           >
             <Input maxLength={256} />
           </Form.Item>
@@ -392,7 +396,7 @@ export function CaseDetailPage() {
 function caseToEditForm(expenseCase: ExpenseCase): CaseEditForm {
   return {
     applicantName: expenseCase.applicantName,
-    departmentCode: expenseCase.departmentCode,
+    projectCode: expenseCase.projectCode,
     title: expenseCase.title,
     claimedAmount: expenseCase.claimedAmount,
     currency: expenseCase.currency,
@@ -422,7 +426,7 @@ function StageRail({
   onSelect: (stage: CaseStageKey) => void;
 }) {
   return (
-    <Card className="stage-rail" title="案例阶段">
+    <Card className="stage-rail" title="申请阶段">
       <Space orientation="vertical" className="page-stack" size={8}>
         {stages.map((stage) => (
           <button
@@ -459,6 +463,7 @@ function StageWorkspace({
   settling,
   onSettle,
   settlementCompleted,
+  readOnly,
 }: {
   stage: CaseStageKey;
   expenseCase: ExpenseCase;
@@ -475,15 +480,16 @@ function StageWorkspace({
   settling: boolean;
   onSettle: () => void;
   settlementCompleted: boolean;
+  readOnly: boolean;
 }) {
   if (stage === 'summary') {
     return (
       <Space orientation="vertical" size="middle" className="page-stack">
         <Descriptions bordered column={2}>
-          <Descriptions.Item label="案例编号">{expenseCase.caseNumber}</Descriptions.Item>
+          <Descriptions.Item label="申请编号">{expenseCase.caseNumber}</Descriptions.Item>
           <Descriptions.Item label="状态"><StatusBadge status={expenseCase.status} /></Descriptions.Item>
           <Descriptions.Item label="申请人">{expenseCase.applicantName}</Descriptions.Item>
-          <Descriptions.Item label="部门">{expenseCase.departmentCode}</Descriptions.Item>
+          <Descriptions.Item label="经费项目">{expenseCase.projectCode}</Descriptions.Item>
           <Descriptions.Item label="申报金额">{expenseCase.claimedAmount} {expenseCase.currency}</Descriptions.Item>
           <Descriptions.Item label="风险"><RiskBadge level={expenseCase.riskLevel} score={expenseCase.riskScore} /></Descriptions.Item>
           <Descriptions.Item label="创建时间">{new Date(expenseCase.createdAt).toLocaleString('zh-CN')}</Descriptions.Item>
@@ -521,7 +527,7 @@ function StageWorkspace({
 
   if (stage === 'evidence') {
     if (evidenceLoading) return <Spin />;
-    return <EvidenceSourceBoard evidence={evidence} />;
+    return <EvidenceSourceBoard evidence={evidence} expenseCase={expenseCase} />;
   }
 
   if (stage === 'policy') {
@@ -546,14 +552,15 @@ function StageWorkspace({
                 report={report}
                 loading={reportLoading}
                 onGenerate={onGenerateReport}
+                canGenerate={!readOnly}
               />
             ),
           },
-          {
+          ...(!readOnly ? [{
             key: 'chat',
             label: '询问依据',
             children: <EvidenceChatPanel caseId={caseId} />,
-          },
+          }] : []),
         ]}
       />
     );
@@ -579,6 +586,7 @@ function DiagnosisSidebar({
   onRetryExtraction,
   observability,
   observabilityLoading,
+  canRetry,
 }: {
   diagnosis?: CaseDiagnosis;
   loading: boolean;
@@ -587,6 +595,7 @@ function DiagnosisSidebar({
   onRetryExtraction: () => void;
   observability?: Parameters<typeof CaseObservabilityPanel>[0]['observability'];
   observabilityLoading: boolean;
+  canRetry: boolean;
 }) {
   if (loading) {
     return (
@@ -604,15 +613,15 @@ function DiagnosisSidebar({
             <Alert
               type={diagnosis.severity}
               showIcon
-              message={diagnosis.title}
+              title={diagnosis.title}
               description={diagnosis.description}
             />
-            {diagnosis.retryKind === 'extraction' && (
+            {canRetry && diagnosis.retryKind === 'extraction' && (
               <Button type="primary" loading={extracting} onClick={onRetryExtraction}>
                 {diagnosis.actionLabel ?? '重新识别票据'}
               </Button>
             )}
-            {diagnosis.retryKind === 'workflow' && diagnosis.requestId && (
+            {canRetry && diagnosis.retryKind === 'workflow' && diagnosis.requestId && (
               <WorkflowLauncher
                 caseId={caseId}
                 initialRequestId={diagnosis.requestId}
@@ -639,30 +648,32 @@ export function ReviewReportPanel({
   report,
   loading,
   onGenerate,
+  canGenerate = true,
 }: {
   report?: ReviewReport;
   loading: boolean;
   onGenerate: () => void;
+  canGenerate?: boolean;
 }) {
   if (!report) {
     return (
       <Space orientation="vertical">
         <Empty description="尚未生成审核报告" />
-        <Button type="primary" loading={loading} onClick={onGenerate}>生成审核报告</Button>
+        {canGenerate && <Button type="primary" loading={loading} onClick={onGenerate}>生成审核报告</Button>}
       </Space>
     );
   }
   return (
     <Space orientation="vertical" size="middle" className="page-stack">
       <Space>
-        <Button loading={loading} onClick={onGenerate}>重新生成</Button>
+        {canGenerate && <Button loading={loading} onClick={onGenerate}>重新生成</Button>}
         <Tag color="blue">辅助建议</Tag>
         <Typography.Text type="secondary">{new Date(report.createdAt).toLocaleString('zh-CN')}</Typography.Text>
       </Space>
       <Alert
         type="info"
         showIcon
-        message="审核建议"
+        title="审核建议"
         description={businessText(report.summary) || '请结合票据、制度和历史记录完成审核判断。'}
       />
       <div className="review-report-grid">
@@ -746,18 +757,20 @@ function businessText(value?: string) {
   if (!value) return '';
   return value
     .replace(/\s*（?\s*ID[:：]\s*[0-9a-f-]{20,}\s*）?/gi, '')
-    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '该案例')
+    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '该申请')
     .replaceAll('claimedAmount', '申报金额')
     .replaceAll('score', '风险分')
     .replaceAll('HIGH', '高')
     .replaceAll('MEDIUM', '中')
     .replaceAll('LOW', '低')
     .replaceAll('POLICY_LIMIT_EXCEEDED', '金额可能超过适用标准')
+    .replaceAll('PROJECT_BUDGET_EXCEEDED', '项目可用预算不足或币种不一致')
+    .replaceAll('POLICY_EVIDENCE_MISSING', '缺少可追溯制度依据')
     .replaceAll('DEPENDENCY_UNAVAILABLE', '外部数据暂时不可用')
     .replaceAll('POLICY_RETRIEVAL', '制度依据核对')
     .replaceAll('RISK_ASSESSMENT', '风险评估')
     .replaceAll('RISK_ROUTING', '审核分配')
-    .replaceAll('MCP_CONTEXT_AGENT', '员工信息核对')
+    .replaceAll('MCP_CONTEXT_AGENT', '申请人信息核对')
     .replaceAll('POLICY_RAG_AGENT', '制度依据核对')
     .replaceAll('MCP', '外部数据')
     .replaceAll('policyFindings', '制度依据')
@@ -780,12 +793,14 @@ function settlementErrorMessage(apiMessage?: string) {
   if (!apiMessage) return undefined;
   if (
     apiMessage.includes('MCP') ||
-    apiMessage.includes('submit_reimbursement') ||
-    apiMessage.includes('submit_payment') ||
+    apiMessage.includes('submit_fund_reimbursement') ||
+    apiMessage.includes('submit_fund_posting') ||
+    apiMessage.includes('debit_project_budget') ||
+    apiMessage.includes('record_fund_reimbursement_history') ||
     apiMessage.includes('NON_RETRYABLE') ||
     apiMessage.includes('DEPENDENCY')
   ) {
-    return '结算服务暂时不可用，本案例的审核结果已保留。请稍后重试结算，或联系管理员检查结算服务。';
+    return '入账服务暂时不可用，本申请的审核结果已保留。请稍后重试入账，或联系管理员检查入账服务。';
   }
   return apiMessage;
 }
@@ -812,7 +827,7 @@ function EvidenceChatPanel({ caseId }: { caseId: string }) {
         onSearch={(value) => value.trim() && mutation.mutate(value.trim())}
         loading={mutation.isPending}
         enterButton="提问"
-        placeholder="例如：为什么这个案例需要人工审核？"
+        placeholder="例如：为什么这笔经费申请需要人工审核？"
       />
       <List
         dataSource={history}
@@ -873,7 +888,7 @@ function DocumentEvidence({ document }: { document: ExpenseDocumentDetail }) {
               <Alert
                 type="warning"
                 showIcon
-                message="需要人工关注"
+                title="需要人工关注"
                 description={[
                   ...extraction.validationErrors,
                   ...extraction.result.warnings,
@@ -901,7 +916,7 @@ function DocumentEvidence({ document }: { document: ExpenseDocumentDetail }) {
               size="small"
               pagination={false}
               dataSource={extraction.result.items}
-              locale={{ emptyText: '未提取到费用明细' }}
+              locale={{ emptyText: '未提取到票据明细' }}
               columns={[
                 { title: '明细', dataIndex: 'description' },
                 { title: '数量', dataIndex: 'quantity' },

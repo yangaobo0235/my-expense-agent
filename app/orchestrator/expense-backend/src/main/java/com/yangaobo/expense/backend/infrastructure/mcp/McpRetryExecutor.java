@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.infrastructure.mcp;
 
-import com.yangaobo.expense.common.error.ExpenseFlowErrorCode;
-import com.yangaobo.expense.common.error.ExpenseFlowException;
+import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.CampusFundFlowException;
 import com.yangaobo.expense.backend.application.governance.DependencyCircuitBreaker;
 import java.net.ConnectException;
 import java.net.http.HttpConnectTimeoutException;
@@ -56,9 +56,9 @@ final class McpRetryExecutor {
                 pause();
             }
         }
-        ExpenseFlowException failure =
-                new ExpenseFlowException(
-                        ExpenseFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+        CampusFundFlowException failure =
+                new CampusFundFlowException(
+                        CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
                         "MCP 调用失败："
                                 + operation
                                 + "，"

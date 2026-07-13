@@ -116,14 +116,12 @@ export function ReviewTaskDetailPage() {
 
   const canHandle = useMemo(() => {
     if (!taskQuery.data) return false;
-    if (taskQuery.data.assigneeRole === 'FINANCE_ADMIN') {
-      return hasAnyRole(user?.roles, ['FINANCE_ADMIN']);
-    }
-    return hasAnyRole(user?.roles, ['REVIEWER', 'FINANCE_ADMIN']);
+    return hasAnyRole(user?.roles, ['FINANCE_ADMIN'])
+      || hasAnyRole(user?.roles, [taskQuery.data.assigneeRole as 'ADVISOR' | 'COLLEGE_REVIEWER']);
   }, [taskQuery.data, user?.roles]);
 
   if (taskQuery.isLoading || caseQuery.isLoading) return <Spin />;
-  if (!taskQuery.data || !caseQuery.data) return <Alert type="warning" showIcon message="审核任务不存在或无权访问" />;
+  if (!taskQuery.data || !caseQuery.data) return <Alert type="warning" showIcon title="审核任务不存在或无权访问" />;
   const task = taskQuery.data;
   const expenseCase = caseQuery.data;
   const traceUrl = evidenceQuery.data?.run?.traceId
@@ -143,9 +141,6 @@ export function ReviewTaskDetailPage() {
           <StatusBadge status={expenseCase.status} />
           <RiskBadge level={expenseCase.riskLevel} score={expenseCase.riskScore} />
           {traceUrl && <Button href={traceUrl} target="_blank">Tempo Trace</Button>}
-          {import.meta.env.VITE_LANGFUSE_URL && (
-            <Button href={import.meta.env.VITE_LANGFUSE_URL} target="_blank">Langfuse</Button>
-          )}
         </Space>
       </div>
 
@@ -153,8 +148,8 @@ export function ReviewTaskDetailPage() {
         <Alert
           type="error"
           showIcon
-          message="当前账号不能处理该任务"
-          description={`任务要求角色：${task.assigneeRole ?? 'REVIEWER'}`}
+          title="当前账号不能处理该任务"
+          description={`任务要求角色：${task.assigneeRole ?? 'COLLEGE_REVIEWER'}`}
         />
       )}
 
@@ -185,7 +180,7 @@ export function ReviewTaskDetailPage() {
               className="form-alert"
               type="info"
               showIcon
-              message="人工决定会写入审计日志，并成为后续结算的唯一依据。"
+              title="人工决定会写入审计日志，并成为后续入账的唯一依据。"
               description="Agent、模型和制度检索只作为证据，不能直接改变审批结论。"
             />
             <Form form={form} layout="vertical" initialValues={{ action: 'approve' }}>
@@ -220,7 +215,7 @@ export function ReviewTaskDetailPage() {
                   form.validateFields().then((values) =>
                     Modal.confirm({
                       title: '确认提交审核动作',
-                      content: '该动作会写入审计日志并更新案例状态。',
+                      content: '该动作会写入审计日志并更新申请状态。',
                       onOk: () => decision.mutate({ action: values.action, values }),
                     }),
                   )

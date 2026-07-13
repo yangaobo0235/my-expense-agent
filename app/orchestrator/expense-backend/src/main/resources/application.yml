@@ -6,7 +6,7 @@ spring:
       - optional:file:.env.local[.properties]
       - optional:file:../../../.env.local[.properties]
   application:
-    name: expense-backend
+    name: campus-fund-backend
   datasource:
     url: ${EXPENSE_DATASOURCE_URL}
     username: ${EXPENSE_DATASOURCE_USERNAME}
@@ -40,16 +40,16 @@ expense:
     model-name: ${EXPENSE_EVIDENCE_CHAT_MODEL_NAME:qwen-plus}
     prompt-version: ${EXPENSE_EVIDENCE_CHAT_PROMPT_VERSION:evidence-chat-v1}
   security:
-    issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/expense-flow}
-    jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/certs}
-    audiences: ${KEYCLOAK_BACKEND_AUDIENCES:expense-backend}
+    issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/campus-fund-flow}
+    jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/campus-fund-flow/protocol/openid-connect/certs}
+    audiences: ${KEYCLOAK_BACKEND_AUDIENCES:campus-fund-backend}
     jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
     allowed-origins: ${EXPENSE_ALLOWED_ORIGINS:http://localhost:25105}
   minio:
     endpoint: ${EXPENSE_MINIO_ENDPOINT}
     access-key: ${EXPENSE_MINIO_ACCESS_KEY}
     secret-key: ${EXPENSE_MINIO_SECRET_KEY}
-    bucket: ${EXPENSE_MINIO_BUCKET:expense-documents}
+    bucket: ${EXPENSE_MINIO_BUCKET:campus-fund-documents}
   ai:
     chat:
       base-url: ${EXPENSE_AI_CHAT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
@@ -66,8 +66,8 @@ expense:
   mcp:
     client:
       enabled: ${EXPENSE_MCP_CLIENT_ENABLED:true}
-      token-uri: ${EXPENSE_MCP_TOKEN_URI:http://localhost:18080/realms/expense-flow/protocol/openid-connect/token}
-      client-id: ${EXPENSE_MCP_CLIENT_ID:expense-backend}
+      token-uri: ${EXPENSE_MCP_TOKEN_URI:http://localhost:18080/realms/campus-fund-flow/protocol/openid-connect/token}
+      client-id: ${EXPENSE_MCP_CLIENT_ID:campus-fund-backend}
       client-secret: ${EXPENSE_MCP_CLIENT_SECRET:}
       account-url: ${EXPENSE_ACCOUNT_MCP_URL:http://localhost:25102/mcp}
       expense-url: ${EXPENSE_EXPENSE_MCP_URL:http://localhost:25103/mcp}

@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.yangaobo</groupId>
-        <artifactId>my-expense-agent</artifactId>
+        <artifactId>campus-fund-flow</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>expense-common</artifactId>
-    <name>ExpenseFlow Common Contracts</name>
+    <name>CampusFundFlow Common Contracts</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

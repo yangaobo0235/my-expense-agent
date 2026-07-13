@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class ExpenseMultiAgentPlanner {
 
-    public static final String PLAN_VERSION = "expenseflow-multi-agent-v1";
+    public static final String PLAN_VERSION = "campus-fund-flow-multi-agent-v1";
 
     public ExpenseMultiAgentPlan plan(String caseId, String requestId) {
         return new ExpenseMultiAgentPlan(
@@ -32,21 +32,21 @@ public final class ExpenseMultiAgentPlanner {
                         new AgentStepDefinition(
                                 2,
                                 AgentRole.MCP_CONTEXT_AGENT,
-                                "员工与历史上下文 Agent",
+                                "申请人与历史经费上下文 Agent",
                                 "EVIDENCE_COLLECTION",
                                 "PARALLEL",
                                 "EVIDENCE_COLLECTION",
                                 List.of(AgentRole.RECEIPT_EXTRACTION_AGENT),
                                 "",
-                                "通过只读 MCP Tool 查询员工、账户、历史费用和重复票据证据。",
-                                List.of("ownerSubject", "departmentCode", "documentSha256"),
-                                List.of("employeeContext", "duplicateCheck", "historyEvidence"),
+                                "通过只读 MCP Tool 查询申请人、项目预算、历史经费报销和重复票据证据。",
+                                List.of("ownerSubject", "projectCode", "documentSha256"),
+                                List.of("applicantContext", "duplicateCheck", "historyEvidence"),
                                 List.of(
-                                        "get_employee_profile",
-                                        "get_payment_methods",
-                                        "get_account_balance",
+                                        "get_applicant_profile",
+                                        "get_reimbursement_accounts",
+                                        "get_project_budget_balance",
                                         "check_duplicate_document",
-                                        "get_expense_history"),
+                                        "get_fund_reimbursement_history"),
                                 false,
                                 AgentFailurePolicy.RETRY_THEN_HUMAN_REVIEW,
                                 3,
@@ -60,8 +60,8 @@ public final class ExpenseMultiAgentPlanner {
                                 "EVIDENCE_COLLECTION",
                                 List.of(AgentRole.RECEIPT_EXTRACTION_AGENT),
                                 "",
-                                "按费用类别、地区、员工等级和费用日期检索制度片段，并保留可追溯引用。",
-                                List.of("category", "region", "employeeGrade", "expenseDate"),
+                                "按经费用途、地区、校园级别和报销日期检索制度片段，并保留可追溯引用。",
+                                List.of("category", "region", "campusLevel", "expenseDate"),
                                 List.of("policyFindings", "citations"),
                                 List.of("calculate_allowed_amount", "validate_invoice_number"),
                                 false,
@@ -105,19 +105,24 @@ public final class ExpenseMultiAgentPlanner {
                         new AgentStepDefinition(
                                 6,
                                 AgentRole.APPROVED_SETTLEMENT_AGENT,
-                                "审批后结算 Agent",
+                                "审批后入账 Agent",
                                 "SETTLEMENT",
                                 "SEQUENTIAL_CHAIN",
                                 "APPROVED_WRITEBACK",
                                 List.of(AgentRole.RISK_RULE_AGENT),
                                 "仅当路由结果为 LOW_RISK_AUTO_APPROVE 或人工审批通过后允许执行。",
-                                "仅在确定性审批通过后调用写 MCP Tool，提交内部报销和付款请求。",
+                                "仅在确定性审批通过后调用写 MCP Tool，依次扣减共享项目预算、登记经费报销、提交入账并回写票据历史。",
                                 List.of("approvedDecision", "approvedAmount", "approvalReference"),
-                                List.of("reimbursementId", "paymentId", "settlementStatus"),
-                                List.of("submit_reimbursement", "submit_payment", "save_review_evidence"),
+                                List.of("budgetDebitId", "reimbursementId", "postingId", "postingStatus", "historyRecordId"),
+                                List.of(
+                                        "debit_project_budget",
+                                        "submit_fund_reimbursement",
+                                        "submit_fund_posting",
+                                        "record_fund_reimbursement_history",
+                                        "save_review_evidence"),
                                 true,
                                 AgentFailurePolicy.IDEMPOTENT_WRITE_RETRY,
                                 3,
-                                "财务复核内部结算请求状态并人工补偿")));
+                                "财务复核内部入账请求状态并人工补偿")));
     }
 }

@@ -8,16 +8,17 @@ const developmentMode = import.meta.env.VITE_AUTH_MODE === 'development';
 
 const keycloak = new Keycloak({
   url: import.meta.env.VITE_KEYCLOAK_URL ?? 'http://localhost:18080',
-  realm: import.meta.env.VITE_KEYCLOAK_REALM ?? 'expense-flow',
-  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID ?? 'expense-web',
+  realm: import.meta.env.VITE_KEYCLOAK_REALM ?? 'campus-fund-flow',
+  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID ?? 'campus-fund-web',
 });
 
 function rolesOf(token?: KeycloakTokenParsed): UserRole[] {
   const realmAccess = token?.realm_access as { roles?: string[] } | undefined;
   return (realmAccess?.roles ?? []).filter((role): role is UserRole =>
     [
-      'EMPLOYEE',
-      'REVIEWER',
+      'STUDENT',
+      'ADVISOR',
+      'COLLEGE_REVIEWER',
       'FINANCE_ADMIN',
       'PROMPT_AUTHOR',
       'PROMPT_REVIEWER',
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setSession({
         subject: 'development-user',
         displayName: '本地开发用户',
-        roles: ['EMPLOYEE', 'REVIEWER', 'FINANCE_ADMIN'],
+        roles: ['STUDENT', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN'],
       });
       return;
     }
@@ -68,7 +69,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           displayName:
             keycloak.tokenParsed.preferred_username ??
             keycloak.tokenParsed.name ??
-            'ExpenseFlow 用户',
+            'CampusFundFlow 用户',
           roles: rolesOf(keycloak.tokenParsed),
         });
       })
