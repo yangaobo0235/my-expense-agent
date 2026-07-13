@@ -19,6 +19,14 @@ app/frontend/playwright-report/
 app/frontend/test-results/
 *.tsbuildinfo
 
+# Tests are kept locally for verification, but are not part of submitted code.
+**/src/test/
+**/src/test/**
+app/frontend/e2e/
+app/frontend/e2e/**
+app/frontend/src/**/*.test.ts
+app/frontend/src/**/*.test.tsx
+
 ### IntelliJ IDEA ###
 .idea/
 .idea/modules.xml

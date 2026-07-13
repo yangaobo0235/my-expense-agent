@@ -6,80 +6,86 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL%20%2B%20pgvector-15%2B-4169E1?logo=postgresql&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-CampusFundFlow 是一个面向高校项目经费报销场景的智能合规审核平台，覆盖学生竞赛、科研训练、实验室耗材、社团活动、会议差旅等经费支出从申请、票据上传、材料识别、制度检索、预算与科目合规校验、人工复核、审批后入账到审计追踪的完整流程。
+CampusFundFlow 是一个面向高校经费报销场景的智能合规审核平台，覆盖学生竞赛、科研训练、实验室耗材、社团活动、会议差旅等校园支出从申请、票据上传、材料识别、制度检索、预算与科目校验、人工复核、审批后入账到审计追踪的完整流程。
 
-系统的核心原则是“AI 提供证据，流程负责决策”。视觉模型、RAG 和 Agent 只生成结构化候选证据、制度引用、风险说明和补充材料建议；状态流转、金额校验、权限判断、幂等保护、人工复核和写入动作全部由 Java 服务端执行，保证校园经费审核过程可追溯、可复核、可恢复。
+系统采用 Spring Boot 拆分主编排服务与业务上下文服务，前端由 React + Ant Design 承载申请、审核、制度、评测和观测工作台。AI 能力通过 RAG、票据抽取、风险解释和 Agent 编排提供审核证据；审批、驳回、入账、权限校验和幂等写入始终由 Java 服务端受控执行，确保校园经费审核过程可追溯、可复核、可恢复。
 
 ## 功能范围
 
 ### 经费申请与票据材料
 
-* 学生或项目成员创建报销申请，填写申请人、学院/项目组、报销事项、申报金额和币种。
-* 支持 PDF、PNG、JPG、JPEG 票据或佐证材料上传，文件存储到 MinIO。
-* 记录票据 SHA-256、对象存储 Key、文件元数据、预览地址和提取结果。
-* 支持票据结构化抽取，包含确定性抽取和 LLM/视觉模型抽取两种模式。
-* 工作流失败后可重新触发审核流程，并保留失败阶段、失败原因和可恢复证据。
+- 学生或项目成员创建经费报销申请，填写申请人、学院、项目、经费类型、报销事项、金额和币种。
+- 支持 PDF、PNG、JPG、JPEG 票据或佐证材料上传，文件存储到 MinIO。
+- 记录票据 SHA-256、对象存储 Key、文件元数据、预览地址、抽取结果和材料状态。
+- 支持确定性抽取与 LLM/视觉模型抽取两种模式，便于离线演示和真实模型接入。
+- 工作流失败后可重新触发审核流程，并保留失败阶段、失败原因、事件时间线和可恢复证据。
 
 ### 校园制度检索与合规审核
 
-* 支持学校财务制度、竞赛经费办法、创新创业项目经费办法、社团活动经费细则的导入、分块、向量化和版本管理。
-* 基于 PostgreSQL pgvector 执行制度 RAG 检索，返回制度片段、章节、版本、相似度和可追溯引用。
-* 确定性风险引擎输出风险分值、风险等级和风险信号。
-* 覆盖项目预算超额、经费科目不匹配、重复票据、票据抬头异常、缺少审批材料、支出日期超出项目周期、低置信度抽取等场景。
-* 低风险申请可自动进入通过候选，中高风险申请自动进入指导老师、学院审核员或财务复核队列。
+- 支持学校财务制度、竞赛经费办法、创新创业项目经费办法、社团活动经费细则的导入、分块、向量化和版本管理。
+- 基于 PostgreSQL pgvector 执行制度 RAG 检索，返回制度片段、章节、版本、相似度和可追溯引用。
+- 确定性风险引擎输出风险分值、风险等级、风险信号和审核建议。
+- 覆盖预算超额、科目不匹配、重复票据、票据抬头异常、缺少审批材料、支出日期超出项目周期、低置信度抽取等场景。
+- 低风险申请可进入通过候选，中高风险申请自动进入指导老师、学院审核员或财务复核队列。
 
 ### 人工复核与审批后入账
 
-* 审核员查看待处理任务、风险信号、制度引用、票据抽取结果、预算上下文和工作流证据。
-* 支持批准、驳回、要求补充材料和更多信息建议。
-* 高风险或疑似违规任务可限制为学院财务或校级财务处理。
-* 审批后入账通过受控写 Tool 提交报销登记和经费入账请求。
-* 写操作使用 requestId 做幂等保护，避免重复提交和重复入账。
+- 审核员查看待处理任务、风险信号、制度引用、票据抽取结果、预算上下文和工作流证据。
+- 支持批准、驳回、要求补充材料和更多信息建议。
+- 高风险或疑似违规任务可限制为学院财务或校级财务处理。
+- 审批后入账通过受控写 Tool 提交报销登记和经费入账请求。
+- 写操作使用 requestId 做幂等保护，避免重复提交和重复入账。
 
 ### AI 治理与可观测性
 
-* MCP Tool 分为只读 Tool 和审批后写 Tool，写 Tool 不允许被模型直接触发。
-* 记录工作流运行、Agent 步骤、模型调用、Token 用量、Tool 调用和错误信息。
-* 支持申请事件流，前端可以查看经费报销申请的执行时间线。
-* 内置风险评测、制度 RAG 评测和 Agent 安全评测数据集。
-* Prompt 模板支持提交、审核、启用和版本治理，防止越权审批、绕过复核和敏感信息泄露。
+- MCP Tool 分为只读 Tool 和审批后写 Tool，写 Tool 不允许被模型直接触发。
+- 记录工作流运行、Agent 步骤、模型调用、Token 用量、Tool 调用和错误信息。
+- 前端可查看申请事件流、审核时间线、制度引用和模型证据。
+- 内置风险评测、制度 RAG 评测和 Agent 安全评测数据集。
+- Prompt 模板支持提交、审核、启用和版本治理，防止越权审批、绕过复核和敏感信息泄露。
 
-## 系统架构
+## 系统架构图
 
 ```mermaid
 flowchart LR
-    Web["React 校园经费审核台 :25105"] --> Backend["campus-fund-backend :25101"]
+    Web["React + Ant Design 审核台 :25105"] --> Backend["主编排服务 campus-fund-backend :25101"]
+
+    Backend --> Agents["Agent 编排模块 campus-fund-agents"]
+    Agents --> Account["申请人上下文服务 :25102"]
+    Agents --> Fund["经费报销服务 :25103"]
+    Agents --> Audit["审计历史服务 :25104"]
 
     Backend --> DB[("PostgreSQL + pgvector")]
-    Backend --> MinIO[("MinIO")]
-    Backend --> Keycloak["Keycloak"]
-    Backend --> DashScope["OpenAI 兼容模型 / DashScope"]
-
-    Backend --> Agents["campus-fund-agents"]
-    Agents --> Account["applicant-context MCP :25102"]
-    Agents --> Fund["fund-reimbursement MCP :25103"]
-    Agents --> Audit["audit-history MCP :25104"]
-
     Account --> DB
     Fund --> DB
     Audit --> DB
 
+    Backend --> MinIO[("MinIO 票据与材料存储")]
+    Backend --> Keycloak["Keycloak OAuth2 / JWT"]
+    Account --> Keycloak
+    Fund --> Keycloak
+    Audit --> Keycloak
+
+    Backend --> DashScope["DashScope / OpenAI 兼容模型"]
     Backend --> OTEL["OpenTelemetry Collector"]
-    OTEL --> Tempo["Tempo"]
-    OTEL --> Prometheus["Prometheus"]
-    Prometheus --> Grafana["Grafana"]
+    OTEL --> Tempo["Tempo Trace"]
+    Backend --> Prometheus["Prometheus Metrics"]
+    Prometheus --> Grafana["Grafana Dashboard"]
+
+    Backend -. 可选模型实验 .-> Langfuse["Langfuse"]
+    Backend -. 预留缓存与限流 .-> Redis[("Redis")]
 ```
 
 ## 模块说明
 
 | 模块 | 默认端口 | 说明 |
-| --- | --- | --- |
-| `app/orchestrator/expense-backend` | 25101 | 主业务 API，负责经费申请、票据、RAG、风险、复核、入账、评测和观测 |
-| `app/orchestrator/expense-agents` | - | 多 Agent 计划、MCP Tool 目录和 MCP 客户端抽象 |
-| `app/orchestrator/expense-common` | - | 共享领域状态、错误模型和 MCP 安全组件 |
-| `app/business-api/account` | 25102 | 申请人、学院、项目和账户上下文 REST API 与 MCP 工具 |
-| `app/business-api/expense` | 25103 | 经费报销业务 REST API 与 MCP 读写工具 |
-| `app/business-api/audit-history` | 25104 | 审计历史 REST API 与 MCP 工具 |
+| --- | ---: | --- |
+| `app/orchestrator/expense-backend` | 25101 | 主业务 API，负责经费申请、票据、制度 RAG、风险审核、人工复核、入账、评测和观测 |
+| `app/orchestrator/expense-agents` | - | Agent 编排、MCP Tool 目录、Tool 路由和 MCP 客户端抽象 |
+| `app/orchestrator/expense-common` | - | 共享领域状态、错误模型、MCP 安全组件和通用契约 |
+| `app/business-api/account` | 25102 | 申请人、学院、项目、角色和预算上下文 REST API 与 MCP 工具 |
+| `app/business-api/expense` | 25103 | 经费报销业务 REST API 与 MCP 只读/写入工具 |
+| `app/business-api/audit-history` | 25104 | 审计历史、申请事件和操作追踪 REST API 与 MCP 工具 |
 | `app/frontend` | 25105 | React + Ant Design 校园经费审核台 |
 | `deploy/keycloak` | - | Keycloak Realm 配置和演示账号初始化脚本 |
 
@@ -96,9 +102,11 @@ flowchart LR
 | 测试 | JUnit 5、Mockito、Testcontainers、Vitest、Playwright |
 | 工程化 | Maven 聚合工程、npm、OpenAPI TypeScript 类型生成 |
 
-## 核心流程
+## AI 合规审核
 
-### 校园经费审核流程
+`expense-backend` 是平台的审核编排中心。它会读取申请、票据、项目预算、历史报销、制度片段和审计记录，组合为可追溯审核证据。模型只负责抽取、总结、解释和建议，所有影响业务状态的动作必须经过服务端权限校验和状态机校验。
+
+校园经费审核流程：
 
 ```text
 学生或项目成员创建经费报销申请
@@ -113,7 +121,19 @@ flowchart LR
  -> 记录审计日志、模型调用、Tool 调用和工作流事件
 ```
 
-### 受控 MCP 写入流程
+制度 RAG 流程：
+
+```text
+导入校园制度 Markdown
+ -> 输入防护与内容清洗
+ -> 按章节分块
+ -> 生成 1024 维向量
+ -> 写入 PostgreSQL pgvector
+ -> 审核时按经费类型、学院、项目角色和支出日期检索制度片段
+ -> 返回可追溯引用作为审核证据
+```
+
+受控 MCP 写入流程：
 
 ```text
 申请已审批
@@ -124,30 +144,20 @@ flowchart LR
  -> 保存 Tool 调用结果和审批引用
 ```
 
-### 制度 RAG 流程
-
-```text
-导入校园制度 Markdown
- -> 敏感信息脱敏与输入防护
- -> 按章节分块
- -> 生成 1024 维向量
- -> 写入 PostgreSQL pgvector
- -> 审核时按经费类型、学院、项目角色和支出日期检索制度片段
- -> 返回可追溯引用作为审核证据
-```
-
 ## 快速开始
 
 ### 1. 环境要求
 
-* JDK 21
-* Maven 3.9+
-* Node.js 20+
-* PostgreSQL 15+，并启用 pgvector 扩展
-* MinIO
-* Keycloak
-* Tempo、OpenTelemetry Collector、Prometheus、Grafana
-* 可选：DashScope 或其他 OpenAI 兼容模型服务
+- JDK 21
+- Maven 3.9+
+- Node.js 20+
+- PostgreSQL 15+，并启用 pgvector 扩展
+- MinIO
+- Keycloak
+- Tempo、OpenTelemetry Collector、Prometheus、Grafana
+- 可选：DashScope 或其他 OpenAI 兼容模型服务
+
+Redis 与 Langfuse 已在当前演示环境中安装，但本版本业务运行时不强依赖。Redis 可作为后续分布式缓存或限流扩展；Langfuse 可用于模型实验，正式审计链路以数据库审计记录和 OpenTelemetry Trace 为准。
 
 ### 2. 基础组件
 
@@ -156,14 +166,11 @@ flowchart LR
 ```bash
 docker start pgvector redis minio expense-keycloak tempo otel-collector prometheus grafana
 
-# 当前 Euler 主机上的可选 Langfuse 独立部署
 cd /opt/expense-flow/langfuse
 docker compose up -d
 ```
 
-Redis 与 Langfuse 已安装在当前 Euler 主机，但本版本业务运行时不依赖它们。Redis 可留作后续分布式缓存或限流扩展；Langfuse 可独立用于模型实验，本系统当前的正式审计链路以数据库审计记录和 OpenTelemetry Trace 为准。
-
-常用组件地址可按部署端口映射访问：
+常用组件地址：
 
 | 组件 | 地址示例 |
 | --- | --- |
@@ -176,11 +183,11 @@ Redis 与 Langfuse 已安装在当前 Euler 主机，但本版本业务运行时
 | Grafana | `http://192.168.23.66:3000` |
 | Langfuse（可选） | `http://192.168.23.66:13000` |
 
-Prometheus 的 `expense-backend` 抓取目标必须指向 Java 服务实际运行的主机，不能固定理解为基础组件主机：
+Prometheus 的 `expense-backend` 抓取目标需要指向 Java 服务实际运行的主机：
 
 | 运行方式 | `static_configs.targets` |
 | --- | --- |
-| 四个 Java 服务也运行在 Euler 主机 | `192.168.23.66:25101` |
+| 四个 Java 服务运行在 Euler 主机 | `192.168.23.66:25101` |
 | Java 服务运行在当前 Windows 主机，Euler 使用 VMnet8 `192.168.23.0/24` | `192.168.23.1:25101` |
 
 修改 Euler 上 Prometheus 使用的 `/etc/prometheus/prometheus.yml` 或对应宿主机挂载文件后，执行 `docker restart prometheus`，再从 `http://192.168.23.66:9090/targets` 确认 `expense-backend` 为 `UP`。
@@ -194,7 +201,7 @@ cd campus-fund-flow
 
 ### 4. 配置环境变量
 
-本项目会读取项目根目录下的 `.env.local`，也可以通过操作系统环境变量或启动配置注入。
+本项目会读取项目根目录下的 `.env.local`，也可以通过操作系统环境变量或启动配置注入。`.env.local` 只用于本地开发，不应提交到 Git。
 
 Windows PowerShell 示例：
 
@@ -255,13 +262,15 @@ powershell -ExecutionPolicy Bypass -File deploy/keycloak/init-campus-users.ps1
 
 演示账号规划：
 
-| 账号 | 密码 | 角色 |
-| --- | --- | --- |
-| `student01` | `CampusFund123!` | 学生申请人，创建经费报销申请和上传票据 |
-| `advisor01` | `CampusFund123!` | 指导老师，复核项目相关性和材料完整性 |
-| `collegeReviewer01` | `CampusFund123!` | 学院审核员，处理人工复核任务 |
-| `finance01` | `CampusFund123!` | 学院财务，审核、入账、Prompt 管理和观测 |
-| `auditor01` | `CampusFund123!` | 审计员，查看审计记录和工作流证据 |
+| 账号 | 角色 |
+| --- | --- |
+| `student01` | 学生申请人，创建经费报销申请和上传票据 |
+| `advisor01` | 指导老师，复核项目相关性和材料完整性 |
+| `collegeReviewer01` | 学院审核员，处理人工复核任务 |
+| `finance01` | 学院财务，审核、入账、Prompt 管理和观测 |
+| `auditor01` | 审计员，查看审计记录和工作流证据 |
+
+演示密码和初始化细节以 `deploy/keycloak/init-campus-users.ps1` 为准。
 
 ### 7. 启动后端服务
 
@@ -318,7 +327,7 @@ npm run dev
 
 ## 测试与构建
 
-运行后端单元测试：
+运行后端测试：
 
 ```powershell
 $env:JAVA_HOME="D:\software\jdk\jdk-21.0.6"
@@ -380,20 +389,21 @@ campus-fund-flow/
 
 ## 安全说明
 
-* 模型输出只能作为候选证据，不能直接审批、驳回、入账、转账或修改申请状态。
-* 学生只能访问本人或授权项目组的经费申请，指导老师、学院审核员、财务和审计员具备受控的跨申请权限。
-* MCP 只读 Tool 和写 Tool 分离，写 Tool 仅在审批后入账阶段开放。
-* 所有写入类 Tool 调用必须携带幂等 requestId 和审批引用。
-* 证据问答只能基于当前申请证据回答，不能请求密码、Token、银行密钥等敏感信息。
-* 生产环境应使用独立密钥、最小权限账号和 HTTPS，并关闭敏感调试日志。
-* 提交代码前请确认 `.env.local`、日志、临时文件和真实凭据未进入 Git。
+- 模型输出只能作为候选证据，不能直接审批、驳回、入账、转账或修改申请状态。
+- 学生只能访问本人或授权项目组的经费申请，指导老师、学院审核员、财务和审计员具备受控的跨申请权限。
+- MCP 只读 Tool 和写 Tool 分离，写 Tool 仅在审批后入账阶段开放。
+- 所有写入类 Tool 调用必须携带幂等 requestId 和审批引用。
+- 证据问答只能基于当前申请证据回答，不能请求密码、Token、银行密钥等敏感信息。
+- 开发、测试和生产环境必须使用不同的密钥；生产环境应使用独立密钥、最小权限账号和 HTTPS。
+- 生产环境应关闭敏感调试日志，并补充容量评估、权限审计、告警策略和容灾设计。
+- 提交代码前请确认 `.env.local`、日志、临时文件和真实凭据未进入 Git。
 
 ## 项目边界
 
-* 当前入账流程会持久化内部报销登记和入账请求，未对接真实银行、银校直连或学校财务系统。
-* LLM/视觉抽取依赖外部模型服务，确定性抽取器主要用于离线演示和降级。
-* 内置评测集用于工程质量基线，不代表真实高校财务制度的完整覆盖范围。
-* 本项目是学习与作品集项目，生产部署前仍需补充容量评估、权限审计、告警策略和容灾设计。
+- 当前入账流程会持久化内部报销登记和入账请求，未对接真实银行、银校直连或学校财务系统。
+- LLM/视觉抽取依赖外部模型服务，确定性抽取器主要用于离线演示和降级。
+- 内置评测集用于工程质量基线，不代表真实高校财务制度的完整覆盖范围。
+- 本项目是学习与作品集项目，生产部署前仍需结合真实校内制度进行二次审计。
 
 ## License
 
