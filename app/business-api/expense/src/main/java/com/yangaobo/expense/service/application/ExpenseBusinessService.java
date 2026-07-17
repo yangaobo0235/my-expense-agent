@@ -59,7 +59,7 @@ public class ExpenseBusinessService {
                             jdbcClient
                                     .sql(
                                             """
-                                            INSERT INTO campus_fund_reimbursement_record (
+                                            INSERT INTO my_expense_agent_reimbursement_record (
                                                 reimbursement_id, request_id, case_id, amount, currency, status, submitted_at
                                             ) VALUES (
                                                 :reimbursementId, :requestId, :caseId, :amount, :currency, :status, :submittedAt
@@ -100,7 +100,7 @@ public class ExpenseBusinessService {
                             jdbcClient
                                     .sql(
                                             """
-                                            INSERT INTO campus_fund_posting_record (
+                                            INSERT INTO my_expense_agent_posting_record (
                                                 posting_id, request_id, reimbursement_id, amount, currency, status, posted_at
                                             ) VALUES (
                                                 :postingId, :requestId, :reimbursementId, :amount, :currency, :status, :postedAt
@@ -123,7 +123,7 @@ public class ExpenseBusinessService {
                 .sql(
                         """
                         SELECT reimbursement_id, request_id, case_id, amount, currency, status, submitted_at
-                        FROM campus_fund_reimbursement_record
+                        FROM my_expense_agent_reimbursement_record
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
@@ -145,7 +145,7 @@ public class ExpenseBusinessService {
                 .sql(
                         """
                         SELECT posting_id, request_id, reimbursement_id, amount, currency, status, posted_at
-                        FROM campus_fund_posting_record
+                        FROM my_expense_agent_posting_record
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
@@ -169,7 +169,7 @@ public class ExpenseBusinessService {
                                 """
                                 SELECT EXISTS (
                                     SELECT 1
-                                    FROM campus_fund_reimbursement_record
+                                    FROM my_expense_agent_reimbursement_record
                                     WHERE reimbursement_id = :reimbursementId
                                 )
                                 """)

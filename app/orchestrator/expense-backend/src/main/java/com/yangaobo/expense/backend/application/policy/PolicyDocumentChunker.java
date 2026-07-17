@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.policy;
 
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -14,8 +14,8 @@ public class PolicyDocumentChunker {
 
     public List<PolicyChunkDraft> chunk(String markdown) {
         if (markdown == null || markdown.isBlank()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED, "制度正文不能为空");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED, "制度正文不能为空");
         }
         List<PolicyChunkDraft> result = new ArrayList<>();
         String section = "正文";
@@ -35,8 +35,8 @@ public class PolicyDocumentChunker {
         }
         flushSection(result, section, body.toString());
         if (result.isEmpty()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED, "制度正文没有可索引内容");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED, "制度正文没有可索引内容");
         }
         return List.copyOf(result);
     }

@@ -4,8 +4,8 @@ import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
 import com.yangaobo.expense.backend.application.observability.WorkflowObservability;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -103,23 +103,23 @@ public class ExpenseCoordinator {
 
     private static void validateStartState(ExpenseCase expenseCase) {
         if (expenseCase.status().isTerminal()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "已完成审批的申请不能重新启动审核工作流");
         }
         if (expenseCase.status() != ExpenseCaseStatus.EXTRACTED
                 && expenseCase.status() != ExpenseCaseStatus.WAITING_HUMAN
                 && expenseCase.status() != ExpenseCaseStatus.FAILED) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "只有已完成提取的案例才能启动完整审核工作流");
         }
     }
 
     private static String required(String value, String field) {
         if (value == null || value.isBlank()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED, field + "不能为空");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED, field + "不能为空");
         }
         return value.trim();
     }

@@ -11,7 +11,7 @@ public class AudienceValidator implements OAuth2TokenValidator<Jwt> {
     private static final OAuth2Error INVALID_AUDIENCE =
             new OAuth2Error(
                     "invalid_token",
-                    "JWT audience 不属于 campus-fund-backend",
+                    "JWT audience 不属于 my-expense-agent-backend",
                     null);
 
     private final Set<String> allowedAudiences;

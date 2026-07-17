@@ -61,7 +61,7 @@ export function AppLayout() {
         <div className="brand">
           <div className="brand-mark">CF</div>
           <div>
-            <strong>CampusFundFlow</strong>
+            <strong>my-expense-agent</strong>
             <span>校园经费合规审核</span>
           </div>
         </div>

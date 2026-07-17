@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.yangaobo</groupId>
-        <artifactId>campus-fund-flow</artifactId>
+        <artifactId>my-expense-agent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>expense-agents</artifactId>
-    <name>CampusFundFlow Agent Adapters</name>
+    <name>my-expense-agent Agent Adapters</name>
     <dependencies>
         <dependency>
             <groupId>com.yangaobo</groupId>

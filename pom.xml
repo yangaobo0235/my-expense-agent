@@ -12,11 +12,11 @@
     </parent>
 
     <groupId>com.yangaobo</groupId>
-    <artifactId>campus-fund-flow</artifactId>
+    <artifactId>my-expense-agent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>CampusFundFlow</name>
+    <name>my-expense-agent</name>
     <description>Auditable intelligent campus fund reimbursement and compliance review workflow</description>
 
     <modules>

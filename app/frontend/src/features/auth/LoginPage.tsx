@@ -12,7 +12,7 @@ export function LoginPage() {
         <div className="brand-mark large">CF</div>
         <Space orientation="vertical" size="large">
           <div>
-            <Typography.Title level={2}>CampusFundFlow</Typography.Title>
+            <Typography.Title level={2}>my-expense-agent</Typography.Title>
             <Typography.Paragraph type="secondary">
               登录后查看校园经费申请进度、合规证据与人工复核任务。
             </Typography.Paragraph>

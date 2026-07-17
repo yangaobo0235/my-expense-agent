@@ -16,8 +16,8 @@ import com.yangaobo.expense.backend.application.governance.DependencyCircuitBrea
 import com.yangaobo.expense.backend.application.observability.ModelCallRecorder;
 import com.yangaobo.expense.backend.application.prompt.PromptRenderService;
 import com.yangaobo.expense.backend.application.prompt.RenderedPrompt;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Base64;
@@ -412,9 +412,9 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
         return exception.getMessage();
     }
 
-    private static CampusFundFlowException dependency(String message, Exception cause) {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+    private static MyExpenseAgentException dependency(String message, Exception cause) {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE,
                 cause == null ? message : message + ": " + cause.getMessage(),
                 cause);
     }

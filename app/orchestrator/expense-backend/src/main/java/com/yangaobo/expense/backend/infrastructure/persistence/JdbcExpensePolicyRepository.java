@@ -8,8 +8,8 @@ import com.yangaobo.expense.backend.domain.model.PolicyStatus;
 import com.yangaobo.expense.backend.domain.repository.ExpensePolicyRepository;
 import com.yangaobo.expense.backend.domain.repository.PolicyCatalogEntry;
 import com.yangaobo.expense.backend.domain.repository.PolicySearchMatch;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -92,8 +92,8 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
             }
             return policy;
         } catch (DataIntegrityViolationException exception) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.DUPLICATE_REQUEST,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.DUPLICATE_REQUEST,
                     "相同制度编码和版本已经存在");
         }
     }
@@ -173,8 +173,8 @@ public class JdbcExpensePolicyRepository implements ExpensePolicyRepository {
 
     private static String vectorLiteral(float[] vector) {
         if (vector.length != 1024) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED, "制度向量维度必须为 1024");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED, "制度向量维度必须为 1024");
         }
         StringBuilder builder = new StringBuilder(vector.length * 10).append('[');
         for (int index = 0; index < vector.length; index++) {

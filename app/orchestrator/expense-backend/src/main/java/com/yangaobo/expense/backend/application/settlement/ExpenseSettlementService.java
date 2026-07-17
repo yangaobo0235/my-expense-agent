@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.backend.domain.model.ExpenseDocument;
 import com.yangaobo.expense.backend.domain.repository.ExpenseDocumentRepository;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Clock;
@@ -63,8 +63,8 @@ public class ExpenseSettlementService {
             UUID caseId, String requestId, String actorSubject) {
         ExpenseCase expenseCase = caseService.getById(caseId);
         if (expenseCase.status() != ExpenseCaseStatus.APPROVED) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "只有已批准的经费申请才能发起入账");
         }
         ReviewRepository.ExpenseDecision decision =
@@ -73,8 +73,8 @@ public class ExpenseSettlementService {
                         .filter(item -> "APPROVED".equals(item.decision()))
                         .orElseThrow(
                                 () ->
-                                        new CampusFundFlowException(
-                                                CampusFundFlowErrorCode
+                                        new MyExpenseAgentException(
+                                                MyExpenseAgentErrorCode
                                                         .INVALID_STATE_TRANSITION,
                                                 "经费申请缺少有效的批准决定"));
         String normalizedRequestId = required(requestId, "requestId");
@@ -306,14 +306,14 @@ public class ExpenseSettlementService {
                                 expenseDate,
                                 document.sha256()));
             } catch (JsonProcessingException exception) {
-                throw new CampusFundFlowException(
-                        CampusFundFlowErrorCode.VALIDATION_FAILED,
+                throw new MyExpenseAgentException(
+                        MyExpenseAgentErrorCode.VALIDATION_FAILED,
                         "票据提取结果无法写入报销历史");
             }
         }
         if (candidates.isEmpty()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
                     "没有可用于入账历史回写的票据提取结果");
         }
         return List.copyOf(candidates);
@@ -360,8 +360,8 @@ public class ExpenseSettlementService {
         try {
             ApprovedExpenseWriter.WriteResult result = operation.get();
             if (!result.success()) {
-                throw new CampusFundFlowException(
-                        CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+                throw new MyExpenseAgentException(
+                        MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE,
                         toolName + " 返回失败");
             }
             toolCallRepository.succeed(
@@ -403,15 +403,15 @@ public class ExpenseSettlementService {
     }
 
     private static String errorCode(RuntimeException exception) {
-        return exception instanceof CampusFundFlowException flow
+        return exception instanceof MyExpenseAgentException flow
                 ? flow.code().name()
-                : CampusFundFlowErrorCode.INTERNAL_ERROR.name();
+                : MyExpenseAgentErrorCode.INTERNAL_ERROR.name();
     }
 
     private static String required(String value, String field) {
         if (value == null || value.isBlank() || "null".equals(value)) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
                     field + "不能为空");
         }
         return value.trim();

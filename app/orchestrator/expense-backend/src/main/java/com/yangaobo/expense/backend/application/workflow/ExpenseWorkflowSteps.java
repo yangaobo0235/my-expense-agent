@@ -19,8 +19,8 @@ import com.yangaobo.expense.backend.domain.risk.RiskAssessmentInput;
 import com.yangaobo.expense.backend.domain.risk.RiskSignal;
 import com.yangaobo.expense.backend.domain.risk.RiskSignalCode;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -843,8 +843,8 @@ class ExpenseWorkflowSteps {
     private List<ExtractedExpenseDocument> loadExtracted(UUID caseId) {
         var results = documentRepository.findExtractionResultsByCaseId(caseId);
         if (results.isEmpty()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED, "案例没有可用的票据提取结果");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED, "案例没有可用的票据提取结果");
         }
         List<ExtractedExpenseDocument> documents = new ArrayList<>();
         for (var result : results) {
@@ -968,9 +968,9 @@ class ExpenseWorkflowSteps {
     }
 
     static String errorCode(RuntimeException exception) {
-        return exception instanceof CampusFundFlowException flowException
+        return exception instanceof MyExpenseAgentException flowException
                 ? flowException.code().name()
-                : CampusFundFlowErrorCode.INTERNAL_ERROR.name();
+                : MyExpenseAgentErrorCode.INTERNAL_ERROR.name();
     }
 
     static String safeMessage(RuntimeException exception) {

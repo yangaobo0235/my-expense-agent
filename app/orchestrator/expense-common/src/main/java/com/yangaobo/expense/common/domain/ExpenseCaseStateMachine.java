@@ -1,7 +1,7 @@
 package com.yangaobo.expense.common.domain;
 
-import com.yangaobo.expense.common.error.CampusFundFlowException;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -24,8 +24,8 @@ public final class ExpenseCaseStateMachine {
     public static ExpenseCaseStatus transition(
             ExpenseCaseStatus current, ExpenseCaseStatus target) {
         if (!canTransition(current, target)) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "Cannot transition expense case from %s to %s".formatted(current, target));
         }
         return target;

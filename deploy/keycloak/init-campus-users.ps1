@@ -1,9 +1,9 @@
 param(
     [string] $KeycloakBaseUrl = 'http://192.168.23.66:18080',
-    [string] $Realm = 'campus-fund-flow',
+    [string] $Realm = 'my-expense-agent',
     [string] $AdminUsername = 'admin',
     [string] $AdminPassword = 'admin',
-    [string] $UserPassword = 'CampusFund123!',
+    [string] $UserPassword = 'MyExpense123!',
     [string] $BackendClientSecret = $env:KEYCLOAK_BACKEND_CLIENT_SECRET
 )
 
@@ -51,10 +51,10 @@ $headers = @{ Authorization = "Bearer $adminToken" }
 
 $webClients = @(Invoke-KeycloakJson `
         -Method Get `
-        -Uri "$KeycloakBaseUrl/admin/realms/$Realm/clients?clientId=campus-fund-web" `
+        -Uri "$KeycloakBaseUrl/admin/realms/$Realm/clients?clientId=my-expense-agent-web" `
         -Headers $headers)
 if ($webClients.Count -ne 1) {
-    throw 'campus-fund-web client 不存在或不唯一'
+    throw 'my-expense-agent-web client 不存在或不唯一'
 }
 $webClient = Invoke-KeycloakJson `
     -Method Get `
@@ -85,10 +85,10 @@ Invoke-KeycloakJson `
 if (-not [string]::IsNullOrWhiteSpace($BackendClientSecret)) {
     $backendClients = @(Invoke-KeycloakJson `
             -Method Get `
-            -Uri "$KeycloakBaseUrl/admin/realms/$Realm/clients?clientId=campus-fund-backend" `
+            -Uri "$KeycloakBaseUrl/admin/realms/$Realm/clients?clientId=my-expense-agent-backend" `
             -Headers $headers)
     if ($backendClients.Count -ne 1) {
-        throw 'campus-fund-backend client 不存在或不唯一'
+        throw 'my-expense-agent-backend client 不存在或不唯一'
     }
     $backendClient = Invoke-KeycloakJson `
         -Method Get `
@@ -238,10 +238,10 @@ if (-not [string]::IsNullOrWhiteSpace($BackendClientSecret)) {
             -ContentType 'application/x-www-form-urlencoded' `
             -Body @{
                 grant_type = 'client_credentials'
-                client_id = 'campus-fund-backend'
+                client_id = 'my-expense-agent-backend'
                 client_secret = $BackendClientSecret
             }).access_token
     if ([string]::IsNullOrWhiteSpace($serviceToken)) {
-        throw 'campus-fund-backend 服务账号令牌获取失败'
+        throw 'my-expense-agent-backend 服务账号令牌获取失败'
     }
 }

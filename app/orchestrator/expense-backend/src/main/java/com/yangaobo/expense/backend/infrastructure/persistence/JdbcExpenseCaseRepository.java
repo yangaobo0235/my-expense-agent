@@ -5,8 +5,8 @@ import com.yangaobo.expense.backend.domain.model.Money;
 import com.yangaobo.expense.backend.domain.model.RiskLevel;
 import com.yangaobo.expense.backend.domain.repository.ExpenseCaseRepository;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -165,8 +165,8 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (updated != 1) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "Expense case changed while it was being processed");
         }
         return expenseCase;
@@ -185,8 +185,8 @@ public class JdbcExpenseCaseRepository implements ExpenseCaseRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (deleted != 1) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "Expense case changed while it was being deleted");
         }
     }

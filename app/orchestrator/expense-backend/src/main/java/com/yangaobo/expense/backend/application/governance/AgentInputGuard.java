@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.application.governance;
 
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -25,8 +25,8 @@ public class AgentInputGuard {
                         violations.isEmpty() ? "LOW" : violations.size() > 1 ? "HIGH" : "MEDIUM",
                         violations);
         if (mode == GuardMode.BLOCK && !violations.isEmpty()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
                     "Agent 输入安全检查未通过：" + String.join("、", violations));
         }
         return result;

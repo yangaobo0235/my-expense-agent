@@ -50,7 +50,7 @@ public class ExpenseMcpConfiguration {
             ExpenseBusinessService service,
             ObjectMapper objectMapper) {
         return McpServer.sync(transport)
-                .serverInfo("campus-fund-business-mcp", "1.0.0")
+                .serverInfo("my-expense-agent-business-mcp", "1.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .toolCall(tool(mapper, "validate_invoice_number", "校验发票号码格式", invoiceSchema()),
                         (e, r) -> result(objectMapper, service.validateInvoiceNumber(text(r, "invoiceNumber"))))

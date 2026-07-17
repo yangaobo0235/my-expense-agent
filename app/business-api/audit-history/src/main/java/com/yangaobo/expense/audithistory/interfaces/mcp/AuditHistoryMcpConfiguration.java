@@ -51,7 +51,7 @@ public class AuditHistoryMcpConfiguration {
             AuditHistoryService service,
             ObjectMapper objectMapper) {
         return McpServer.sync(transport)
-                .serverInfo("campus-fund-audit-history-mcp", "1.0.0")
+                .serverInfo("my-expense-agent-audit-history-mcp", "1.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .toolCall(tool(mapper, "check_duplicate_document", "按 SHA-256 检查重复票据，并可排除当前案例", duplicateSchema()),
                         (e,r)->result(objectMapper,service.checkDuplicateDocument(text(r,"sha256"),optionalUuid(r,"excludeCaseId"))))

@@ -113,7 +113,7 @@ export const fixtureEvidence: CaseEvidence = {
       status: 'SUCCEEDED',
       durationMs: 4,
       evidence: {
-        planVersion: 'campusfundflow-multi-agent-v1',
+        planVersion: 'my-expense-agent-multi-agent-v1',
         agents: [
           {
             sequence: 1,
@@ -266,7 +266,7 @@ export const fixturePolicies: PolicyCatalogEntry[] = [
     version: 'v1',
     effectiveFrom: '2026-01-01',
     status: 'ACTIVE',
-    sourceUri: 'policy://campus-fund-flow/COMPETITION-TRAVEL-CN-V1',
+    sourceUri: 'policy://my-expense-agent/COMPETITION-TRAVEL-CN-V1',
     chunkCount: 8,
     indexedChunkCount: 8,
     updatedAt: '2026-06-22T09:00:00+08:00',
@@ -281,7 +281,7 @@ export const fixturePolicies: PolicyCatalogEntry[] = [
     version: 'v1',
     effectiveFrom: '2026-01-01',
     status: 'ACTIVE',
-    sourceUri: 'policy://campus-fund-flow/SRTP-MATERIAL-CN-V1',
+    sourceUri: 'policy://my-expense-agent/SRTP-MATERIAL-CN-V1',
     chunkCount: 7,
     indexedChunkCount: 7,
     updatedAt: '2026-06-22T09:00:00+08:00',
@@ -298,7 +298,7 @@ export const fixturePolicyMatches: PolicySearchMatch[] = [
     region: 'CN',
     applicantType: 'STUDENT',
     effectiveFrom: '2026-01-01',
-    sourceUri: 'policy://campus-fund-flow/COMPETITION-TRAVEL-CN-V1',
+    sourceUri: 'policy://my-expense-agent/COMPETITION-TRAVEL-CN-V1',
     chunkId: 'chunk-1',
     chunkIndex: 1,
     section: '竞赛住宿标准',
@@ -334,7 +334,7 @@ export const fixtureRiskReport: RiskEvaluationReport = {
     humanReviewTriggerRate: 0.6,
   },
   agentGovernance: {
-    planVersion: 'campusfundflow-multi-agent-v1',
+    planVersion: 'my-expense-agent-multi-agent-v1',
     totalAgents: 6,
     writeAgentCount: 1,
     idempotentWriteAgentCount: 1,

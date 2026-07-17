@@ -2,8 +2,8 @@ package com.yangaobo.expense.backend.domain.model;
 
 import com.yangaobo.expense.common.domain.ExpenseCaseStateMachine;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -183,7 +183,7 @@ public record ExpenseCase(
         return normalized;
     }
 
-    private static CampusFundFlowException validation(String message) {
-        return new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
+    private static MyExpenseAgentException validation(String message) {
+        return new MyExpenseAgentException(MyExpenseAgentErrorCode.VALIDATION_FAILED, message);
     }
 }

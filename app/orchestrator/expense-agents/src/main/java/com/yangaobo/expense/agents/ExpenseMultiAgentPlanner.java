@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class ExpenseMultiAgentPlanner {
 
-    public static final String PLAN_VERSION = "campus-fund-flow-multi-agent-v1";
+    public static final String PLAN_VERSION = "my-expense-agent-multi-agent-v1";
 
     public ExpenseMultiAgentPlan plan(String caseId, String requestId) {
         return new ExpenseMultiAgentPlan(

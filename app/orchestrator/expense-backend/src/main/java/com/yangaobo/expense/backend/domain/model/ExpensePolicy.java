@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.domain.model;
 
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -55,7 +55,7 @@ public record ExpensePolicy(
         return normalized;
     }
 
-    private static CampusFundFlowException validation(String message) {
-        return new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
+    private static MyExpenseAgentException validation(String message) {
+        return new MyExpenseAgentException(MyExpenseAgentErrorCode.VALIDATION_FAILED, message);
     }
 }

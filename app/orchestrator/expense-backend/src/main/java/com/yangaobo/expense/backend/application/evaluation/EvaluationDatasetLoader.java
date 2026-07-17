@@ -2,8 +2,8 @@ package com.yangaobo.expense.backend.application.evaluation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -64,7 +64,7 @@ final class EvaluationDatasetLoader {
         }
     }
 
-    private static CampusFundFlowException unavailable(String message) {
-        return new CampusFundFlowException(CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE, message);
+    private static MyExpenseAgentException unavailable(String message) {
+        return new MyExpenseAgentException(MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE, message);
     }
 }

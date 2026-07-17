@@ -8,8 +8,8 @@ import com.yangaobo.expense.backend.application.workflow.RiskRoutingDecision;
 import com.yangaobo.expense.backend.application.event.ExpenseCaseEventRepository;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,7 +132,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                 .sql(
                         """
                         SELECT case_id
-                        FROM campus_fund_audit_log
+                        FROM my_expense_agent_audit_log
                         WHERE action = 'REVIEW_MORE_INFO_REQUESTED'
                           AND request_id = :requestId
                         """)
@@ -192,8 +192,8 @@ public class JdbcReviewRepository implements ReviewRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (updated != 1) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "审核任务已被其他审核员处理");
         }
     }
@@ -223,8 +223,8 @@ public class JdbcReviewRepository implements ReviewRepository {
                         .param("expectedVersion", expectedVersion)
                         .update();
         if (updated != 1) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                     "审核任务已被其他审核员处理");
         }
     }
@@ -282,7 +282,7 @@ public class JdbcReviewRepository implements ReviewRepository {
         jdbcClient
                 .sql(
                         """
-                        INSERT INTO campus_fund_audit_log (
+                        INSERT INTO my_expense_agent_audit_log (
                             id, case_id, actor_subject, actor_type, action,
                             resource_type, resource_id, request_id, metadata, occurred_at
                         ) VALUES (

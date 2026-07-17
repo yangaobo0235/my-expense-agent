@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.interfaces.rest;
 import com.yangaobo.expense.backend.application.policy.ImportPolicyCommand;
 import com.yangaobo.expense.backend.application.policy.PolicyRetrievalService;
 import com.yangaobo.expense.backend.application.policy.PolicySearchQuery;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -89,8 +89,8 @@ public class PolicyController {
 
     private static String authenticatedSubject(Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.ACCESS_DENIED, "需要先完成身份认证");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.ACCESS_DENIED, "需要先完成身份认证");
         }
         return principal.getName();
     }

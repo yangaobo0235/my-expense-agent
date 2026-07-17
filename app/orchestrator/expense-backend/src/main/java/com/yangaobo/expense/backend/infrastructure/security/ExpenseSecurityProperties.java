@@ -22,7 +22,7 @@ public record ExpenseSecurityProperties(
         }
         audiences =
                 audiences == null || audiences.isEmpty()
-                        ? Set.of("campus-fund-backend")
+                        ? Set.of("my-expense-agent-backend")
                         : Set.copyOf(audiences);
         jwtClockSkew = jwtClockSkew == null ? Duration.ofSeconds(60) : jwtClockSkew;
         allowedOrigins =

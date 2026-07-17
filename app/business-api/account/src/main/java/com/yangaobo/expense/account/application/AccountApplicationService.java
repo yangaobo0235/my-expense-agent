@@ -33,7 +33,7 @@ public class AccountApplicationService {
                                         """
                                         SELECT applicant_id, name, project_code, campus_level, region,
                                                budget_balance, currency
-                                        FROM campus_fund_applicant_account
+                                        FROM my_expense_agent_applicant_account
                                         WHERE applicant_id = :applicantId
                                         ORDER BY project_code
                                         LIMIT 1
@@ -44,7 +44,7 @@ public class AccountApplicationService {
                                         """
                                         SELECT applicant_id, name, project_code, campus_level, region,
                                                budget_balance, currency
-                                        FROM campus_fund_applicant_account
+                                        FROM my_expense_agent_applicant_account
                                         WHERE applicant_id = :applicantId
                                           AND project_code = :projectCode
                                         ORDER BY project_code
@@ -88,8 +88,8 @@ public class AccountApplicationService {
                         """
                         SELECT budget.project_code, budget.total_amount, budget.available_amount,
                                budget.currency, budget.version, budget.updated_at
-                        FROM campus_fund_project_budget budget
-                        JOIN campus_fund_project_member member
+                        FROM my_expense_agent_project_budget budget
+                        JOIN my_expense_agent_project_member member
                           ON member.project_code = budget.project_code
                         WHERE member.applicant_id = :applicantId
                           AND budget.project_code = :projectCode
@@ -143,7 +143,7 @@ public class AccountApplicationService {
                                 """
                                 SELECT EXISTS (
                                     SELECT 1
-                                    FROM campus_fund_project_member
+                                    FROM my_expense_agent_project_member
                                     WHERE project_code = :projectCode
                                       AND applicant_id = :applicantId
                                 )
@@ -161,7 +161,7 @@ public class AccountApplicationService {
                         .sql(
                                 """
                                 SELECT available_amount, currency
-                                FROM campus_fund_project_budget
+                                FROM my_expense_agent_project_budget
                                 WHERE project_code = :projectCode
                                 FOR UPDATE
                                 """)
@@ -197,7 +197,7 @@ public class AccountApplicationService {
         jdbcClient
                 .sql(
                         """
-                        UPDATE campus_fund_project_budget
+                        UPDATE my_expense_agent_project_budget
                         SET available_amount = :remaining,
                             version = version + 1,
                             updated_at = :updatedAt
@@ -210,7 +210,7 @@ public class AccountApplicationService {
         jdbcClient
                 .sql(
                         """
-                        INSERT INTO campus_fund_budget_debit (
+                        INSERT INTO my_expense_agent_budget_debit (
                             debit_id, request_id, case_id, project_code, applicant_id,
                             amount, currency, status, remaining_available, created_at
                         ) VALUES (
@@ -238,7 +238,7 @@ public class AccountApplicationService {
                         """
                         SELECT debit_id, request_id, case_id, project_code, applicant_id,
                                amount, currency, status, remaining_available, created_at
-                        FROM campus_fund_budget_debit
+                        FROM my_expense_agent_budget_debit
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
@@ -279,7 +279,7 @@ public class AccountApplicationService {
                 .sql(
                         """
                         SELECT account_type
-                        FROM campus_fund_reimbursement_account
+                        FROM my_expense_agent_reimbursement_account
                         WHERE applicant_id = :applicantId
                         ORDER BY account_type
                         """)

@@ -34,7 +34,7 @@ public class OpenApiConfiguration {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("CampusFundFlow API")
+                                .title("MyExpenseAgent API")
                                 .version("v1")
                                 .description(
                                         "校园项目经费报销、合规审核、人工复核和审批后入账 API"))

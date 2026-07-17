@@ -7,8 +7,8 @@ import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.application.governance.SensitiveDataMasker;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -102,8 +102,8 @@ public class ExpenseCaseApplicationService {
         ExpenseCase expenseCase =
                 repository.findById(caseId).orElseThrow(() -> notFound(caseId));
         if (!expenseCase.ownerSubject().equals(ownerSubject)) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.ACCESS_DENIED,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.ACCESS_DENIED,
                     "The authenticated subject cannot access this expense case");
         }
         return expenseCase;
@@ -117,8 +117,8 @@ public class ExpenseCaseApplicationService {
     @Transactional(readOnly = true)
     public ExpenseCasePage search(ExpenseCaseQuery query) {
         if (query.page() < 0 || query.size() < 1 || query.size() > 100) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.VALIDATION_FAILED,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
                     "page必须大于等于0，size必须处于1到100之间");
         }
         var result =
@@ -170,15 +170,15 @@ public class ExpenseCaseApplicationService {
         return value == null || value.isBlank() ? null : value.trim();
     }
 
-    private static CampusFundFlowException notFound(UUID caseId) {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.EXPENSE_CASE_NOT_FOUND,
+    private static MyExpenseAgentException notFound(UUID caseId) {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.EXPENSE_CASE_NOT_FOUND,
                 "Expense case %s was not found".formatted(caseId));
     }
 
     private static void requireDraft(ExpenseCase expenseCase, String message) {
         if (expenseCase.status() != ExpenseCaseStatus.DRAFT) {
-            throw new CampusFundFlowException(CampusFundFlowErrorCode.VALIDATION_FAILED, message);
+            throw new MyExpenseAgentException(MyExpenseAgentErrorCode.VALIDATION_FAILED, message);
         }
     }
 

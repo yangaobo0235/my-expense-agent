@@ -14,7 +14,7 @@ export async function consumeCaseEvents({
   onEvent,
   onResetRequired,
 }: EventStreamOptions) {
-  let lastEventId = sessionStorage.getItem(`campus-fund-event:${caseId}`) ?? undefined;
+  let lastEventId = sessionStorage.getItem(`my-expense-agent-event:${caseId}`) ?? undefined;
   let lastSequence = 0;
   const seen = new Set<string>();
 
@@ -32,7 +32,7 @@ export async function consumeCaseEvents({
       },
     );
     if (response.status === 422) {
-      sessionStorage.removeItem(`campus-fund-event:${caseId}`);
+      sessionStorage.removeItem(`my-expense-agent-event:${caseId}`);
       lastEventId = undefined;
       onResetRequired();
       continue;
@@ -50,7 +50,7 @@ export async function consumeCaseEvents({
       seen.add(id);
       lastSequence = Math.max(lastSequence, event.sequence);
       lastEventId = id;
-      sessionStorage.setItem(`campus-fund-event:${caseId}`, id);
+      sessionStorage.setItem(`my-expense-agent-event:${caseId}`, id);
       onEvent(event);
     }
     await new Promise((resolve) => setTimeout(resolve, 1500));

@@ -6,8 +6,8 @@ import com.yangaobo.expense.backend.application.extraction.ExpenseDocumentExtrac
 import com.yangaobo.expense.backend.application.extraction.ExtractedExpenseDocument;
 import com.yangaobo.expense.backend.application.extraction.ExtractionCandidate;
 import com.yangaobo.expense.backend.application.extraction.PreparedDocument;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -54,8 +54,8 @@ public class DeterministicTextExpenseExtractor implements ExpenseDocumentExtract
     @Override
     public ExtractionCandidate extract(PreparedDocument prepared) {
         if (prepared.kind() != DocumentInputKind.TEXT) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE,
                     "Vision extraction is not configured yet");
         }
         String text = prepared.text();

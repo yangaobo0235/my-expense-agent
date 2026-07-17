@@ -1,8 +1,8 @@
 package com.yangaobo.expense.backend.infrastructure.mcp;
 
 import com.yangaobo.expense.backend.application.settlement.ApprovedExpenseWriter;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -66,9 +66,9 @@ public class DisabledApprovedExpenseWriter
         throw unavailable();
     }
 
-    private static CampusFundFlowException unavailable() {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+    private static MyExpenseAgentException unavailable() {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE,
                 "MCP Client 未启用，无法执行审批后入账");
     }
 }

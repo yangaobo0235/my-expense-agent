@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.settlement.ToolCallRepository;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -129,8 +129,8 @@ public class JdbcToolCallRepository implements ToolCallRepository {
                                         new IllegalStateException(
                                                 "Tool 调用幂等记录不存在"));
         if ("RUNNING".equals(existing.status())) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.DUPLICATE_REQUEST,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.DUPLICATE_REQUEST,
                     "相同 requestId 的 Tool 调用正在处理中");
         }
         if ("FAILED".equals(existing.status())) {

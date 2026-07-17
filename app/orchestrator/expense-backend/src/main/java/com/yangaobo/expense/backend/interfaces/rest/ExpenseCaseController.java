@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.application.extraction.ExpenseExtractionServ
 import com.yangaobo.expense.backend.application.settlement.ToolCallRepository;
 import com.yangaobo.expense.backend.application.workflow.ExpenseCoordinator;
 import com.yangaobo.expense.backend.application.workflow.ExpenseWorkflowCommand;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
@@ -233,8 +233,8 @@ public class ExpenseCaseController {
 
     private static String authenticatedSubject(Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.ACCESS_DENIED, "Authentication is required");
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.ACCESS_DENIED, "Authentication is required");
         }
         return principal.getName();
     }

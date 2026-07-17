@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.infrastructure.document;
 import com.yangaobo.expense.backend.application.extraction.DocumentInputKind;
 import com.yangaobo.expense.backend.application.extraction.DocumentPreprocessor;
 import com.yangaobo.expense.backend.application.extraction.PreparedDocument;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.io.IOException;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -35,7 +35,7 @@ public class PdfBoxDocumentPreprocessor implements DocumentPreprocessor {
             return new PreparedDocument(
                     DocumentInputKind.IMAGE, "", content, contentType, pageCount);
         } catch (IOException exception) {
-            CampusFundFlowException failure = rejected("PDF is damaged or cannot be parsed");
+            MyExpenseAgentException failure = rejected("PDF is damaged or cannot be parsed");
             failure.initCause(exception);
             throw failure;
         }
@@ -52,7 +52,7 @@ public class PdfBoxDocumentPreprocessor implements DocumentPreprocessor {
         return text.codePoints().filter(codePoint -> !Character.isWhitespace(codePoint)).count();
     }
 
-    private static CampusFundFlowException rejected(String message) {
-        return new CampusFundFlowException(CampusFundFlowErrorCode.DOCUMENT_REJECTED, message);
+    private static MyExpenseAgentException rejected(String message) {
+        return new MyExpenseAgentException(MyExpenseAgentErrorCode.DOCUMENT_REJECTED, message);
     }
 }

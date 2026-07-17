@@ -9,8 +9,8 @@ import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import dev.langchain4j.service.tool.ToolExecutionResult;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -198,8 +198,8 @@ public class ApprovedMcpWriteService {
         if (expenseCase.status() == ExpenseCaseStatus.UPLOADED
                 || expenseCase.status()
                         == ExpenseCaseStatus.EXTRACTING) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "票据提取完成前不能保存审核证据");
         }
         return execute(
@@ -224,8 +224,8 @@ public class ApprovedMcpWriteService {
         }
         ExpenseCase expenseCase = caseService.getById(caseId);
         if (expenseCase.status() != ExpenseCaseStatus.APPROVED) {
-            throw new CampusFundFlowException(
-                    CampusFundFlowErrorCode.INVALID_STATE_TRANSITION,
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "只有已批准的经费申请才能执行报销登记或入账 Tool");
         }
         return expenseCase;
@@ -280,9 +280,9 @@ public class ApprovedMcpWriteService {
         return value.trim();
     }
 
-    private static CampusFundFlowException validation(String message) {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.VALIDATION_FAILED, message);
+    private static MyExpenseAgentException validation(String message) {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.VALIDATION_FAILED, message);
     }
 
     public record McpWriteResult(

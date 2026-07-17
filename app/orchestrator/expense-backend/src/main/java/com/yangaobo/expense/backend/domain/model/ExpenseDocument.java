@@ -1,7 +1,7 @@
 package com.yangaobo.expense.backend.domain.model;
 
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public record ExpenseDocument(
         return normalized;
     }
 
-    private static CampusFundFlowException validation(String message) {
-        return new CampusFundFlowException(CampusFundFlowErrorCode.DOCUMENT_REJECTED, message);
+    private static MyExpenseAgentException validation(String message) {
+        return new MyExpenseAgentException(MyExpenseAgentErrorCode.DOCUMENT_REJECTED, message);
     }
 }

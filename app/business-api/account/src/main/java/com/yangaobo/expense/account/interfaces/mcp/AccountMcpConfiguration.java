@@ -52,7 +52,7 @@ public class AccountMcpConfiguration {
             AccountApplicationService service,
             ObjectMapper objectMapper) {
         return McpServer.sync(transport)
-                .serverInfo("campus-fund-account-mcp", "1.0.0")
+                .serverInfo("my-expense-agent-account-mcp", "1.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .toolCall(
                         tool(mapper, "get_applicant_profile", "查询学生申请人、所属项目、校园角色和地区信息", applicantSchema()),

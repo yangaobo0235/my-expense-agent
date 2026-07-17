@@ -1,8 +1,8 @@
 package com.yangaobo.expense.backend.infrastructure.storage;
 
 import com.yangaobo.expense.backend.application.storage.DocumentObjectStorage;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.GetObjectArgs;
@@ -143,8 +143,8 @@ public class MinioDocumentObjectStorage implements DocumentObjectStorage {
                 exception);
     }
 
-    private static CampusFundFlowException unavailable(String message, Exception cause) {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE, message, cause);
+    private static MyExpenseAgentException unavailable(String message, Exception cause) {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE, message, cause);
     }
 }

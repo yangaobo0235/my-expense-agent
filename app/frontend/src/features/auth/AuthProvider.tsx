@@ -8,8 +8,8 @@ const developmentMode = import.meta.env.VITE_AUTH_MODE === 'development';
 
 const keycloak = new Keycloak({
   url: import.meta.env.VITE_KEYCLOAK_URL ?? 'http://localhost:18080',
-  realm: import.meta.env.VITE_KEYCLOAK_REALM ?? 'campus-fund-flow',
-  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID ?? 'campus-fund-web',
+  realm: import.meta.env.VITE_KEYCLOAK_REALM ?? 'my-expense-agent',
+  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID ?? 'my-expense-agent-web',
 });
 
 function rolesOf(token?: KeycloakTokenParsed): UserRole[] {
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           displayName:
             keycloak.tokenParsed.preferred_username ??
             keycloak.tokenParsed.name ??
-            'CampusFundFlow 用户',
+            'my-expense-agent 用户',
           roles: rolesOf(keycloak.tokenParsed),
         });
       })

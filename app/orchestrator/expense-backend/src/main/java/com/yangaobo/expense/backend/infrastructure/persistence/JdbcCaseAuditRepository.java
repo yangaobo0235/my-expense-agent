@@ -29,7 +29,7 @@ public class JdbcCaseAuditRepository implements CaseAuditRepository {
                         SELECT id, case_id, actor_subject, actor_type, action,
                                resource_type, resource_id, request_id,
                                metadata::text AS metadata, occurred_at
-                        FROM campus_fund_audit_log
+                        FROM my_expense_agent_audit_log
                         WHERE case_id = :caseId
                         ORDER BY occurred_at DESC, id DESC
                         LIMIT :limit

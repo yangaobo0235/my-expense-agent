@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 
 const schemaUrl = process.env.OPENAPI_SCHEMA_URL ?? 'http://localhost:25101/v3/api-docs';
 const committedSchema = resolve('src/api/generated/schema.ts');
-const tempDir = mkdtempSync(join(tmpdir(), 'campus-fund-openapi-'));
+const tempDir = mkdtempSync(join(tmpdir(), 'my-expense-agent-openapi-'));
 const generatedSchema = join(tempDir, 'schema.ts');
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
@@ -27,7 +27,7 @@ try {
     console.error('\nOpenAPI schema is out of date.');
     console.error(`Source: ${schemaUrl}`);
     console.error(`Expected committed file: ${committedSchema}`);
-    console.error('\nRun `npm run api:generate` after starting campus-fund-backend, then commit the updated schema.');
+    console.error('\nRun `npm run api:generate` after starting my-expense-agent-backend, then commit the updated schema.');
     process.exitCode = 1;
   } else {
     console.log('OpenAPI schema is up to date.');

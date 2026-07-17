@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.ai.ChatModelClient;
 import com.yangaobo.expense.backend.application.ai.ChatModelProperties;
 import com.yangaobo.expense.backend.application.governance.DependencyCircuitBreaker;
-import com.yangaobo.expense.common.error.CampusFundFlowErrorCode;
-import com.yangaobo.expense.common.error.CampusFundFlowException;
+import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
+import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
@@ -131,9 +131,9 @@ public class OpenAiCompatibleChatModelClient implements ChatModelClient {
         return Math.max(0, Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
     }
 
-    private static CampusFundFlowException dependency(String message, Exception cause) {
-        return new CampusFundFlowException(
-                CampusFundFlowErrorCode.DEPENDENCY_UNAVAILABLE,
+    private static MyExpenseAgentException dependency(String message, Exception cause) {
+        return new MyExpenseAgentException(
+                MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE,
                 cause == null ? message : message + ": " + cause.getMessage());
     }
 }

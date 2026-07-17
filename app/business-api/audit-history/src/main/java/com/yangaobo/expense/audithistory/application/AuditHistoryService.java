@@ -30,7 +30,7 @@ public class AuditHistoryService {
         String sql =
                 """
                 SELECT case_id, applicant_id, seller_name, amount, currency, expense_date, document_sha256
-                FROM campus_fund_reimbursement_history_item
+                FROM my_expense_agent_reimbursement_history_item
                 WHERE document_sha256 = :sha256
                 """
                         + (excludeCaseId == null ? "" : " AND case_id <> :excludeCaseId")
@@ -51,7 +51,7 @@ public class AuditHistoryService {
                 .sql(
                         """
                         SELECT case_id, applicant_id, seller_name, amount, currency, expense_date, document_sha256
-                        FROM campus_fund_reimbursement_history_item
+                        FROM my_expense_agent_reimbursement_history_item
                         WHERE applicant_id = :applicantId
                         ORDER BY expense_date DESC
                         """)
@@ -112,7 +112,7 @@ public class AuditHistoryService {
         jdbcClient
                 .sql(
                         """
-                        INSERT INTO campus_fund_reimbursement_history_item (
+                        INSERT INTO my_expense_agent_reimbursement_history_item (
                             history_id, request_id, case_id, applicant_id, seller_name,
                             amount, currency, expense_date, document_sha256, created_at
                         ) VALUES (
@@ -155,7 +155,7 @@ public class AuditHistoryService {
                             jdbcClient
                                     .sql(
                                             """
-                                            INSERT INTO campus_fund_review_evidence (
+                                            INSERT INTO my_expense_agent_review_evidence (
                                                 evidence_id, request_id, case_id, evidence_type, content_hash, created_at
                                             ) VALUES (
                                                 :evidenceId, :requestId, :caseId, :evidenceType, :contentHash, :createdAt
@@ -177,7 +177,7 @@ public class AuditHistoryService {
                 .sql(
                         """
                         SELECT evidence_id, request_id, case_id, evidence_type, content_hash, created_at
-                        FROM campus_fund_review_evidence
+                        FROM my_expense_agent_review_evidence
                         WHERE request_id = :requestId
                         """)
                 .param("requestId", requestId)
@@ -203,7 +203,7 @@ public class AuditHistoryService {
                         """
                         SELECT history_id, request_id, case_id, applicant_id, seller_name,
                                amount, currency, expense_date, document_sha256, created_at
-                        FROM campus_fund_reimbursement_history_item
+                        FROM my_expense_agent_reimbursement_history_item
                         WHERE case_id = :caseId AND document_sha256 = :documentSha256
                         """)
                 .param("caseId", caseId)
@@ -218,7 +218,7 @@ public class AuditHistoryService {
                         """
                         SELECT history_id, request_id, case_id, applicant_id, seller_name,
                                amount, currency, expense_date, document_sha256, created_at
-                        FROM campus_fund_reimbursement_history_item
+                        FROM my_expense_agent_reimbursement_history_item
                         WHERE %s
                         """
                                 .formatted(whereClause))

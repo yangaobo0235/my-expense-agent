@@ -6,7 +6,7 @@ spring:
       - optional:file:.env.local[.properties]
       - optional:file:../../../.env.local[.properties]
   application:
-    name: campus-fund-applicant-context
+    name: my-expense-agent-applicant-context
   datasource:
     url: ${EXPENSE_DATASOURCE_URL}
     username: ${EXPENSE_DATASOURCE_USERNAME}
@@ -22,8 +22,8 @@ spring:
 expense:
   mcp:
     security:
-      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/campus-fund-flow}
-      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/campus-fund-flow/protocol/openid-connect/certs}
+      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/my-expense-agent}
+      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/certs}
       jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
       audiences:
         - ${ACCOUNT_MCP_AUDIENCE:account-mcp}
