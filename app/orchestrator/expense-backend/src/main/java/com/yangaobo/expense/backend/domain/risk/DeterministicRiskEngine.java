@@ -89,6 +89,13 @@ public class DeterministicRiskEngine {
                             30,
                             "未检索到可追溯的适用校园经费制度证据"));
         }
+        if (input.promptInjectionDetected()) {
+            signals.add(
+                    signal(
+                            RiskSignalCode.PROMPT_INJECTION_DETECTED,
+                            60,
+                            "票据文本包含试图绕过审核或操纵模型的提示注入指令"));
+        }
 
         int score =
                 Math.min(

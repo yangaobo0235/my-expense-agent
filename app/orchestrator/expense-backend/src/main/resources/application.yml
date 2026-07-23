@@ -26,10 +26,10 @@ spring:
 expense:
   extraction:
     mode: ${EXPENSE_EXTRACTION_MODE:llm}
-    model-name: ${EXPENSE_EXTRACTION_MODEL_NAME:qwen-vl-plus}
+    model-name: ${EXPENSE_EXTRACTION_MODEL_NAME:gpt-5.4}
     prompt-version: ${EXPENSE_EXTRACTION_PROMPT_VERSION:receipt-extraction-v2}
-    base-url: ${EXPENSE_EXTRACTION_BASE_URL:${EXPENSE_AI_CHAT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}}
-    api-key: ${EXPENSE_EXTRACTION_API_KEY:${DASHSCOPE_API_KEY:}}
+    base-url: ${EXPENSE_EXTRACTION_BASE_URL:https://api.openai.com/v1}
+    api-key: ${EXPENSE_EXTRACTION_API_KEY:${OPENAI_API_KEY:}}
     timeout: ${EXPENSE_EXTRACTION_TIMEOUT:30s}
     max-retries: ${EXPENSE_EXTRACTION_MAX_RETRIES:2}
     fallback-enabled: ${EXPENSE_EXTRACTION_FALLBACK_ENABLED:true}
@@ -77,7 +77,7 @@ expense:
       max-attempts: ${EXPENSE_MCP_MAX_ATTEMPTS:2}
       retry-delay: ${EXPENSE_MCP_RETRY_DELAY:200ms}
   evaluation:
-    risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v1.json}
+    risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v2.json}
     policy-rag-dataset: ${EXPENSE_POLICY_RAG_EVALUATION_DATASET:classpath:evaluation/cases/policy-rag-golden-v1.json}
     agent-security-dataset: ${EXPENSE_AGENT_SECURITY_EVALUATION_DATASET:classpath:evaluation/cases/agent-security-golden-v1.json}
 management:

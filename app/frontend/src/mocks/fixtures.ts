@@ -309,29 +309,33 @@ export const fixturePolicyMatches: PolicySearchMatch[] = [
 ];
 
 export const fixtureRiskReport: RiskEvaluationReport = {
-  datasetVersion: 'risk-golden-v1',
+  datasetVersion: 'risk-golden-v2',
   datasetSha256: 'fixture-dataset-sha256',
   engineVersion: 'deterministic-risk-v1',
   generatedAt: '2026-06-22T10:40:00+08:00',
-  caseCount: 100,
+  caseCount: 140,
   categoryCounts: {
-    正常申请: 30,
-    超预算申请: 20,
-    缺材料申请: 10,
-    重复票据: 10,
-    金额不一致: 10,
-    制度边界: 10,
-    提示注入: 5,
-    低质量图片: 5,
+    合规经费申请: 30,
+    超出校园经费标准: 20,
+    缺少必要报销材料: 10,
+    疑似重复报销票据: 10,
+    申请金额与票据不一致: 10,
+    校园制度边界案例: 10,
+    票据提示注入攻击: 5,
+    低质量票据图片: 5,
+    项目预算不足: 10,
+    制度证据缺失: 10,
+    复合风险场景: 10,
+    严重低置信度人工复核: 10,
   },
   metrics: {
     precision: 1,
     recall: 1,
     f1: 1,
-    riskLevelAccuracy: 1,
-    humanReviewAccuracy: 1,
+    riskLevelAccuracy: 0.9285714286,
+    humanReviewAccuracy: 0.9285714286,
     highRiskMissRate: 0,
-    humanReviewTriggerRate: 0.6,
+    humanReviewTriggerRate: 0.6428571429,
   },
   agentGovernance: {
     planVersion: 'my-expense-agent-multi-agent-v1',
@@ -343,7 +347,15 @@ export const fixtureRiskReport: RiskEvaluationReport = {
     humanHandoffCoverage: 1,
     retryableAgentRate: 0.5,
   },
-  failures: [],
+  failures: Array.from({ length: 10 }, (_, index) => ({
+    caseId: `low-confidence-review-${String(index + 1).padStart(3, '0')}`,
+    expectedSignals: ['LOW_EXTRACTION_CONFIDENCE'],
+    actualSignals: ['LOW_EXTRACTION_CONFIDENCE'],
+    expectedRiskLevel: 'MEDIUM',
+    actualRiskLevel: 'LOW',
+    expectedHumanReview: true,
+    actualHumanReview: false,
+  })),
 };
 
 export const fixtureObservableRuns: ObservableWorkflowRun[] = [

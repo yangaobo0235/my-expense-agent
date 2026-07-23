@@ -29,7 +29,7 @@ final class PromptDefaults {
 
                             {{documentContent}}
                             """,
-                            "qwen-vl-plus",
+                            "gpt-5.4",
                             actor,
                             now);
             case "review-report" ->

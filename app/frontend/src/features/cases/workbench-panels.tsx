@@ -631,6 +631,9 @@ function riskSignalLabel(code: string) {
     POLICY_LIMIT_EXCEEDED: '超过制度额度',
     MISSING_REQUIRED_DOCUMENT: '缺少必要凭证',
     FORBIDDEN_EXPENSE_ITEM: '包含不可报销项目',
+    PROJECT_BUDGET_EXCEEDED: '项目可用预算不足或币种不一致',
+    POLICY_EVIDENCE_MISSING: '缺少可追溯制度依据',
+    PROMPT_INJECTION_DETECTED: '票据包含提示注入指令',
     DATE_ANOMALY: '日期异常',
     SELLER_ANOMALY: '销售方异常',
     DEPENDENCY_UNAVAILABLE: '外部数据暂不可用',
@@ -639,7 +642,7 @@ function riskSignalLabel(code: string) {
 }
 
 function riskSignalColor(code: string) {
-  if (code.includes('DUPLICATE') || code.includes('FORBIDDEN')) return 'red';
+  if (code.includes('DUPLICATE') || code.includes('FORBIDDEN') || code.includes('INJECTION')) return 'red';
   if (code.includes('POLICY') || code.includes('MISSING')) return 'orange';
   if (code.includes('DEPENDENCY')) return 'purple';
   return 'blue';

@@ -171,6 +171,7 @@ function reasonLabel(code: string) {
     DUPLICATE_DOCUMENT: '疑似重复报销',
     MISSING_REQUIRED_DOCUMENT: '缺少必要凭证',
     FORBIDDEN_EXPENSE_ITEM: '可能包含不可报销项目',
+    PROMPT_INJECTION_DETECTED: '票据包含提示注入指令',
     DATE_ANOMALY: '支出日期异常',
     SELLER_ANOMALY: '收款方需要确认',
   };

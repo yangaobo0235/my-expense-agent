@@ -31,6 +31,18 @@ final class ComplianceFactDeriver {
                     "奢侈品",
                     "私人用品",
                     "个人消费");
+    private static final List<String> PROMPT_INJECTION_TERMS =
+            List.of(
+                    "忽略之前",
+                    "ignore previous",
+                    "越过规则",
+                    "绕过审批",
+                    "直接批准",
+                    "approve all",
+                    "跳过人工",
+                    "skip human",
+                    "submit_fund_posting",
+                    "直接入账");
 
     private ComplianceFactDeriver() {}
 
@@ -46,6 +58,7 @@ final class ComplianceFactDeriver {
         List<String> sellerReasons = new ArrayList<>();
         List<String> missingFields = new ArrayList<>();
         List<String> forbiddenItems = new ArrayList<>();
+        List<String> promptInjectionEvidence = new ArrayList<>();
 
         for (int documentIndex = 0; documentIndex < documents.size(); documentIndex++) {
             ExtractedExpenseDocument document = documents.get(documentIndex);
@@ -89,6 +102,15 @@ final class ComplianceFactDeriver {
                 if (matchedTerm != null) {
                     forbiddenItems.add(description + " [" + matchedTerm + "]");
                 }
+                collectPromptInjectionEvidence(
+                        prefix + ".items.description", description, promptInjectionEvidence);
+            }
+            collectPromptInjectionEvidence(prefix + ".sellerName", seller, promptInjectionEvidence);
+            collectPromptInjectionEvidence(
+                    prefix + ".buyerName", normalized(document.buyerName()), promptInjectionEvidence);
+            for (String warning : document.warnings()) {
+                collectPromptInjectionEvidence(
+                        prefix + ".warnings", normalized(warning), promptInjectionEvidence);
             }
         }
 
@@ -104,6 +126,7 @@ final class ComplianceFactDeriver {
         evidence.put("sellerReasons", List.copyOf(sellerReasons));
         evidence.put("missingFields", List.copyOf(missingFields));
         evidence.put("forbiddenItems", List.copyOf(forbiddenItems));
+        evidence.put("promptInjectionEvidence", List.copyOf(promptInjectionEvidence));
         evidence.put("policyMatchCount", policyFindings == null ? 0 : policyFindings.size());
         if (budget != null) {
             evidence.put(
@@ -125,12 +148,22 @@ final class ComplianceFactDeriver {
                 !missingFields.isEmpty(),
                 !forbiddenItems.isEmpty(),
                 policyEvidenceMissing,
+                !promptInjectionEvidence.isEmpty(),
                 evidence);
     }
 
     private static String forbiddenTerm(String description) {
         String normalized = description.toLowerCase(Locale.ROOT);
         return FORBIDDEN_ITEM_TERMS.stream().filter(normalized::contains).findFirst().orElse(null);
+    }
+
+    private static void collectPromptInjectionEvidence(
+            String field, String value, List<String> evidence) {
+        String normalized = value.toLowerCase(Locale.ROOT);
+        PROMPT_INJECTION_TERMS.stream()
+                .filter(normalized::contains)
+                .findFirst()
+                .ifPresent(term -> evidence.add(field + " [" + term + "]"));
     }
 
     private static String normalized(String value) {
@@ -144,6 +177,7 @@ final class ComplianceFactDeriver {
             boolean missingRequiredDocument,
             boolean forbiddenExpenseItem,
             boolean policyEvidenceMissing,
+            boolean promptInjectionDetected,
             Map<String, Object> evidence)
             implements Serializable {
 

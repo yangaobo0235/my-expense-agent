@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 public class ExpenseExtractionProperties {
 
     private String mode = "llm";
-    private String modelName = "qwen-vl-plus";
+    private String modelName = "gpt-5.4";
     private String promptVersion = "receipt-extraction-v2";
-    private String baseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1";
+    private String baseUrl = "https://api.openai.com/v1";
     private String apiKey = "";
     private Duration timeout = Duration.ofSeconds(30);
     private int maxRetries = 2;

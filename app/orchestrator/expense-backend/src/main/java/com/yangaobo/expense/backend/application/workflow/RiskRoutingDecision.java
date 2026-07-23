@@ -56,7 +56,8 @@ public record RiskRoutingDecision(
         List<String> reasons = codes.stream().map(Enum::name).toList();
         if (codes.contains(RiskSignalCode.DUPLICATE_DOCUMENT)
                 || codes.contains(RiskSignalCode.SELLER_ANOMALY)
-                || codes.contains(RiskSignalCode.FORBIDDEN_EXPENSE_ITEM)) {
+                || codes.contains(RiskSignalCode.FORBIDDEN_EXPENSE_ITEM)
+                || codes.contains(RiskSignalCode.PROMPT_INJECTION_DETECTED)) {
             return new RiskRoutingDecision(
                     RiskRoutingAction.POSSIBLE_FRAUD_ESCALATE,
                     true,
@@ -64,8 +65,8 @@ public record RiskRoutingDecision(
                     "FRAUD_REVIEW",
                     "FINANCE_ADMIN",
                     8,
-                    List.of("重复票据检查", "商户异常证据", "历史报销", "原始票据", "正反证据摘要"),
-                    "该案例存在疑似舞弊信号，已升级财务管理员复核。",
+                    List.of("重复票据检查", "商户异常证据", "提示注入证据", "历史报销", "原始票据", "正反证据摘要"),
+                    "该案例存在疑似舞弊或提示注入信号，已升级财务管理员复核。",
                     "ESCALATE_FRAUD_REVIEW",
                     reasons);
         }

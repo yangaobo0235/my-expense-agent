@@ -683,7 +683,8 @@ class ExpenseWorkflowSteps {
                                     facts.missingRequiredDocument(),
                                     facts.forbiddenExpenseItem(),
                                     facts.projectBudgetExceeded(),
-                                    facts.policyEvidenceMissing()));
+                                    facts.policyEvidenceMissing(),
+                                    facts.promptInjectionDetected()));
             if (dependencyFailure) {
                 risk = withDependencyFailure(risk);
             }

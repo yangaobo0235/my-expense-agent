@@ -2,7 +2,12 @@ import { Alert, Card, Descriptions, Empty, Space, Table, Tag, Typography } from 
 import { CaseEvidence, ReviewTask } from '../api/contracts';
 
 const policySignals = new Set(['POLICY_LIMIT_EXCEEDED', 'AMOUNT_MISMATCH']);
-const fraudSignals = new Set(['DUPLICATE_DOCUMENT', 'SELLER_ANOMALY', 'FORBIDDEN_EXPENSE_ITEM']);
+const fraudSignals = new Set([
+  'DUPLICATE_DOCUMENT',
+  'SELLER_ANOMALY',
+  'FORBIDDEN_EXPENSE_ITEM',
+  'PROMPT_INJECTION_DETECTED',
+]);
 
 export function RiskEvidenceBoard({
   evidence,

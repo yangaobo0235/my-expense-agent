@@ -1,6 +1,6 @@
 {
-  "datasetVersion": "risk-golden-v1",
-  "description": "my-expense-agent 确定性风险引擎 100 条人工核验合成黄金案例，覆盖学生竞赛、科研训练、实验耗材、社团活动等校园经费报销中的正常、超标、缺票、重复、金额差异、制度边界、提示注入与低质量票据。",
+  "datasetVersion": "risk-golden-v2",
+  "description": "my-expense-agent 确定性风险引擎 140 条人工核验合成回归案例，覆盖正常申请、制度超限、材料缺失、重复票据、金额差异、阈值边界、提示注入、低质量图片、预算不足、制度证据缺失、复合风险与严重低置信度人工复核。",
   "cases": [
     {
       "id": "normal-001",
@@ -1097,9 +1097,10 @@
       "claimedAmount": 341,
       "extractedAmount": 341,
       "extractionConfidence": 0.85,
-      "expectedSignals": [],
-      "expectedRiskLevel": "LOW",
-      "expectedHumanReview": false
+      "promptInjectionDetected": true,
+      "expectedSignals": ["PROMPT_INJECTION_DETECTED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
     },
     {
       "id": "injection-002",
@@ -1107,9 +1108,10 @@
       "claimedAmount": 382,
       "extractedAmount": 382,
       "extractionConfidence": 0.87,
-      "expectedSignals": [],
-      "expectedRiskLevel": "LOW",
-      "expectedHumanReview": false
+      "promptInjectionDetected": true,
+      "expectedSignals": ["PROMPT_INJECTION_DETECTED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
     },
     {
       "id": "injection-003",
@@ -1117,9 +1119,10 @@
       "claimedAmount": 423,
       "extractedAmount": 423,
       "extractionConfidence": 0.89,
-      "expectedSignals": [],
-      "expectedRiskLevel": "LOW",
-      "expectedHumanReview": false
+      "promptInjectionDetected": true,
+      "expectedSignals": ["PROMPT_INJECTION_DETECTED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
     },
     {
       "id": "injection-004",
@@ -1127,9 +1130,10 @@
       "claimedAmount": 464,
       "extractedAmount": 464,
       "extractionConfidence": 0.91,
-      "expectedSignals": [],
-      "expectedRiskLevel": "LOW",
-      "expectedHumanReview": false
+      "promptInjectionDetected": true,
+      "expectedSignals": ["PROMPT_INJECTION_DETECTED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
     },
     {
       "id": "injection-005",
@@ -1138,10 +1142,12 @@
       "extractedAmount": 505,
       "extractionConfidence": 0.93,
       "forbiddenExpenseItem": true,
+      "promptInjectionDetected": true,
       "expectedSignals": [
-        "FORBIDDEN_EXPENSE_ITEM"
+        "FORBIDDEN_EXPENSE_ITEM",
+        "PROMPT_INJECTION_DETECTED"
       ],
-      "expectedRiskLevel": "MEDIUM",
+      "expectedRiskLevel": "HIGH",
       "expectedHumanReview": true
     },
     {
@@ -1205,6 +1211,443 @@
         "MISSING_REQUIRED_DOCUMENT",
         "LOW_EXTRACTION_CONFIDENCE"
       ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-001",
+      "category": "项目预算不足",
+      "claimedAmount": 820,
+      "extractedAmount": 820,
+      "extractionConfidence": 0.91,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-002",
+      "category": "项目预算不足",
+      "claimedAmount": 960,
+      "extractedAmount": 960,
+      "extractionConfidence": 0.88,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-003",
+      "category": "项目预算不足",
+      "claimedAmount": 1250,
+      "extractedAmount": 1250,
+      "extractionConfidence": 0.93,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-004",
+      "category": "项目预算不足",
+      "claimedAmount": 1480,
+      "extractedAmount": 1480,
+      "extractionConfidence": 0.86,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-005",
+      "category": "项目预算不足",
+      "claimedAmount": 1760,
+      "extractedAmount": 1760,
+      "extractionConfidence": 0.95,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-006",
+      "category": "项目预算不足",
+      "claimedAmount": 2140,
+      "extractedAmount": 2140,
+      "extractionConfidence": 0.9,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-007",
+      "category": "项目预算不足",
+      "claimedAmount": 2580,
+      "extractedAmount": 2580,
+      "extractionConfidence": 0.87,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-008",
+      "category": "项目预算不足",
+      "claimedAmount": 3060,
+      "extractedAmount": 3060,
+      "extractionConfidence": 0.92,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-009",
+      "category": "项目预算不足",
+      "claimedAmount": 3480,
+      "extractedAmount": 3480,
+      "extractionConfidence": 0.89,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-010",
+      "category": "项目预算不足",
+      "claimedAmount": 4200,
+      "extractedAmount": 4200,
+      "extractionConfidence": 0.94,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-001",
+      "category": "制度证据缺失",
+      "claimedAmount": 260,
+      "extractedAmount": 260,
+      "extractionConfidence": 0.9,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-002",
+      "category": "制度证据缺失",
+      "claimedAmount": 480,
+      "extractedAmount": 480,
+      "extractionConfidence": 0.88,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-003",
+      "category": "制度证据缺失",
+      "claimedAmount": 720,
+      "extractedAmount": 720,
+      "extractionConfidence": 0.93,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-004",
+      "category": "制度证据缺失",
+      "claimedAmount": 980,
+      "extractedAmount": 980,
+      "extractionConfidence": 0.85,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-005",
+      "category": "制度证据缺失",
+      "claimedAmount": 1260,
+      "extractedAmount": 1260,
+      "extractionConfidence": 0.91,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-006",
+      "category": "制度证据缺失",
+      "claimedAmount": 1540,
+      "extractedAmount": 1540,
+      "extractionConfidence": 0.87,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-007",
+      "category": "制度证据缺失",
+      "claimedAmount": 1880,
+      "extractedAmount": 1880,
+      "extractionConfidence": 0.95,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-008",
+      "category": "制度证据缺失",
+      "claimedAmount": 2240,
+      "extractedAmount": 2240,
+      "extractionConfidence": 0.89,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-009",
+      "category": "制度证据缺失",
+      "claimedAmount": 2780,
+      "extractedAmount": 2780,
+      "extractionConfidence": 0.92,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-010",
+      "category": "制度证据缺失",
+      "claimedAmount": 3360,
+      "extractedAmount": 3360,
+      "extractionConfidence": 0.86,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-001",
+      "category": "复合风险场景",
+      "claimedAmount": 1600,
+      "extractedAmount": 1500,
+      "extractionConfidence": 0.92,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["AMOUNT_MISMATCH", "PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-002",
+      "category": "复合风险场景",
+      "claimedAmount": 880,
+      "extractedAmount": 880,
+      "extractionConfidence": 0.66,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE", "PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-003",
+      "category": "复合风险场景",
+      "claimedAmount": 1320,
+      "extractedAmount": 1320,
+      "extractionConfidence": 0.94,
+      "missingRequiredDocument": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["MISSING_REQUIRED_DOCUMENT", "POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-004",
+      "category": "复合风险场景",
+      "claimedAmount": 2400,
+      "extractedAmount": 2400,
+      "extractionConfidence": 0.91,
+      "forbiddenExpenseItem": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["FORBIDDEN_EXPENSE_ITEM", "POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-005",
+      "category": "复合风险场景",
+      "claimedAmount": 980,
+      "extractedAmount": 930,
+      "extractionConfidence": 0.68,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["AMOUNT_MISMATCH", "LOW_EXTRACTION_CONFIDENCE", "POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-006",
+      "category": "复合风险场景",
+      "claimedAmount": 2860,
+      "extractedAmount": 2860,
+      "extractionConfidence": 0.9,
+      "duplicateDocument": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["DUPLICATE_DOCUMENT", "PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-007",
+      "category": "复合风险场景",
+      "claimedAmount": 740,
+      "extractedAmount": 740,
+      "extractionConfidence": 0.65,
+      "missingRequiredDocument": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["MISSING_REQUIRED_DOCUMENT", "LOW_EXTRACTION_CONFIDENCE", "PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-008",
+      "category": "复合风险场景",
+      "claimedAmount": 1920,
+      "extractedAmount": 1850,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["AMOUNT_MISMATCH", "POLICY_LIMIT_EXCEEDED", "POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-009",
+      "category": "复合风险场景",
+      "claimedAmount": 3560,
+      "extractedAmount": 3560,
+      "extractionConfidence": 0.88,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": ["FORBIDDEN_EXPENSE_ITEM", "PROJECT_BUDGET_EXCEEDED"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-010",
+      "category": "复合风险场景",
+      "claimedAmount": 1680,
+      "extractedAmount": 1600,
+      "extractionConfidence": 0.64,
+      "duplicateDocument": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": ["DUPLICATE_DOCUMENT", "AMOUNT_MISMATCH", "LOW_EXTRACTION_CONFIDENCE", "POLICY_EVIDENCE_MISSING"],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-001",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 180,
+      "extractedAmount": 180,
+      "extractionConfidence": 0.22,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-002",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 260,
+      "extractedAmount": 260,
+      "extractionConfidence": 0.27,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-003",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 340,
+      "extractedAmount": 340,
+      "extractionConfidence": 0.31,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-004",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 420,
+      "extractedAmount": 420,
+      "extractionConfidence": 0.35,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-005",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 560,
+      "extractedAmount": 560,
+      "extractionConfidence": 0.39,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-006",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 680,
+      "extractedAmount": 680,
+      "extractionConfidence": 0.43,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-007",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 820,
+      "extractedAmount": 820,
+      "extractionConfidence": 0.47,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-008",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 960,
+      "extractedAmount": 960,
+      "extractionConfidence": 0.51,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-009",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 1120,
+      "extractedAmount": 1120,
+      "extractionConfidence": 0.55,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-010",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 1360,
+      "extractedAmount": 1360,
+      "extractionConfidence": 0.59,
+      "expectedSignals": ["LOW_EXTRACTION_CONFIDENCE"],
       "expectedRiskLevel": "MEDIUM",
       "expectedHumanReview": true
     }

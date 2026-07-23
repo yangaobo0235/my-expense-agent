@@ -18,6 +18,9 @@ public record RiskEvaluationDataset(
             boolean policyLimitExceeded,
             boolean missingRequiredDocument,
             boolean forbiddenExpenseItem,
+            boolean projectBudgetExceeded,
+            boolean policyEvidenceMissing,
+            boolean promptInjectionDetected,
             List<String> expectedSignals,
             String expectedRiskLevel,
             boolean expectedHumanReview) {}

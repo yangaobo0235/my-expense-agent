@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
@@ -70,11 +71,22 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
         return jdbcClient
                 .sql(
                         """
-                        SELECT output_data::text
-                        FROM expense_agent_step
-                        WHERE run_id = :runId AND step_name = :stepName
-                          AND status = 'SUCCEEDED'
-                        ORDER BY attempt DESC
+                        SELECT state_data
+                        FROM (
+                            SELECT state_data::text AS state_data,
+                                   0 AS source_priority,
+                                   checkpoint_version AS saved_version
+                            FROM expense_workflow_checkpoint
+                            WHERE run_id = :runId AND node_name = :stepName
+                            UNION ALL
+                            SELECT output_data::text AS state_data,
+                                   1 AS source_priority,
+                                   attempt AS saved_version
+                            FROM expense_agent_step
+                            WHERE run_id = :runId AND step_name = :stepName
+                              AND status = 'SUCCEEDED'
+                        ) saved_state
+                        ORDER BY source_priority, saved_version DESC
                         LIMIT 1
                         """)
                 .param("runId", runId)
@@ -207,8 +219,10 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
     }
 
     @Override
+    @Transactional
     public void succeedStep(
             UUID runId, String stepName, int attempt, Map<String, Object> output) {
+        String outputJson = writeJson(output);
         jdbcClient
                 .sql(
                         """
@@ -218,7 +232,29 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                         WHERE run_id = :runId AND step_name = :stepName
                           AND attempt = :attempt
                         """)
-                .param("output", writeJson(output))
+                .param("output", outputJson)
+                .param("runId", runId)
+                .param("stepName", stepName)
+                .param("attempt", attempt)
+                .update();
+        jdbcClient
+                .sql(
+                        """
+                        INSERT INTO expense_workflow_checkpoint (
+                            id, run_id, case_id, node_name, checkpoint_version,
+                            state_data, created_at
+                        )
+                        SELECT :id, run_id, case_id, step_name, attempt,
+                               CAST(:stateData AS jsonb), CURRENT_TIMESTAMP
+                        FROM expense_agent_step
+                        WHERE run_id = :runId AND step_name = :stepName
+                          AND attempt = :attempt AND status = 'SUCCEEDED'
+                        ON CONFLICT (run_id, node_name, checkpoint_version)
+                        DO UPDATE SET state_data = EXCLUDED.state_data,
+                                      created_at = EXCLUDED.created_at
+                        """)
+                .param("id", UUID.randomUUID())
+                .param("stateData", outputJson)
                 .param("runId", runId)
                 .param("stepName", stepName)
                 .param("attempt", attempt)

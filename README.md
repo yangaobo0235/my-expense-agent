@@ -18,14 +18,14 @@ my-expense-agent 是一个面向高校经费报销场景的智能合规审核平
 - 支持 PDF、PNG、JPG、JPEG 票据或佐证材料上传，文件存储到 MinIO。
 - 记录票据 SHA-256、对象存储 Key、文件元数据、预览地址、抽取结果和材料状态。
 - 支持确定性抽取与 LLM/视觉模型抽取两种模式，便于离线演示和真实模型接入。
-- 工作流失败后可重新触发审核流程，并保留失败阶段、失败原因、事件时间线和可恢复证据。
+- 工作流成功节点会持久化 run、step 和 checkpoint 快照；失败后可从最新成功 checkpoint 恢复，并保留失败阶段、失败原因、事件时间线和可恢复证据。
 
 ### 校园制度检索与合规审核
 
 - 支持学校财务制度、竞赛经费办法、创新创业项目经费办法、社团活动经费细则的导入、分块、向量化和版本管理。
 - 基于 PostgreSQL pgvector 执行制度 RAG 检索，返回制度片段、章节、版本、相似度和可追溯引用。
 - 确定性风险引擎输出风险分值、风险等级、风险信号和审核建议。
-- 覆盖预算超额、科目不匹配、重复票据、票据抬头异常、缺少审批材料、支出日期超出项目周期、低置信度抽取等场景。
+- 覆盖项目预算不足或币种不一致、申报金额与票据金额不一致、重复票据、日期异常、销售方异常、材料缺失、禁止报销项目、制度证据缺失、低置信度抽取和票据提示注入等场景。
 - 低风险申请可进入通过候选，中高风险申请自动进入指导老师、学院审核员或财务复核队列。
 
 ### 人工复核与审批后入账
@@ -42,7 +42,7 @@ my-expense-agent 是一个面向高校经费报销场景的智能合规审核平
 - 记录工作流运行、Agent 步骤、模型调用、Token 用量、Tool 调用和错误信息。
 - 前端可查看申请事件流、审核时间线、制度引用和模型证据。
 - 内置风险评测、制度 RAG 评测和 Agent 安全评测数据集。
-- Prompt 模板支持提交、审核、启用和版本治理，防止越权审批、绕过复核和敏感信息泄露。
+- Prompt 模板支持提交、审核、启用和版本治理，并通过服务端规则阻断越权审批、绕过复核和敏感信息请求。
 
 ## 系统架构图
 
@@ -66,14 +66,12 @@ flowchart LR
     Fund --> Keycloak
     Audit --> Keycloak
 
-    Backend --> DashScope["DashScope / OpenAI 兼容模型"]
+    Backend --> OpenAI["GPT-5.4 票据视觉抽取"]
     Backend --> OTEL["OpenTelemetry Collector"]
     OTEL --> Tempo["Tempo Trace"]
     Backend --> Prometheus["Prometheus Metrics"]
     Prometheus --> Grafana["Grafana Dashboard"]
 
-    Backend -. 可选模型实验 .-> Langfuse["Langfuse"]
-    Backend -. 预留缓存与限流 .-> Redis[("Redis")]
 ```
 
 ## 模块说明
@@ -102,6 +100,39 @@ flowchart LR
 | 测试 | JUnit 5、Mockito、Testcontainers、Vitest、Playwright |
 | 工程化 | Maven 聚合工程、npm、OpenAPI TypeScript 类型生成 |
 
+## 核心实现索引
+
+| 能力 | 代码入口 | 可验证内容 |
+| --- | --- | --- |
+| LangGraph4j 审核编排 | `ExpenseWorkflowGraphFactory`、`ExpenseWorkflowSteps` | 票据加载、Agent 计划、并行证据收集、风险评估、人工路由和最终状态节点 |
+| run / step / checkpoint 恢复 | `JdbcWorkflowRunRepository`、`V13__add_workflow_checkpoints.sql` | 成功节点快照、失败记录、同一 requestId 恢复和旧 step 数据兼容 |
+| GPT-5.4 票据抽取 | `LlmExpenseDocumentExtractor`、`ExpenseExtractionValidator` | PDF/图片预处理、结构化 JSON、金额/日期/币种/明细合计校验和确定性降级 |
+| pgvector 制度检索 | `PolicyRetrievalService`、`JdbcExpensePolicyRepository` | 按经费类型、地区、申请人类型和生效日期过滤，返回版本及章节级引用 |
+| 确定性风险与人工路由 | `DeterministicRiskEngine`、`RiskRoutingDecision` | 预算、金额、重复票据、材料、制度证据、提示注入等风险信号及分级路由 |
+| 审批后 MCP 写入 | `ApprovedMcpWriteService`、`ExpenseSettlementService` | 角色入口、审批状态、金额、审批引用和 requestId 幂等校验 |
+| 审计与模型观测 | `JdbcModelCallRepository`、`JdbcToolCallRepository`、`ObservabilityController` | 模型版本、Prompt 版本、Token、延迟、重试、Tool 结果和错误码 |
+
+## 风险评测基线
+
+`risk-golden-v2.json` 包含 140 条人工核验的合成案例，其中 30 条为预期高风险案例。当前确定性风险引擎的固定回归结果如下：
+
+| 指标 | 结果 |
+| --- | ---: |
+| 风险分级准确率 | 92.86%（130/140） |
+| 人工复核路由准确率 | 92.86%（130/140） |
+| 高风险案例召回率 | 100%（30/30） |
+| 风险信号 Precision / Recall / F1 | 1.000 / 1.000 / 1.000 |
+
+10 条误差均来自“严重低置信度但金额及其他事实正常”的边界案例：引擎输出低风险信号，但当前 30 分人工复核阈值不会仅因 25 分低置信度信号触发复核。该差异作为可解释基线保留在评测失败明细中，而不是在展示层隐藏。
+
+复现评测：
+
+```powershell
+mvn -q -pl app/orchestrator/expense-backend -am `
+  '-Dtest=RiskEvaluationServiceTest' `
+  '-Dsurefire.failIfNoSpecifiedTests=false' test
+```
+
 ## AI 合规审核
 
 `expense-backend` 是平台的审核编排中心。它会读取申请、票据、项目预算、历史报销、制度片段和审计记录，组合为可追溯审核证据。模型只负责抽取、总结、解释和建议，所有影响业务状态的动作必须经过服务端权限校验和状态机校验。
@@ -114,7 +145,7 @@ flowchart LR
  -> 票据结构化抽取
  -> 获取申请人、学院、项目预算和历史报销记录
  -> 检索适用校园经费制度
- -> 计算预算、科目、票据和材料风险信号
+ -> 计算预算、金额、票据、材料、制度证据和提示注入风险信号
  -> 低风险进入通过候选 / 中高风险进入人工复核
  -> 指导老师、学院审核员或财务人员批准、驳回或要求补充材料
  -> 财务人员发起审批后入账
@@ -129,7 +160,7 @@ flowchart LR
  -> 按章节分块
  -> 生成 1024 维向量
  -> 写入 PostgreSQL pgvector
- -> 审核时按经费类型、学院、项目角色和支出日期检索制度片段
+ -> 审核时按经费类型、地区、申请人类型和支出日期检索制度片段
  -> 返回可追溯引用作为审核证据
 ```
 
@@ -154,43 +185,22 @@ flowchart LR
 - PostgreSQL 15+，并启用 pgvector 扩展
 - MinIO
 - Keycloak
-- Tempo、OpenTelemetry Collector、Prometheus、Grafana
-- 可选：DashScope 或其他 OpenAI 兼容模型服务
+- 可选：OpenAI GPT-5.4（真实票据视觉抽取）
+- 可选：Tempo、OpenTelemetry Collector、Prometheus、Grafana（链路和指标观测）
 
-Redis 与 Langfuse 已在当前演示环境中安装，但本版本业务运行时不强依赖。Redis 可作为后续分布式缓存或限流扩展；Langfuse 可用于模型实验，正式审计链路以数据库审计记录和 OpenTelemetry Trace 为准。
+未配置外部模型时，可启用确定性票据抽取和确定性向量模型跑通核心审核流程。本项目运行时不依赖 Redis、消息队列或 Elasticsearch。
 
-### 2. 基础组件
+### 2. 准备依赖服务
 
-当前演示环境部署在 Euler 系统，主机地址请通过 `EULER_HOST` 配置。基础组件启动命令如下：
+本仓库不绑定特定操作系统、虚拟机地址或已有容器名称。请自行准备 PostgreSQL/pgvector、MinIO 和 Keycloak，并通过环境变量提供连接信息。下面是本地开发时可采用的端口约定：
 
-```bash
-docker start pgvector redis minio expense-keycloak tempo otel-collector prometheus grafana
-
-cd /opt/expense-flow/langfuse
-docker compose up -d
-```
-
-常用组件地址：
-
-| 组件 | 地址示例 |
+| 组件 | 本地地址示例 |
 | --- | --- |
-| PostgreSQL + pgvector | `EULER_HOST:5432` |
-| MinIO API | `http://EULER_HOST:9001` |
-| MinIO Console | `http://EULER_HOST:9000` |
-| Keycloak | `http://EULER_HOST:18080` |
-| Tempo | `http://EULER_HOST:3200` |
-| Prometheus | `http://EULER_HOST:9090` |
-| Grafana | `http://EULER_HOST:3000` |
-| Langfuse（可选） | `http://EULER_HOST:13000` |
-
-Prometheus 的 `expense-backend` 抓取目标需要指向 Java 服务实际运行的主机：
-
-| 运行方式 | `static_configs.targets` |
-| --- | --- |
-| 四个 Java 服务运行在 Euler 主机 | `EULER_HOST:25101` |
-| Java 服务运行在当前 Windows 主机，Euler 使用 VMnet8 `YOUR_VMNET8_SUBNET` | `WINDOWS_VMNET8_HOST:25101` |
-
-修改 Euler 上 Prometheus 使用的 `/etc/prometheus/prometheus.yml` 或对应宿主机挂载文件后，执行 `docker restart prometheus`，再从 `http://EULER_HOST:9090/targets` 确认 `expense-backend` 为 `UP`。
+| PostgreSQL + pgvector | `localhost:5432` |
+| MinIO API | `http://localhost:9000` |
+| MinIO Console | `http://localhost:9001` |
+| Keycloak | `http://localhost:18080` |
+| OpenTelemetry OTLP（可选） | `http://localhost:4318` |
 
 ### 3. 克隆项目
 
@@ -206,26 +216,33 @@ cd my-expense-agent
 Windows PowerShell 示例：
 
 ```powershell
-$env:EXPENSE_DATASOURCE_URL="jdbc:postgresql://EULER_HOST:5432/my_expense_agent"
+$env:EXPENSE_DATASOURCE_URL="jdbc:postgresql://localhost:5432/my_expense_agent"
 $env:EXPENSE_DATASOURCE_USERNAME="postgres"
 $env:EXPENSE_DATASOURCE_PASSWORD="change-me"
 
-$env:EXPENSE_MINIO_ENDPOINT="http://EULER_HOST:9001"
+$env:EXPENSE_MINIO_ENDPOINT="http://localhost:9000"
 $env:EXPENSE_MINIO_ACCESS_KEY="change-me"
 $env:EXPENSE_MINIO_SECRET_KEY="change-me"
 $env:EXPENSE_MINIO_BUCKET="my-expense-agent-documents"
 
-$env:KEYCLOAK_ISSUER_URI="http://EULER_HOST:18080/realms/my-expense-agent"
-$env:KEYCLOAK_JWK_SET_URI="http://EULER_HOST:18080/realms/my-expense-agent/protocol/openid-connect/certs"
+$env:KEYCLOAK_ISSUER_URI="http://localhost:18080/realms/my-expense-agent"
+$env:KEYCLOAK_JWK_SET_URI="http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/certs"
 $env:KEYCLOAK_BACKEND_AUDIENCES="my-expense-agent-backend"
 ```
 
-如需接入 LLM/视觉抽取和向量模型：
+如需接入 GPT-5.4 视觉抽取：
+
+```powershell
+$env:OPENAI_API_KEY="your-api-key"
+$env:EXPENSE_EXTRACTION_MODE="llm"
+$env:EXPENSE_EXTRACTION_MODEL_NAME="gpt-5.4"
+$env:EXPENSE_EXTRACTION_BASE_URL="https://api.openai.com/v1"
+```
+
+如需使用 DashScope 生成制度向量，可单独配置：
 
 ```powershell
 $env:DASHSCOPE_API_KEY="your-api-key"
-$env:EXPENSE_EXTRACTION_MODE="llm"
-$env:EXPENSE_EXTRACTION_MODEL_NAME="qwen-vl-plus"
 $env:EXPENSE_AI_EMBEDDING_PROVIDER="dashscope"
 ```
 
@@ -240,17 +257,17 @@ $env:EXPENSE_AI_EMBEDDING_PROVIDER="deterministic"
 
 ### 5. 初始化数据库
 
-首次运行前需要创建数据库，并启用 pgvector：
+首次运行前需要创建数据库并启用 pgvector。数据库账号和授权方式请按本地环境配置，不要在仓库中保存真实密码：
 
 ```sql
-ALTER USER postgres WITH PASSWORD 'change-me';
-CREATE DATABASE my_expense_agent OWNER postgres;
+CREATE DATABASE my_expense_agent;
 \c my_expense_agent;
 CREATE EXTENSION IF NOT EXISTS vector;
-GRANT ALL PRIVILEGES ON DATABASE my_expense_agent TO postgres;
 ```
 
 业务表由 Flyway 在服务启动时自动创建，统一写入 `my_expense_agent` 数据库。
+
+Flyway 迁移文件按版本追加且不回写历史：`V12` 记录曾用的票据视觉模型，`V14` 将已有环境中的活动票据抽取模板升级为 GPT-5.4；新环境的代码默认值同样为 GPT-5.4。
 
 ### 6. 初始化 Keycloak
 
@@ -274,15 +291,13 @@ powershell -ExecutionPolicy Bypass -File deploy/keycloak/init-campus-users.ps1
 
 ### 7. 启动后端服务
 
-建议先确认当前终端使用 JDK 21：
+先确认当前终端使用 JDK 21：
 
 ```powershell
-$env:JAVA_HOME="D:\software\jdk\jdk-21.0.6"
-$env:Path="$env:JAVA_HOME\bin;$env:Path"
 java -version
 ```
 
-先在项目根目录执行一次完整清理构建。`clean` 不可省略，否则已经删除或改名的 Flyway 迁移可能残留在模块的 `target/classes` 中：
+在项目根目录执行完整构建。本地迭代过 Flyway 迁移文件时建议保留 `clean`，避免旧资源残留在模块的 `target/classes` 中：
 
 ```powershell
 mvn -q clean package
@@ -291,10 +306,10 @@ mvn -q clean package
 构建成功后，分别在四个项目根目录终端中按以下顺序运行 JAR：
 
 ```powershell
-& "$env:JAVA_HOME\bin\java.exe" -jar app/business-api/account/target/account-1.0.0-SNAPSHOT.jar
-& "$env:JAVA_HOME\bin\java.exe" -jar app/business-api/expense/target/expense-1.0.0-SNAPSHOT.jar
-& "$env:JAVA_HOME\bin\java.exe" -jar app/business-api/audit-history/target/audit-history-1.0.0-SNAPSHOT.jar
-& "$env:JAVA_HOME\bin\java.exe" -jar app/orchestrator/expense-backend/target/expense-backend-1.0.0-SNAPSHOT.jar
+java -jar app/business-api/account/target/account-1.0.0-SNAPSHOT.jar
+java -jar app/business-api/expense/target/expense-1.0.0-SNAPSHOT.jar
+java -jar app/business-api/audit-history/target/audit-history-1.0.0-SNAPSHOT.jar
+java -jar app/orchestrator/expense-backend/target/expense-backend-1.0.0-SNAPSHOT.jar
 ```
 
 常用访问地址：
@@ -325,13 +340,19 @@ $env:VITE_AUTH_MODE="development"
 npm run dev
 ```
 
+只查看前端交互、不启动后端服务时，可以同时启用 MSW 模拟 API：
+
+```powershell
+$env:VITE_AUTH_MODE="development"
+$env:VITE_MOCK_API="msw"
+npm run dev
+```
+
 ## 测试与构建
 
 运行后端测试：
 
 ```powershell
-$env:JAVA_HOME="D:\software\jdk\jdk-21.0.6"
-$env:Path="$env:JAVA_HOME\bin;$env:Path"
 mvn -q -DskipITs test
 ```
 
@@ -341,7 +362,7 @@ mvn -q -DskipITs test
 cd app/frontend
 npm ci
 npm run typecheck
-npm test -- --run
+npm test
 npm run build
 ```
 
@@ -358,6 +379,8 @@ npm run e2e
 cd app/frontend
 npm run api:check
 ```
+
+`api:check` 会读取 `http://localhost:25101/v3/api-docs`，执行前需要先启动后端主编排服务。
 
 后端接口变化后重新生成类型：
 
@@ -401,6 +424,7 @@ my-expense-agent/
 ## 项目边界
 
 - 当前入账流程会持久化内部报销登记和入账请求，未对接真实银行、银校直连或学校财务系统。
+- GPT-5.4 仅用于票据结构化抽取；审核摘要和证据问答可配置其他 OpenAI 兼容模型，二者都不能直接改变审批或入账状态。
 - LLM/视觉抽取依赖外部模型服务，确定性抽取器主要用于离线演示和降级。
 - 内置评测集用于工程质量基线，不代表真实高校财务制度的完整覆盖范围。
 - 本项目是学习与作品集项目，生产部署前仍需结合真实校内制度进行二次审计。

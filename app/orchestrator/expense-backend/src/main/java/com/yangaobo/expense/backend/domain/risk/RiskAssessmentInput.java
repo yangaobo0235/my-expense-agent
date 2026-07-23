@@ -14,7 +14,8 @@ public record RiskAssessmentInput(
         boolean missingRequiredDocument,
         boolean forbiddenExpenseItem,
         boolean projectBudgetExceeded,
-        boolean policyEvidenceMissing) {
+        boolean policyEvidenceMissing,
+        boolean promptInjectionDetected) {
 
     public RiskAssessmentInput(
             BigDecimal claimedAmount,
@@ -36,6 +37,7 @@ public record RiskAssessmentInput(
                 policyLimitExceeded,
                 missingRequiredDocument,
                 forbiddenExpenseItem,
+                false,
                 false,
                 false);
     }

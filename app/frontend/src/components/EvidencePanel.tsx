@@ -263,6 +263,7 @@ function riskSignalLabel(code: string) {
     FORBIDDEN_EXPENSE_ITEM: '包含不可报销项目',
     PROJECT_BUDGET_EXCEEDED: '项目可用预算不足或币种不一致',
     POLICY_EVIDENCE_MISSING: '缺少可追溯制度依据',
+    PROMPT_INJECTION_DETECTED: '票据包含提示注入指令',
     DATE_ANOMALY: '日期异常',
     SELLER_ANOMALY: '销售方异常',
     DEPENDENCY_UNAVAILABLE: '外部数据暂不可用',

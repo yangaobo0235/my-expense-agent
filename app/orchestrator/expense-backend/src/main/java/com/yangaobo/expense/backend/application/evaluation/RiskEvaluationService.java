@@ -39,7 +39,7 @@ public class RiskEvaluationService {
             ObjectMapper objectMapper,
             DeterministicRiskEngine engine,
             Clock clock,
-            @Value("${expense.evaluation.risk-dataset:classpath:evaluation/cases/risk-golden-v1.json}")
+            @Value("${expense.evaluation.risk-dataset:classpath:evaluation/cases/risk-golden-v2.json}")
                     String datasetLocation) {
         this.objectMapper = objectMapper;
         this.engine = engine;
@@ -206,7 +206,10 @@ public class RiskEvaluationService {
                 testCase.sellerAnomaly(),
                 testCase.policyLimitExceeded(),
                 testCase.missingRequiredDocument(),
-                testCase.forbiddenExpenseItem());
+                testCase.forbiddenExpenseItem(),
+                testCase.projectBudgetExceeded(),
+                testCase.policyEvidenceMissing(),
+                testCase.promptInjectionDetected());
     }
 
     private static int intersectionSize(Set<String> left, Set<String> right) {
