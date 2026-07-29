@@ -613,7 +613,7 @@ export interface components {
             claimedAmount?: number;
             currency?: string;
             /** @enum {string} */
-            status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
+            status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_MORE_INFO" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
             riskLevel?: string;
             /** Format: int32 */
             riskScore?: number;
@@ -710,7 +710,7 @@ export interface components {
             /** Format: uuid */
             runId?: string;
             /** @enum {string} */
-            status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
+            status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_MORE_INFO" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
             /** Format: int32 */
             riskScore?: number;
             /** @enum {string} */
@@ -849,7 +849,7 @@ export interface components {
             requiredEvidence?: string[];
             userFacingMessage?: string;
             fallbackStrategy?: string;
-            debateAssistEnabled?: boolean;
+            summaryRequired?: boolean;
             reviewerComment?: string;
             /** Format: date-time */
             dueAt?: string;
@@ -923,7 +923,7 @@ export interface components {
             /** Format: int32 */
             maxTokens?: number;
             /** @enum {string} */
-            status?: "DRAFT" | "IN_REVIEW" | "APPROVED" | "ACTIVE" | "REJECTED" | "DEPRECATED";
+            status?: "DRAFT" | "SUBMITTED" | "EVALUATING" | "APPROVED" | "ACTIVE" | "RETIRED";
             promptHash?: string;
             createdBy?: string;
             updatedBy?: string;
@@ -1004,7 +1004,6 @@ export interface components {
             /** Format: date-time */
             completedAt?: string;
             errorCode?: string;
-            traceId?: string;
             /** Format: int32 */
             stepCount?: number;
             /** Format: int32 */
@@ -1013,7 +1012,16 @@ export interface components {
             failedStepCount?: number;
             /** Format: int64 */
             durationMs?: number;
-            agentPlanRecorded?: boolean;
+            executionPolicyRecorded?: boolean;
+            /** @enum {string} */
+            commandType?: "REVIEW" | "REVIEW_AGAIN" | "RESTORE";
+            /** Format: int32 */
+            documentVersion?: number;
+            /** Format: uuid */
+            previousRunId?: string;
+            reopenReason?: string;
+            routeAction?: string;
+            waitingReason?: string;
         };
         ModelCallSummary: {
             /** Format: int64 */
@@ -1179,7 +1187,6 @@ export interface components {
             completedAt?: string;
             errorCode?: string;
             errorMessage?: string;
-            traceId?: string;
         };
         SseEmitter: {
             /** Format: int64 */
@@ -1198,6 +1205,7 @@ export interface components {
             /** Format: date-time */
             previewExpiresAt?: string;
             extraction?: components["schemas"]["Extraction"];
+            extractionAttempts?: components["schemas"]["ExtractionAttempt"][];
             /** Format: date-time */
             createdAt?: string;
         };
@@ -1212,20 +1220,42 @@ export interface components {
             extractionLatencyMs?: number;
             extractorMode?: string;
         };
-        AgentGovernance: {
+        ExecutionGovernance: {
             planVersion?: string;
             /** Format: int32 */
-            totalAgents?: number;
+            totalCapabilities?: number;
             /** Format: int32 */
-            writeAgentCount?: number;
+            writeCapabilityCount?: number;
             /** Format: int32 */
-            idempotentWriteAgentCount?: number;
+            idempotentWriteCapabilityCount?: number;
             writeToolIsolationPassed?: boolean;
             settlementWriteRetryProtected?: boolean;
             /** Format: double */
             humanHandoffCoverage?: number;
             /** Format: double */
-            retryableAgentRate?: number;
+            retryableCapabilityRate?: number;
+        };
+        ExtractionAttempt: {
+            /** Format: int32 */
+            attemptNo?: number;
+            attemptType?: string;
+            validationErrors?: components["schemas"]["ExtractionValidationError"][];
+            outputHash?: string;
+            /** Format: int32 */
+            tokenUsage?: number;
+            /** Format: int64 */
+            latencyMs?: number;
+            /** Format: int32 */
+            networkRetryCount?: number;
+            status?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ExtractionValidationError: {
+            code?: string;
+            field?: string;
+            message?: string;
+            repairable?: boolean;
         };
         Failure: {
             caseId?: string;
@@ -1264,7 +1294,7 @@ export interface components {
                 [key: string]: number;
             };
             metrics?: components["schemas"]["Metrics"];
-            agentGovernance?: components["schemas"]["AgentGovernance"];
+            executionGovernance?: components["schemas"]["ExecutionGovernance"];
             failures?: components["schemas"]["Failure"][];
         };
         PolicyRagEvaluationReport: {
@@ -2474,7 +2504,7 @@ export interface operations {
     search: {
         parameters: {
             query?: {
-                status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
+            status?: "DRAFT" | "UPLOADED" | "EXTRACTING" | "EXTRACTED" | "POLICY_CHECKING" | "RISK_CHECKING" | "WAITING_MORE_INFO" | "WAITING_HUMAN" | "APPROVED" | "REJECTED" | "FAILED";
                 riskLevel?: string;
                 applicant?: string;
                 createdFrom?: string;

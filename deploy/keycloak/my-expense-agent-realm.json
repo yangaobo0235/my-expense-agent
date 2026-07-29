@@ -24,8 +24,8 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
-      "redirectUris": ["http://localhost:25105/*", "http://127.0.0.1:25105/*", "http://192.168.23.66:25105/*"],
-      "webOrigins": ["http://localhost:25105", "http://127.0.0.1:25105", "http://192.168.23.66:25105"],
+      "redirectUris": ["http://localhost:25105/*", "http://127.0.0.1:25105/*"],
+      "webOrigins": ["http://localhost:25105", "http://127.0.0.1:25105"],
       "attributes": {"pkce.code.challenge.method": "S256"},
       "protocolMappers": [
         {

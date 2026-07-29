@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Col, Empty, Row, Space, Statistic, Table, Tag, Typography } from 'antd';
-import { getModelCallSummary, grafanaTraceUrl, listModelCalls, listObservableRuns } from '../../api/expense-api';
+import { Card, Col, Empty, Row, Space, Statistic, Table, Tag, Typography } from 'antd';
+import { getModelCallSummary, listModelCalls, listObservableRuns } from '../../api/expense-api';
 import { ModelCallRecord, ObservableWorkflowRun } from '../../api/contracts';
 
 export function ObservabilityPage() {
@@ -21,15 +21,11 @@ export function ObservabilityPage() {
     <Space orientation="vertical" size="large" className="page-stack">
       <div className="page-heading">
         <div>
-          <Typography.Title level={2}>可观测性</Typography.Title>
+          <Typography.Title level={2}>运行审计</Typography.Title>
           <Typography.Text type="secondary">
-            从业务运行定位 OpenTelemetry Trace，并进入 Grafana Tempo 或 Langfuse。
+            查看工作流步骤、模型调用、失败原因和管理员操作记录。
           </Typography.Text>
         </div>
-        <Space>
-          <Button href={import.meta.env.VITE_LANGFUSE_URL} target="_blank">打开 Langfuse</Button>
-          <Button type="primary" href={import.meta.env.VITE_GRAFANA_URL} target="_blank">打开 Grafana</Button>
-        </Space>
       </div>
 
       <Card title="模型调用成本与延迟" loading={modelSummary.isLoading}>
@@ -94,7 +90,7 @@ export function ObservabilityPage() {
         />
       </Card>
 
-      <Card title="最近工作流 Trace">
+      <Card title="最近工作流运行">
         <Table<ObservableWorkflowRun>
           rowKey="runId"
           loading={runs.isLoading}
@@ -129,9 +125,10 @@ export function ObservabilityPage() {
                 <Space wrap>
                   <Tag color="blue">{row.succeededStepCount ?? 0}/{row.stepCount ?? 0} 成功</Tag>
                   {(row.failedStepCount ?? 0) > 0 && <Tag color="red">{row.failedStepCount} 失败</Tag>}
-                  <Tag color={row.agentPlanRecorded ? 'green' : 'default'}>
-                    {row.agentPlanRecorded ? '已记录 Agent Plan' : '未记录 Agent Plan'}
+                  <Tag color={row.executionPolicyRecorded ? 'green' : 'default'}>
+                    {row.executionPolicyRecorded ? '已记录执行策略' : '未记录执行策略'}
                   </Tag>
+                  {row.documentVersion && <Tag>V{row.documentVersion}</Tag>}
                 </Space>
               ),
             },
@@ -146,22 +143,6 @@ export function ObservabilityPage() {
               dataIndex: 'durationMs',
               key: 'durationMs',
               render: (value?: number) => value === undefined ? '-' : `${value} ms`,
-            },
-            {
-              title: 'Trace ID',
-              dataIndex: 'traceId',
-              key: 'traceId',
-              render: (traceId?: string) =>
-                traceId ? <Typography.Text code copyable>{traceId}</Typography.Text> : <Typography.Text type="secondary">未采样或历史运行</Typography.Text>,
-            },
-            {
-              title: '链路',
-              key: 'action',
-              render: (_, row) => (
-                <Button disabled={!row.traceId} href={row.traceId ? grafanaTraceUrl(row.traceId) : undefined} target="_blank">
-                  在 Tempo 查看
-                </Button>
-              ),
             },
           ]}
         />

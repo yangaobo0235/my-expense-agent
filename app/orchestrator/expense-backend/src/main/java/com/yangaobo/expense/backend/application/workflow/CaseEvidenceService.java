@@ -82,7 +82,7 @@ public class CaseEvidenceService {
     private static StepView view(WorkflowRunRepository.WorkflowStep step) {
         Map<String, Object> evidence =
                 switch (step.name()) {
-                    case "AGENT_PLAN" ->
+                    case "EXECUTION_POLICY" ->
                             selected(step.output(), "plan");
                     case "MCP_APPLICANT_CONTEXT" ->
                             selected(step.output(), "context");
@@ -115,7 +115,7 @@ public class CaseEvidenceService {
                                     List.of(
                                             "action",
                                             "requiresHumanReview",
-                                            "debateAssistEnabled",
+                                            "summaryRequired",
                                             "queue",
                                             "assigneeRole",
                                             "slaHours",

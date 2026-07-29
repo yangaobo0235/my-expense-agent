@@ -66,7 +66,7 @@ export interface ReviewTask {
   requiredEvidence: RequiredField<ReviewTaskResponse, 'requiredEvidence'>;
   userFacingMessage?: ReviewTaskResponse['userFacingMessage'];
   fallbackStrategy?: ReviewTaskResponse['fallbackStrategy'];
-  debateAssistEnabled?: ReviewTaskResponse['debateAssistEnabled'];
+  summaryRequired?: ReviewTaskResponse['summaryRequired'];
   reviewerComment?: ReviewTaskResponse['reviewerComment'];
   dueAt?: ReviewTaskResponse['dueAt'];
   version: RequiredField<ReviewTaskResponse, 'version'>;
@@ -121,7 +121,25 @@ export interface ExpenseDocumentDetail {
     extractionLatencyMs?: number;
     extractorMode?: string;
   };
+  extractionAttempts?: ExtractionAttempt[];
   createdAt: RequiredField<ExpenseDocumentDetailResponse, 'createdAt'>;
+}
+
+export interface ExtractionAttempt {
+  attemptNo: number;
+  attemptType: 'ORIGINAL' | 'REPAIR';
+  validationErrors: Array<{
+    code: string;
+    field: string;
+    message: string;
+    repairable: boolean;
+  }>;
+  outputHash?: string;
+  tokenUsage: number;
+  latencyMs: number;
+  networkRetryCount: number;
+  status: 'SUCCEEDED' | 'VALIDATION_FAILED' | 'FAILED';
+  createdAt: string;
 }
 
 export interface RiskSignal {
@@ -140,7 +158,12 @@ export interface CaseEvidence {
     completedAt?: RequiredField<CaseEvidenceResponse, 'run'>['completedAt'];
     errorCode?: RequiredField<CaseEvidenceResponse, 'run'>['errorCode'];
     errorMessage?: RequiredField<CaseEvidenceResponse, 'run'>['errorMessage'];
-    traceId?: RequiredField<CaseEvidenceResponse, 'run'>['traceId'];
+    commandType?: WorkflowCommandType;
+    documentVersion?: number;
+    previousRunId?: string;
+    reopenReason?: string;
+    routeAction?: string;
+    waitingReason?: string;
   };
   steps: Array<{
     id: string;
@@ -171,6 +194,7 @@ export interface CaseEvidence {
   toolCalls: Array<{
     id: string;
     toolName: string;
+    requestId: string;
     writeOperation: boolean;
     status: string;
     output: Record<string, unknown>;
@@ -234,15 +258,15 @@ export interface RiskEvaluationReport {
     highRiskMissRate: number;
     humanReviewTriggerRate: number;
   };
-  agentGovernance?: {
+  executionGovernance?: {
     planVersion?: string;
-    totalAgents?: number;
-    writeAgentCount?: number;
-    idempotentWriteAgentCount?: number;
+    totalCapabilities?: number;
+    writeCapabilityCount?: number;
+    idempotentWriteCapabilityCount?: number;
     writeToolIsolationPassed?: boolean;
     settlementWriteRetryProtected?: boolean;
     humanHandoffCoverage?: number;
-    retryableAgentRate?: number;
+    retryableCapabilityRate?: number;
   };
   failures: Array<{
     caseId: string;
@@ -263,12 +287,86 @@ export interface ObservableWorkflowRun {
   startedAt: RequiredField<ObservableRunResponse, 'startedAt'>;
   completedAt?: ObservableRunResponse['completedAt'];
   errorCode?: ObservableRunResponse['errorCode'];
-  traceId?: ObservableRunResponse['traceId'];
   stepCount?: ObservableRunResponse['stepCount'];
   succeededStepCount?: ObservableRunResponse['succeededStepCount'];
   failedStepCount?: ObservableRunResponse['failedStepCount'];
   durationMs?: ObservableRunResponse['durationMs'];
-  agentPlanRecorded?: ObservableRunResponse['agentPlanRecorded'];
+  executionPolicyRecorded?: ObservableRunResponse['executionPolicyRecorded'];
+  commandType?: WorkflowCommandType;
+  documentVersion?: number;
+  previousRunId?: string;
+  reopenReason?: string;
+  routeAction?: string;
+  waitingReason?: string;
+}
+
+export type WorkflowCommandType = 'REVIEW' | 'REVIEW_AGAIN' | 'RESTORE';
+
+export interface WorkflowRunDetail {
+  id: string;
+  caseId: string;
+  requestId: string;
+  status: string;
+  startedAt: string;
+  completedAt?: string;
+  errorCode?: string;
+  errorMessage?: string;
+  commandType: WorkflowCommandType;
+  documentVersion: number;
+  previousRunId?: string;
+  reopenReason?: string;
+  routeAction?: string;
+  waitingReason?: string;
+}
+
+export interface DocumentVersion {
+  caseId: string;
+  version: number;
+  documentId: string;
+  sha256: string;
+  sourceType: 'INITIAL_UPLOAD' | 'MORE_INFO_SUBMISSION';
+  uploadedBy: string;
+  replacesVersion?: number;
+  createdAt: string;
+}
+
+export interface MoreInfoTask {
+  id: string;
+  caseId: string;
+  runId: string;
+  requiredMaterials: string[];
+  reasonCodes: string[];
+  status: 'OPEN' | 'SUBMITTED' | 'COMPLETED' | 'CANCELLED';
+  requestedBy: string;
+  dueAt?: string;
+  submittedDocumentVersion?: number;
+  completedAt?: string;
+  createdAt: string;
+}
+
+export interface ExtractionEvaluationReport {
+  datasetVersion: string;
+  generatedAt: string;
+  caseCount: number;
+  categoryCounts: Record<string, number>;
+  metrics: {
+    jsonValidRate: number;
+    schemaPassRate: number;
+    invoiceNumberExactMatch: number;
+    amountExactMatch: number;
+    dateAccuracy: number;
+    currencyAccuracy: number;
+    itemPrecision: number;
+    itemRecall: number;
+    itemF1: number;
+    repairSuccessRate: number;
+    humanHandoffRate: number;
+    p50LatencyMs: number;
+    p95LatencyMs: number;
+    averageTokenUsage: number;
+  };
+  gatePassed: boolean;
+  failures: Array<{ caseId: string; mismatchedFields: string[] }>;
 }
 
 export interface ReviewReport {
@@ -398,7 +496,7 @@ export interface PromptTemplate {
   modelName: string;
   temperature: number;
   maxTokens: number;
-  status: 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'ACTIVE' | 'REJECTED' | 'DEPRECATED';
+  status: 'DRAFT' | 'SUBMITTED' | 'EVALUATING' | 'APPROVED' | 'ACTIVE' | 'RETIRED';
   promptHash: string;
   createdBy: string;
   updatedBy: string;

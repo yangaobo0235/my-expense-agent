@@ -24,7 +24,8 @@ public class DocumentPersistenceService {
     @Transactional
     public ExpenseDocument save(ExpenseCase expenseCase, ExpenseDocument document) {
         ExpenseDocument saved = documentRepository.insert(document);
-        if (expenseCase.status() == ExpenseCaseStatus.DRAFT) {
+        if (expenseCase.status() == ExpenseCaseStatus.DRAFT
+                || expenseCase.status() == ExpenseCaseStatus.WAITING_MORE_INFO) {
             caseApplicationService.transition(expenseCase.id(), ExpenseCaseStatus.UPLOADED);
         }
         return saved;

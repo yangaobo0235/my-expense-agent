@@ -31,7 +31,13 @@ export interface CaseDiagnosis {
 }
 
 const stepLabels: Record<string, string> = {
-  AGENT_PLAN: '处理计划',
+  EXECUTION_POLICY: '受治理执行策略',
+  LOAD_EXTRACTED: '加载当前文档版本',
+  EVIDENCE_QUALITY_GATE: '证据质量门禁',
+  CREATE_MORE_INFO_TASK: '创建补材料任务',
+  GENERATE_REVIEW_SUMMARY: '生成受限复核摘要',
+  VERIFY_SUMMARY_REFERENCES: '核验摘要引用',
+  CREATE_REVIEW_TASK: '创建人工复核任务',
   MCP_APPLICANT_CONTEXT: '申请人信息核对',
   MCP_DUPLICATE_CHECK: '历史重复检测',
   MCP_PROJECT_BUDGET: '项目预算核对',
@@ -240,6 +246,8 @@ export function nextActionDescription(expenseCase: ExpenseCase) {
       return '票据内容已识别，下一步是核对制度并评估风险。';
     case 'WAITING_HUMAN':
       return '该申请需要审核员确认。';
+    case 'WAITING_MORE_INFO':
+      return '该申请正在等待补充材料，提交后将创建新版本并重新审核。';
     case 'APPROVED':
       return '申请已通过审核，下一步由学院财务发起入账。';
     case 'REJECTED':
@@ -255,7 +263,7 @@ export function latestFailedStep(evidence?: CaseEvidence) {
 
 export function isRecoverableWorkflowStep(stage: string) {
   return [
-    'AGENT_PLAN',
+    'EXECUTION_POLICY',
     'MCP_APPLICANT_CONTEXT',
     'MCP_DUPLICATE_CHECK',
     'MCP_REVIEW_EVIDENCE',

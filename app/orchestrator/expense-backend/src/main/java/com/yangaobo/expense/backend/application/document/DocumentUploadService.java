@@ -121,7 +121,8 @@ public class DocumentUploadService {
 
     private static void requireUploadable(ExpenseCase expenseCase) {
         if (expenseCase.status() != ExpenseCaseStatus.DRAFT
-                && expenseCase.status() != ExpenseCaseStatus.UPLOADED) {
+                && expenseCase.status() != ExpenseCaseStatus.UPLOADED
+                && expenseCase.status() != ExpenseCaseStatus.WAITING_MORE_INFO) {
             throw rejected("Documents cannot be added after analysis has started");
         }
     }

@@ -18,7 +18,7 @@ import { RiskBadge } from './RiskBadge';
 type EvidenceStep = CaseEvidence['steps'][number];
 
 const stepLabels: Record<string, string> = {
-  AGENT_PLAN: '处理计划',
+  EXECUTION_POLICY: '受治理执行策略',
   MCP_APPLICANT_CONTEXT: '申请人信息核对',
   MCP_DUPLICATE_CHECK: '历史重复检测',
   MCP_PROJECT_BUDGET: '项目预算核对',
@@ -29,11 +29,11 @@ const stepLabels: Record<string, string> = {
   FINALIZE: '形成审核意见',
 };
 
-interface AgentPlanEvidence {
+interface ExecutionPolicyEvidence {
   planVersion?: string;
-  agents?: Array<{
+  steps?: Array<{
     sequence?: number;
-    role?: string;
+    capability?: string;
     name?: string;
     responsibility?: string;
     allowedTools?: string[];
@@ -66,9 +66,6 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
             </Descriptions.Item>
             <Descriptions.Item label="开始时间">
               {new Date(evidence.run.startedAt).toLocaleString('zh-CN')}
-            </Descriptions.Item>
-            <Descriptions.Item label="链路编号">
-              {evidence.run.traceId ?? '尚未关联'}
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -108,7 +105,7 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
                     ghost
                     items={[{
                       key: step.id,
-                      label: step.name === 'AGENT_PLAN' ? '查看处理分工' : '查看处理依据',
+                      label: step.name === 'EXECUTION_POLICY' ? '查看执行策略' : '查看处理依据',
                       children: renderStepEvidence(step.name, step.evidence),
                     }]}
                   />
@@ -159,6 +156,7 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
             { title: '状态', dataIndex: 'status', render: (value: string) => runStatusLabel(value) },
             { title: '耗时', dataIndex: 'durationMs', render: (value) => `${value ?? 0} ms` },
             { title: '审批引用', dataIndex: 'approvalReference', render: (value) => value || '-' },
+            { title: '请求标识', dataIndex: 'requestId', render: (value) => value || '-' },
           ]}
         />
       </Card>
@@ -167,25 +165,25 @@ export function EvidencePanel({ evidence }: { evidence?: CaseEvidence }) {
 }
 
 function renderStepEvidence(stepName: string, evidence: Record<string, unknown>) {
-  if (stepName !== 'AGENT_PLAN') {
+  if (stepName !== 'EXECUTION_POLICY') {
     return <pre className="json-evidence">{JSON.stringify(evidence, null, 2)}</pre>;
   }
 
-  const plan = evidence as AgentPlanEvidence;
-  const agents = Array.isArray(plan.agents) ? plan.agents : [];
+  const plan = evidence as ExecutionPolicyEvidence;
+  const steps = Array.isArray(plan.steps) ? plan.steps : [];
   return (
     <Space orientation="vertical" className="full-width">
       <Typography.Text type="secondary">
-        系统已生成本次处理计划。
+        系统已记录本次受治理执行策略。
       </Typography.Text>
       <Table
         size="small"
         pagination={false}
-        rowKey={(row) => row.role ?? row.name ?? `step-${row.sequence ?? 'unknown'}`}
-        dataSource={agents}
+        rowKey={(row) => row.capability ?? row.name ?? `step-${row.sequence ?? 'unknown'}`}
+        dataSource={steps}
         columns={[
           { title: '序号', dataIndex: 'sequence', width: 72 },
-          { title: '处理角色', dataIndex: 'role', render: (value?: string) => roleLabel(value) },
+          { title: '受限能力', dataIndex: 'capability', render: (value?: string) => roleLabel(value) },
           { title: '名称', dataIndex: 'name', render: (value?: string) => cleanDisplayName(value) },
           { title: '职责', dataIndex: 'responsibility' },
           {

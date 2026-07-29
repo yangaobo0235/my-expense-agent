@@ -12,7 +12,7 @@ public record RiskEvaluationReport(
         int caseCount,
         Map<String, Integer> categoryCounts,
         Metrics metrics,
-        AgentGovernance agentGovernance,
+        ExecutionGovernance executionGovernance,
         List<Failure> failures) {
 
     public record Metrics(
@@ -24,15 +24,15 @@ public record RiskEvaluationReport(
             double highRiskMissRate,
             double humanReviewTriggerRate) {}
 
-    public record AgentGovernance(
+    public record ExecutionGovernance(
             String planVersion,
-            int totalAgents,
-            int writeAgentCount,
-            int idempotentWriteAgentCount,
+            int totalCapabilities,
+            int writeCapabilityCount,
+            int idempotentWriteCapabilityCount,
             boolean writeToolIsolationPassed,
             boolean settlementWriteRetryProtected,
             double humanHandoffCoverage,
-            double retryableAgentRate) {}
+            double retryableCapabilityRate) {}
 
     public record Failure(
             String caseId,

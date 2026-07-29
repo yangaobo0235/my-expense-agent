@@ -126,7 +126,7 @@ public class JdbcPromptTemplateRepository implements PromptTemplateRepository {
                 .sql(
                         """
                         UPDATE expense_prompt_template
-                           SET status = 'DEPRECATED',
+                           SET status = 'RETIRED',
                                replaced_version = :replacedByVersion,
                                updated_at = CURRENT_TIMESTAMP
                          WHERE prompt_key = :promptKey

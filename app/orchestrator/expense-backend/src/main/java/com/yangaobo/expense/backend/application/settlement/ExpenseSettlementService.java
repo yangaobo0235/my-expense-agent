@@ -375,6 +375,7 @@ public class ExpenseSettlementService {
             toolCallRepository.fail(
                     call.id(),
                     errorCode(exception),
+                    retryable(exception),
                     elapsed(startedAt),
                     clock.instant());
             throw exception;
@@ -406,6 +407,11 @@ public class ExpenseSettlementService {
         return exception instanceof MyExpenseAgentException flow
                 ? flow.code().name()
                 : MyExpenseAgentErrorCode.INTERNAL_ERROR.name();
+    }
+
+    private static boolean retryable(RuntimeException exception) {
+        return exception instanceof MyExpenseAgentException flow
+                && flow.code() == MyExpenseAgentErrorCode.DEPENDENCY_UNAVAILABLE;
     }
 
     private static String required(String value, String field) {

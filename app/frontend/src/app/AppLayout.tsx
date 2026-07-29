@@ -6,7 +6,6 @@ import {
   LogoutOutlined,
   PlusOutlined,
   ProfileOutlined,
-  RadarChartOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Space, Tag, Typography } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -50,7 +49,7 @@ export function AppLayout() {
       ? [{ key: '/prompts', icon: <ProfileOutlined />, label: 'Prompt 审批' }]
       : []),
     ...(canObserve
-      ? [{ key: '/observability', icon: <RadarChartOutlined />, label: '审计观测' }]
+      ? [{ key: '/observability', icon: <AuditOutlined />, label: '运行审计' }]
       : []),
   ];
   const selected = items.find((item) => location.pathname.startsWith(item.key))?.key;
@@ -74,7 +73,7 @@ export function AppLayout() {
       </Sider>
       <Layout>
         <Header className="app-header">
-          <Typography.Text type="secondary" className="header-context">校园制度检索 · Agent 证据 · 人工复核</Typography.Text>
+          <Typography.Text type="secondary" className="header-context">校园制度检索 · 可信证据 · 人工复核</Typography.Text>
           <Space className="header-user">
             <span className="header-roles">{user?.roles.map((role) => <Tag key={role}>{role}</Tag>)}</span>
             <Avatar>{user?.displayName.slice(0, 1)}</Avatar>

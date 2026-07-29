@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.workflow.WorkflowRunRepository;
+import com.yangaobo.expense.backend.application.workflow.WorkflowCommandType;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -27,11 +28,24 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
 
     @Override
     public WorkflowRun startOrLoad(UUID caseId, String requestId) {
+        return startOrLoad(caseId, requestId, WorkflowCommandType.REVIEW,
+                currentDocumentVersion(caseId), null, null);
+    }
+
+    @Override
+    public WorkflowRun startOrLoad(
+            UUID caseId,
+            String requestId,
+            WorkflowCommandType commandType,
+            int documentVersion,
+            UUID previousRunId,
+            String reopenReason) {
         Optional<WorkflowRun> existing =
                 jdbcClient
                         .sql(
                                 """
-                                SELECT id, case_id, request_id, status
+                                SELECT id, case_id, request_id, status, command_type,
+                                       document_version, previous_run_id, reopen_reason
                                 FROM expense_agent_run
                                 WHERE case_id = :caseId AND request_id = :requestId
                                 """)
@@ -43,7 +57,11 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                                                 rs.getObject("id", UUID.class),
                                                 rs.getObject("case_id", UUID.class),
                                                 rs.getString("request_id"),
-                                                rs.getString("status")))
+                                                rs.getString("status"),
+                                                WorkflowCommandType.valueOf(rs.getString("command_type")),
+                                                rs.getInt("document_version"),
+                                                rs.getObject("previous_run_id", UUID.class),
+                                                rs.getString("reopen_reason")))
                         .optional();
         if (existing.isPresent()) {
             return existing.get();
@@ -53,17 +71,36 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                 .sql(
                         """
                         INSERT INTO expense_agent_run (
-                            id, case_id, request_id, run_type, status, started_at
+                            id, case_id, request_id, run_type, status, command_type,
+                            document_version, previous_run_id, reopen_reason, started_at
                         ) VALUES (
-                            :id, :caseId, :requestId, 'EXPENSE_REVIEW', 'RUNNING', :startedAt
+                            :id, :caseId, :requestId, 'EXPENSE_REVIEW', 'RUNNING', :commandType,
+                            :documentVersion, :previousRunId, :reopenReason, :startedAt
                         )
                         """)
                 .param("id", runId)
                 .param("caseId", caseId)
                 .param("requestId", requestId)
+                .param("commandType", commandType.name())
+                .param("documentVersion", documentVersion)
+                .param("previousRunId", previousRunId)
+                .param("reopenReason", reopenReason)
                 .param("startedAt", Timestamp.from(Instant.now()))
                 .update();
-        return new WorkflowRun(runId, caseId, requestId, "RUNNING");
+        return new WorkflowRun(runId, caseId, requestId, "RUNNING", commandType,
+                documentVersion, previousRunId, reopenReason);
+    }
+
+    @Override
+    public int currentDocumentVersion(UUID caseId) {
+        return jdbcClient.sql("""
+                        SELECT COALESCE(MAX(version), 1)
+                        FROM expense_document_version
+                        WHERE case_id = :caseId
+                        """)
+                .param("caseId", caseId)
+                .query(Integer.class)
+                .single();
     }
 
     @Override
@@ -101,7 +138,8 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                 .sql(
                         """
                         SELECT id, case_id, request_id, status, started_at, completed_at,
-                               error_code, error_message, trace_id
+                               error_code, error_message, command_type, document_version,
+                               previous_run_id, reopen_reason, route_action, waiting_reason
                         FROM expense_agent_run
                         WHERE case_id = :caseId
                         ORDER BY started_at DESC, id DESC
@@ -119,8 +157,40 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                                         instant(rs.getTimestamp("completed_at")),
                                         rs.getString("error_code"),
                                         rs.getString("error_message"),
-                                        rs.getString("trace_id")))
+                                        WorkflowCommandType.valueOf(rs.getString("command_type")),
+                                        rs.getInt("document_version"),
+                                        rs.getObject("previous_run_id", UUID.class),
+                                        rs.getString("reopen_reason"),
+                                        rs.getString("route_action"),
+                                        rs.getString("waiting_reason")))
                 .optional();
+    }
+
+    @Override
+    public Optional<WorkflowRunDetail> findRun(UUID runId) {
+        return jdbcClient.sql("""
+                        SELECT id, case_id, request_id, status, started_at, completed_at,
+                               error_code, error_message, command_type, document_version,
+                               previous_run_id, reopen_reason, route_action, waiting_reason
+                        FROM expense_agent_run WHERE id = :runId
+                        """)
+                .param("runId", runId)
+                .query(this::mapRunDetail)
+                .optional();
+    }
+
+    @Override
+    public List<WorkflowRunDetail> findByCaseId(UUID caseId) {
+        return jdbcClient.sql("""
+                        SELECT id, case_id, request_id, status, started_at, completed_at,
+                               error_code, error_message, command_type, document_version,
+                               previous_run_id, reopen_reason, route_action, waiting_reason
+                        FROM expense_agent_run WHERE case_id = :caseId
+                        ORDER BY started_at, id
+                        """)
+                .param("caseId", caseId)
+                .query(this::mapRunDetail)
+                .list();
     }
 
     @Override
@@ -156,39 +226,46 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
                 .sql(
                         """
                         SELECT id, case_id, request_id, status, started_at, completed_at,
-                               error_code, error_message, trace_id
+                               error_code, error_message, command_type, document_version,
+                               previous_run_id, reopen_reason, route_action, waiting_reason
                         FROM expense_agent_run
                         ORDER BY started_at DESC, id DESC
                         LIMIT :limit
                         """)
                 .param("limit", Math.max(1, Math.min(limit, 100)))
-                .query(
-                        (rs, row) ->
-                                new WorkflowRunDetail(
-                                        rs.getObject("id", UUID.class),
-                                        rs.getObject("case_id", UUID.class),
-                                        rs.getString("request_id"),
-                                        rs.getString("status"),
-                                        instant(rs.getTimestamp("started_at")),
-                                        instant(rs.getTimestamp("completed_at")),
-                                        rs.getString("error_code"),
-                                        rs.getString("error_message"),
-                                        rs.getString("trace_id")))
+                .query(this::mapRunDetail)
                 .list();
     }
 
     @Override
-    public void attachTraceId(UUID runId, String traceId) {
-        jdbcClient
-                .sql(
-                        """
+    public void updateOutcome(UUID runId, String routeAction, String waitingReason) {
+        jdbcClient.sql("""
                         UPDATE expense_agent_run
-                        SET trace_id = :traceId
+                        SET route_action = :routeAction, waiting_reason = :waitingReason
                         WHERE id = :runId
                         """)
-                .param("traceId", traceId)
+                .param("routeAction", routeAction)
+                .param("waitingReason", waitingReason)
                 .param("runId", runId)
                 .update();
+    }
+
+    @Override
+    public List<DocumentVersion> documentVersions(UUID caseId) {
+        return jdbcClient.sql("""
+                        SELECT case_id, version, document_id, sha256, source_type,
+                               uploaded_by, replaces_version, created_at
+                        FROM expense_document_version
+                        WHERE case_id = :caseId ORDER BY version
+                        """)
+                .param("caseId", caseId)
+                .query((rs, row) -> new DocumentVersion(
+                        rs.getObject("case_id", UUID.class), rs.getInt("version"),
+                        rs.getObject("document_id", UUID.class), rs.getString("sha256"),
+                        rs.getString("source_type"), rs.getString("uploaded_by"),
+                        (Integer) rs.getObject("replaces_version"),
+                        rs.getTimestamp("created_at").toInstant()))
+                .list();
     }
 
     @Override
@@ -337,5 +414,24 @@ public class JdbcWorkflowRunRepository implements WorkflowRunRepository {
 
     private static Instant instant(Timestamp timestamp) {
         return timestamp == null ? null : timestamp.toInstant();
+    }
+
+    private WorkflowRunDetail mapRunDetail(java.sql.ResultSet rs, int row)
+            throws java.sql.SQLException {
+        return new WorkflowRunDetail(
+                rs.getObject("id", UUID.class),
+                rs.getObject("case_id", UUID.class),
+                rs.getString("request_id"),
+                rs.getString("status"),
+                instant(rs.getTimestamp("started_at")),
+                instant(rs.getTimestamp("completed_at")),
+                rs.getString("error_code"),
+                rs.getString("error_message"),
+                WorkflowCommandType.valueOf(rs.getString("command_type")),
+                rs.getInt("document_version"),
+                rs.getObject("previous_run_id", UUID.class),
+                rs.getString("reopen_reason"),
+                rs.getString("route_action"),
+                rs.getString("waiting_reason"));
     }
 }

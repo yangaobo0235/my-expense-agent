@@ -11,6 +11,9 @@ import com.yangaobo.expense.backend.application.extraction.ExpenseDocumentExtrac
 import com.yangaobo.expense.backend.application.extraction.ExpenseExtractionJsonSchema;
 import com.yangaobo.expense.backend.application.extraction.ExtractedExpenseDocument;
 import com.yangaobo.expense.backend.application.extraction.ExtractionCandidate;
+import com.yangaobo.expense.backend.application.extraction.ExtractionAttemptMetadata;
+import com.yangaobo.expense.backend.application.extraction.ExtractionErrorCode;
+import com.yangaobo.expense.backend.application.extraction.ExtractionValidationError;
 import com.yangaobo.expense.backend.application.extraction.PreparedDocument;
 import com.yangaobo.expense.backend.application.governance.DependencyCircuitBreaker;
 import com.yangaobo.expense.backend.application.observability.ModelCallRecorder;
@@ -87,75 +90,156 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
             throw dependency("LLM API key is not configured", null);
         }
         RenderedPrompt prompt = prompt(document);
+        long startedNanos = System.nanoTime();
+        String modelName = extractionModelName(prompt);
+        try {
+            ModelResponse original = invokeWithNetworkRetry(
+                    requestPayload(document, prompt, modelName, ""), modelName, prompt.content());
+            try {
+                return candidateFrom(
+                        original,
+                        prompt,
+                        modelName,
+                        startedNanos,
+                        false,
+                        "llm");
+            } catch (JsonProcessingException | IllegalArgumentException exception) {
+                List<ExtractionValidationError> errors = List.of(
+                        ExtractionValidationError.repairable(
+                                exception instanceof JsonProcessingException
+                                        ? ExtractionErrorCode.JSON_INVALID
+                                        : ExtractionErrorCode.SCHEMA_INVALID,
+                                "response",
+                                safeMessage(exception)));
+                ExtractionAttemptMetadata originalAttempt =
+                        new ExtractionAttemptMetadata(
+                                ModelCallRecorder.sha256(original.content()),
+                                original.promptTokens(),
+                                original.completionTokens(),
+                                elapsedMs(startedNanos),
+                                original.networkRetryCount(),
+                                errors,
+                                "VALIDATION_FAILED");
+                return repairRaw(document, prompt, modelName, original.content(), errors, startedNanos,
+                        original.networkRetryCount(), List.of(originalAttempt));
+            }
+        } catch (RuntimeException exception) {
+            if (properties.isFallbackEnabled()) {
+                return fallback(document, safeMessage(exception));
+            }
+            throw exception;
+        } catch (JsonProcessingException exception) {
+            throw dependency("LLM extraction request serialization failed", exception);
+        }
+    }
+
+    @Override
+    public boolean supportsRepair() {
+        return true;
+    }
+
+    @Override
+    public ExtractionCandidate repair(
+            PreparedDocument document,
+            ExtractionCandidate candidate,
+            List<ExtractionValidationError> errors) {
+        RenderedPrompt prompt = prompt(document);
+        try {
+            return repairRaw(
+                    document,
+                    prompt,
+                    extractionModelName(prompt),
+                    objectMapper.writeValueAsString(candidate.document()),
+                    errors,
+                    System.nanoTime(),
+                    candidate.networkRetryCount(),
+                    List.of());
+        } catch (JsonProcessingException exception) {
+            throw dependency("LLM extraction repair serialization failed", exception);
+        }
+    }
+
+    private ExtractionCandidate repairRaw(
+            PreparedDocument document,
+            RenderedPrompt prompt,
+            String modelName,
+            String originalJson,
+            List<ExtractionValidationError> errors,
+            long startedNanos,
+            int previousNetworkRetries,
+            List<ExtractionAttemptMetadata> priorAttempts) throws JsonProcessingException {
+        String repairInstruction = """
+
+                Correct the candidate JSON exactly once using only facts visible in the source document.
+                Preserve every field that is not named by a validation error. Never invent a missing fact.
+                Candidate JSON:
+                %s
+                Validation errors:
+                %s
+                """.formatted(originalJson, objectMapper.writeValueAsString(errors));
+        ModelResponse repaired = invokeWithNetworkRetry(
+                requestPayload(document, prompt, modelName, repairInstruction),
+                modelName,
+                prompt.content() + repairInstruction);
+        ExtractionCandidate result = candidateFrom(
+                repaired, prompt, modelName, startedNanos, true, "llm-repair");
+        return new ExtractionCandidate(
+                result.document(), result.modelName(), result.promptVersion(), result.rawResponseHash(),
+                result.promptTokens(), result.completionTokens(), result.latencyMs(), result.extractorMode(),
+                previousNetworkRetries + repaired.networkRetryCount(), true, priorAttempts);
+    }
+
+    private ExtractionCandidate candidateFrom(
+            ModelResponse response,
+            RenderedPrompt prompt,
+            String modelName,
+            long startedNanos,
+            boolean repairUsed,
+            String mode) throws JsonProcessingException {
+        JsonNode json = normalizeExtractionJson(objectMapper.readTree(stripJsonFence(response.content())));
+        List<String> schemaErrors = schema.validate(json);
+        if (!schemaErrors.isEmpty()) {
+            throw new IllegalArgumentException("LLM extraction schema validation failed: " + schemaErrors);
+        }
+        ExtractedExpenseDocument extracted = objectMapper.treeToValue(json, ExtractedExpenseDocument.class);
+        return new ExtractionCandidate(
+                extracted,
+                modelName,
+                prompt.version(),
+                ModelCallRecorder.sha256(response.content()),
+                response.promptTokens(),
+                response.completionTokens(),
+                elapsedMs(startedNanos),
+                mode,
+                response.networkRetryCount(),
+                repairUsed);
+    }
+
+    private ModelResponse invokeWithNetworkRetry(String payload, String modelName, String promptText) {
         int attempts = Math.max(1, properties.getMaxRetries() + 1);
         RuntimeException lastFailure = null;
-        long startedNanos = System.nanoTime();
         for (int attempt = 1; attempt <= attempts; attempt++) {
-            String modelName = extractionModelName(prompt);
             try {
-                log.info(
-                        "Starting LLM receipt extraction attempt={} documentKind={} mediaType={} model={} promptVersion={} endpoint={}",
-                        attempt,
-                        document.kind(),
-                        document.mediaType(),
-                        modelName,
-                        prompt.version(),
-                        chatCompletionsEndpoint());
-                String payload = requestPayload(document, prompt, modelName);
-                String response =
-                        circuitBreaker.execute(
-                                "llm:" + modelName,
-                                () -> callModel(payload, modelName));
+                String response = circuitBreaker.execute("llm:" + modelName, () -> callModel(payload, modelName));
                 JsonNode root = objectMapper.readTree(response);
                 JsonNode message = root.at("/choices/0/message/content");
                 if (!message.isTextual()) {
                     throw dependency("LLM response does not contain message content", null);
                 }
-                String content = stripJsonFence(message.asText());
-                JsonNode json = normalizeExtractionJson(objectMapper.readTree(content));
-                List<String> schemaErrors = schema.validate(json);
-                if (!schemaErrors.isEmpty()) {
-                    log.warn(
-                            "LLM receipt extraction schema validation failed attempt={} model={} promptVersion={} errors={} contentPreview={}",
-                            attempt,
-                            modelName,
-                            prompt.version(),
-                            schemaErrors,
-                            preview(content));
-                    throw dependency("LLM extraction schema validation failed: " + schemaErrors, null);
-                }
-                ExtractedExpenseDocument extracted =
-                        objectMapper.treeToValue(json, ExtractedExpenseDocument.class);
+                String content = message.asText();
                 JsonNode usage = root.get("usage");
-                int promptTokens = usage == null ? estimateTokens(prompt.content()) : usage.path("prompt_tokens").asInt(0);
-                int completionTokens = usage == null ? estimateTokens(content) : usage.path("completion_tokens").asInt(0);
-                return new ExtractionCandidate(
-                        extracted,
-                        extractionModelName(prompt),
-                        prompt.version(),
-                        ModelCallRecorder.sha256(content),
-                        promptTokens,
-                        completionTokens,
-                        elapsedMs(startedNanos),
-                        "llm");
+                return new ModelResponse(
+                        content,
+                        usage == null ? estimateTokens(promptText) : usage.path("prompt_tokens").asInt(0),
+                        usage == null ? estimateTokens(content) : usage.path("completion_tokens").asInt(0),
+                        attempt - 1);
             } catch (JsonProcessingException exception) {
-                log.warn(
-                        "LLM receipt extraction JSON processing failed attempt={} model={} promptVersion={} message={}",
-                        attempt,
-                        modelName,
-                        prompt.version(),
-                        exception.getOriginalMessage());
-                lastFailure = dependency("LLM extraction JSON processing failed", exception);
+                lastFailure = dependency("LLM transport response is not valid JSON", exception);
             } catch (RuntimeException exception) {
                 lastFailure = exception;
             }
         }
-        if (properties.isFallbackEnabled()) {
-            return fallback(document, safeMessage(lastFailure));
-        }
-        throw lastFailure == null
-                ? dependency("LLM extraction failed", null)
-                : lastFailure;
+        throw lastFailure == null ? dependency("LLM extraction failed", null) : lastFailure;
     }
 
     private String callModel(String payload, String modelName) {
@@ -183,18 +267,20 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
         }
     }
 
-    private String requestPayload(PreparedDocument document, RenderedPrompt prompt, String modelName)
+    private String requestPayload(
+            PreparedDocument document, RenderedPrompt prompt, String modelName, String instructionSuffix)
             throws JsonProcessingException {
+        String userPrompt = prompt.content() + (instructionSuffix == null ? "" : instructionSuffix);
         Object userContent =
                 document.kind() == DocumentInputKind.IMAGE
                         ? List.of(
-                                Map.of("type", "text", "text", prompt.content()),
+                                Map.of("type", "text", "text", userPrompt),
                                 Map.of(
                                         "type",
                                         "image_url",
                                         "image_url",
                                         Map.of("url", imageUrl(document))))
-                        : prompt.content();
+                        : userPrompt;
         return objectMapper.writeValueAsString(
                 Map.of(
                         "model",
@@ -249,7 +335,9 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
                 candidate.promptTokens(),
                 candidate.completionTokens(),
                 candidate.latencyMs(),
-                "llm-fallback");
+                "llm-fallback",
+                0,
+                false);
     }
 
     private static String imageUrl(PreparedDocument document) {
@@ -405,7 +493,7 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
         return Math.max(0, java.time.Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
     }
 
-    private static String safeMessage(RuntimeException exception) {
+    private static String safeMessage(Throwable exception) {
         if (exception == null || exception.getMessage() == null || exception.getMessage().isBlank()) {
             return "LLM extraction failed";
         }
@@ -426,4 +514,7 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
         String compact = value.replaceAll("\\s+", " ").trim();
         return compact.length() <= 500 ? compact : compact.substring(0, 500) + "...";
     }
+
+    private record ModelResponse(
+            String content, int promptTokens, int completionTokens, int networkRetryCount) {}
 }

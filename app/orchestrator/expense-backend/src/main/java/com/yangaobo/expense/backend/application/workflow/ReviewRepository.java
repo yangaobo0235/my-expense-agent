@@ -76,7 +76,7 @@ public interface ReviewRepository {
             List<String> requiredEvidence,
             String userFacingMessage,
             String fallbackStrategy,
-            boolean debateAssistEnabled,
+            boolean summaryRequired,
             String reviewerComment,
             Instant dueAt,
             long version,

@@ -67,13 +67,13 @@ public class JdbcReviewRepository implements ReviewRepository {
                             id, case_id, status, reason_codes,
                             routing_action, routing_queue, assignee_role, sla_hours,
                             required_evidence, user_facing_message, fallback_strategy,
-                            debate_assist_enabled, due_at,
+                            summary_required, due_at,
                             version, created_at, updated_at
                         ) VALUES (
                             :id, :caseId, 'OPEN', CAST(:reasons AS jsonb),
                             :routingAction, :routingQueue, :assigneeRole, :slaHours,
                             CAST(:requiredEvidence AS jsonb), :userFacingMessage, :fallbackStrategy,
-                            :debateAssistEnabled, :dueAt,
+                            :summaryRequired, :dueAt,
                             0, :createdAt, :updatedAt
                         )
                         """)
@@ -87,7 +87,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                 .param("requiredEvidence", json(routing.requiredEvidence()))
                 .param("userFacingMessage", routing.userFacingMessage())
                 .param("fallbackStrategy", routing.fallbackStrategy())
-                .param("debateAssistEnabled", routing.debateAssistEnabled())
+                .param("summaryRequired", routing.summaryRequired())
                 .param("dueAt", Timestamp.from(dueAt))
                 .param("createdAt", Timestamp.from(now))
                 .param("updatedAt", Timestamp.from(now))
@@ -333,7 +333,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                 readJsonList(rs.getString("required_evidence")),
                 rs.getString("user_facing_message"),
                 rs.getString("fallback_strategy"),
-                rs.getBoolean("debate_assist_enabled"),
+                rs.getBoolean("summary_required"),
                 rs.getString("reviewer_comment"),
                 dueAt == null ? null : dueAt.toInstant(),
                 rs.getLong("version"),

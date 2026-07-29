@@ -34,6 +34,15 @@ public interface ToolCallRepository {
             long durationMs,
             Instant now);
 
+    default void fail(
+            UUID id,
+            String errorCode,
+            boolean retryable,
+            long durationMs,
+            Instant now) {
+        fail(id, errorCode, durationMs, now);
+    }
+
     record ToolCall(
             UUID id,
             UUID caseId,
@@ -50,6 +59,7 @@ public interface ToolCallRepository {
     record ToolCallDetail(
             UUID id,
             String toolName,
+            String requestId,
             boolean writeOperation,
             String status,
             Map<String, Object> output,

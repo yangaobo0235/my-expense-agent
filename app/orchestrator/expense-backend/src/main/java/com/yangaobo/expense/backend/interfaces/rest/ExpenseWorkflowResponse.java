@@ -1,6 +1,7 @@
 package com.yangaobo.expense.backend.interfaces.rest;
 
 import com.yangaobo.expense.backend.application.workflow.ExpenseWorkflowResult;
+import com.yangaobo.expense.backend.application.workflow.RiskRoutingAction;
 import com.yangaobo.expense.backend.domain.model.RiskLevel;
 import com.yangaobo.expense.backend.domain.risk.RiskSignal;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
@@ -16,7 +17,11 @@ public record ExpenseWorkflowResponse(
         RiskLevel riskLevel,
         List<RiskSignal> riskSignals,
         List<Map<String, Object>> policyFindings,
-        UUID reviewTaskId) {
+        UUID reviewTaskId,
+        UUID moreInfoTaskId,
+        RiskRoutingAction routeAction,
+        int documentVersion,
+        UUID previousRunId) {
 
     static ExpenseWorkflowResponse from(ExpenseWorkflowResult result) {
         return new ExpenseWorkflowResponse(
@@ -27,6 +32,10 @@ public record ExpenseWorkflowResponse(
                 result.riskLevel(),
                 result.riskSignals(),
                 result.policyFindings(),
-                result.reviewTaskId());
+                result.reviewTaskId(),
+                result.moreInfoTaskId(),
+                result.routeAction(),
+                result.documentVersion(),
+                result.previousRunId());
     }
 }

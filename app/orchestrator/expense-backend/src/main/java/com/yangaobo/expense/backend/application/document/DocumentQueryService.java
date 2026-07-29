@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
 import com.yangaobo.expense.backend.application.extraction.ExtractedExpenseDocument;
+import com.yangaobo.expense.backend.application.extraction.ExtractionAttemptRepository;
 import com.yangaobo.expense.backend.application.storage.DocumentObjectStorage;
 import com.yangaobo.expense.backend.domain.repository.ExpenseDocumentRepository;
 import java.net.URI;
@@ -23,6 +24,7 @@ public class DocumentQueryService {
     private final ExpenseCaseApplicationService caseService;
     private final ExpenseDocumentRepository documentRepository;
     private final DocumentObjectStorage objectStorage;
+    private final ExtractionAttemptRepository extractionAttemptRepository;
     private final ObjectMapper objectMapper;
     private final Clock clock;
 
@@ -30,11 +32,13 @@ public class DocumentQueryService {
             ExpenseCaseApplicationService caseService,
             ExpenseDocumentRepository documentRepository,
             DocumentObjectStorage objectStorage,
+            ExtractionAttemptRepository extractionAttemptRepository,
             ObjectMapper objectMapper,
             Clock clock) {
         this.caseService = caseService;
         this.documentRepository = documentRepository;
         this.objectStorage = objectStorage;
+        this.extractionAttemptRepository = extractionAttemptRepository;
         this.objectMapper = objectMapper;
         this.clock = clock;
     }
@@ -77,6 +81,7 @@ public class DocumentQueryService {
                                     previewUrl,
                                     clock.instant().plus(PREVIEW_VALIDITY),
                                     extraction,
+                                    extractionAttemptRepository.findByDocumentId(document.id()),
                                     document.createdAt());
                         })
                 .toList();
@@ -99,6 +104,7 @@ public class DocumentQueryService {
             URI previewUrl,
             Instant previewExpiresAt,
             ExtractionView extraction,
+            List<ExtractionAttemptRepository.ExtractionAttempt> extractionAttempts,
             Instant createdAt) {}
 
     public record ExtractionView(

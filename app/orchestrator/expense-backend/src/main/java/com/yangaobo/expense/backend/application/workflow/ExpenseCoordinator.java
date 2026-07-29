@@ -1,7 +1,6 @@
 package com.yangaobo.expense.backend.application.workflow;
 
 import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
-import com.yangaobo.expense.backend.application.observability.WorkflowObservability;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
 import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
@@ -15,19 +14,16 @@ public class ExpenseCoordinator {
 
     private final ExpenseCaseApplicationService caseService;
     private final WorkflowRunRepository runRepository;
-    private final WorkflowObservability observability;
     private final ExpenseWorkflowSteps steps;
     private final ExpenseWorkflowGraph graph;
 
     public ExpenseCoordinator(
             ExpenseCaseApplicationService caseService,
             WorkflowRunRepository runRepository,
-            WorkflowObservability observability,
             ExpenseWorkflowSteps steps,
             ExpenseWorkflowGraphFactory graphFactory) {
         this.caseService = caseService;
         this.runRepository = runRepository;
-        this.observability = observability;
         this.steps = steps;
         this.graph = graphFactory.graph();
     }
@@ -37,31 +33,25 @@ public class ExpenseCoordinator {
         ExpenseCase expenseCase = caseService.getOwned(caseId, ownerSubject);
         validateStartState(expenseCase);
         String requestId = required(command.requestId(), "requestId");
-        WorkflowRunRepository.WorkflowRun run = runRepository.startOrLoad(caseId, requestId);
+        int documentVersion = command.documentVersion() == null
+                ? runRepository.currentDocumentVersion(caseId)
+                : command.documentVersion();
+        validateReviewAgain(caseId, command, documentVersion);
+        WorkflowRunRepository.WorkflowRun run = runRepository.startOrLoad(
+                caseId, requestId, command.commandType(), documentVersion,
+                command.previousRunId(), command.reopenReason());
         boolean restoreOnly =
                 "SUCCEEDED".equals(run.status())
                         && !steps.hasRecoverableFailedEvidenceSteps(run.id());
 
-        return observability
-                .workflow(
-                        caseId,
-                        run.id(),
-                        requestId,
-                        traceId -> {
-                            if (!restoreOnly) {
-                                runRepository.attachTraceId(run.id(), traceId);
-                            }
-                        },
-                        () ->
-                                executeGraph(
-                                        caseId,
-                                        ownerSubject,
-                                        requestId,
-                                        command,
-                                        expenseCase,
-                                        run,
-                                        restoreOnly))
-                .value();
+        return executeGraph(
+                caseId,
+                ownerSubject,
+                requestId,
+                command,
+                expenseCase,
+                run,
+                restoreOnly);
     }
 
     private ExpenseWorkflowResult executeGraph(
@@ -81,7 +71,8 @@ public class ExpenseCoordinator {
                             requestId,
                             command,
                             expenseCase,
-                            restoreOnly);
+                            restoreOnly,
+                            run);
             return graph.execute(initialState);
         } catch (RuntimeException exception) {
             if (!restoreOnly) {
@@ -113,6 +104,28 @@ public class ExpenseCoordinator {
             throw new MyExpenseAgentException(
                     MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
                     "只有已完成提取的案例才能启动完整审核工作流");
+        }
+    }
+
+    private void validateReviewAgain(
+            UUID caseId, ExpenseWorkflowCommand command, int documentVersion) {
+        if (command.commandType() != WorkflowCommandType.REVIEW_AGAIN) {
+            return;
+        }
+        if (command.previousRunId() == null || command.reopenReason() == null
+                || command.reopenReason().isBlank()) {
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
+                    "REVIEW_AGAIN 必须提供 previousRunId 和 reopenReason");
+        }
+        WorkflowRunRepository.WorkflowRunDetail previous = runRepository.findRun(command.previousRunId())
+                .filter(item -> item.caseId().equals(caseId))
+                .orElseThrow(() -> new MyExpenseAgentException(
+                        MyExpenseAgentErrorCode.VALIDATION_FAILED, "previousRunId 不属于当前案例"));
+        if (documentVersion <= previous.documentVersion()) {
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.VALIDATION_FAILED,
+                    "重新审核必须使用更高的文档版本");
         }
     }
 

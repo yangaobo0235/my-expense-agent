@@ -31,9 +31,9 @@ const evidenceStepGroups = [
     steps: ['MCP_REVIEW_EVIDENCE', 'PARALLEL_EVIDENCE_COLLECTION'],
   },
   {
-    title: '处理计划',
-    description: '本次申请会按固定步骤核对票据、制度和风险。',
-    steps: ['AGENT_PLAN'],
+    title: '受治理执行策略',
+    description: '本次申请按固定能力边界核对票据、制度和风险。',
+    steps: ['EXECUTION_POLICY'],
   },
 ];
 
@@ -320,7 +320,7 @@ export function SettlementWorkbench({
       'record_fund_reimbursement_history',
     ].includes(call.toolName),
   );
-  const failedCalls = settlementCalls.filter((call) => call.status === 'FAILED');
+  const failedCalls = settlementCalls.filter((call) => call.status.startsWith('FAILED_'));
   const pendingApproval = expenseCase.status !== 'APPROVED';
   const latestFailedCall = failedCalls.at(-1);
   return (
@@ -381,8 +381,8 @@ export function SettlementWorkbench({
             dataIndex: 'status',
             width: 150,
             render: (status: string, row) => (
-              <Tag color={status === 'SUCCEEDED' ? 'green' : status === 'FAILED' ? 'red' : 'blue'}>
-                {status === 'FAILED' && settlementCompleted
+              <Tag color={status === 'SUCCEEDED' ? 'green' : status.startsWith('FAILED_') ? 'red' : 'blue'}>
+                {status.startsWith('FAILED_') && settlementCompleted
                   ? '历史失败'
                   : row.errorCode
                     ? settlementErrorLabel(row.errorCode)
@@ -394,10 +394,10 @@ export function SettlementWorkbench({
             title: '说明',
             width: 260,
             render: (_, row) => (
-              <Typography.Text type={row.status === 'FAILED' ? 'danger' : undefined}>
-                {row.status === 'FAILED' && settlementCompleted
+              <Typography.Text type={row.status.startsWith('FAILED_') ? 'danger' : undefined}>
+                {row.status.startsWith('FAILED_') && settlementCompleted
                   ? '之前提交失败过，后续已重新提交成功。'
-                  : row.status === 'FAILED'
+                  : row.status.startsWith('FAILED_')
                   ? settlementFailureMessage(row.errorCode, row.toolName)
                   : row.status === 'SUCCEEDED'
                     ? '已提交到入账系统'
@@ -410,6 +410,12 @@ export function SettlementWorkbench({
             dataIndex: 'approvalReference',
             width: 140,
             render: (value) => shortId(value) || '-',
+          },
+          {
+            title: 'requestId',
+            dataIndex: 'requestId',
+            width: 170,
+            render: (value) => <Typography.Text code>{shortId(value) || '-'}</Typography.Text>,
           },
           {
             title: '完成时间',

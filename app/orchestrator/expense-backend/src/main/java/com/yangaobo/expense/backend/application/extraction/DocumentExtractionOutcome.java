@@ -7,10 +7,20 @@ public record DocumentExtractionOutcome(
         UUID documentId,
         ExtractedExpenseDocument result,
         List<String> validationErrors,
-        boolean reused) {
+        boolean reused,
+        boolean repairUsed,
+        boolean manualReviewRequired) {
 
     public DocumentExtractionOutcome {
         validationErrors =
                 validationErrors == null ? List.of() : List.copyOf(validationErrors);
+    }
+
+    public DocumentExtractionOutcome(
+            UUID documentId,
+            ExtractedExpenseDocument result,
+            List<String> validationErrors,
+            boolean reused) {
+        this(documentId, result, validationErrors, reused, false, !validationErrors.isEmpty());
     }
 }

@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.application.evaluation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.agents.AgentFailurePolicy;
 import com.yangaobo.expense.agents.AgentRole;
-import com.yangaobo.expense.agents.ExpenseMultiAgentPlan;
-import com.yangaobo.expense.agents.ExpenseMultiAgentPlanner;
+import com.yangaobo.expense.agents.GovernedExecutionPlan;
+import com.yangaobo.expense.agents.ExpenseExecutionPolicy;
 import com.yangaobo.expense.backend.domain.risk.DeterministicRiskEngine;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessmentInput;
@@ -33,7 +33,7 @@ public class RiskEvaluationService {
     private final DeterministicRiskEngine engine;
     private final Clock clock;
     private final String datasetLocation;
-    private final ExpenseMultiAgentPlanner agentPlanner;
+    private final ExpenseExecutionPolicy executionPolicy;
 
     public RiskEvaluationService(
             ObjectMapper objectMapper,
@@ -45,7 +45,7 @@ public class RiskEvaluationService {
         this.engine = engine;
         this.clock = clock;
         this.datasetLocation = datasetLocation;
-        this.agentPlanner = new ExpenseMultiAgentPlanner();
+        this.executionPolicy = new ExpenseExecutionPolicy();
     }
 
     public RiskEvaluationReport evaluate() {
@@ -127,16 +127,16 @@ public class RiskEvaluationService {
                         ratio(correctReview, count),
                         ratio(missedHigh, expectedHigh),
                         ratio(reviewTriggered, count)),
-                agentGovernance(),
+                executionGovernance(),
                 List.copyOf(failures));
     }
 
-    private RiskEvaluationReport.AgentGovernance agentGovernance() {
-        ExpenseMultiAgentPlan plan = agentPlanner.plan("evaluation-baseline", "evaluation-request");
-        int totalAgents = plan.steps().size();
-        int writeAgents =
+    private RiskEvaluationReport.ExecutionGovernance executionGovernance() {
+        GovernedExecutionPlan plan = executionPolicy.plan("evaluation-baseline", "evaluation-request");
+        int totalCapabilities = plan.steps().size();
+        int writeCapabilities =
                 (int) plan.steps().stream().filter(step -> step.writeOperationAllowed()).count();
-        int idempotentWriteAgents =
+        int idempotentWriteCapabilities =
                 (int)
                         plan.steps().stream()
                                 .filter(step -> step.writeOperationAllowed())
@@ -147,7 +147,7 @@ public class RiskEvaluationService {
                                                                 .IDEMPOTENT_WRITE_RETRY)
                                 .count();
         boolean writeToolIsolationPassed =
-                writeAgents == 1
+                writeCapabilities == 1
                         && plan.steps().stream()
                                 .filter(step -> step.writeOperationAllowed())
                                 .allMatch(step -> step.role() == AgentRole.APPROVED_SETTLEMENT_AGENT);
@@ -165,7 +165,7 @@ public class RiskEvaluationService {
                 plan.steps().stream()
                         .filter(step -> !step.handoffTarget().isBlank())
                         .count();
-        long retryableAgents =
+        long retryableCapabilities =
                 plan.steps().stream()
                         .filter(
                                 step ->
@@ -176,15 +176,15 @@ public class RiskEvaluationService {
                                                         == AgentFailurePolicy
                                                                 .IDEMPOTENT_WRITE_RETRY)
                         .count();
-        return new RiskEvaluationReport.AgentGovernance(
+        return new RiskEvaluationReport.ExecutionGovernance(
                 plan.planVersion(),
-                totalAgents,
-                writeAgents,
-                idempotentWriteAgents,
+                totalCapabilities,
+                writeCapabilities,
+                idempotentWriteCapabilities,
                 writeToolIsolationPassed,
                 settlementWriteRetryProtected,
-                ratio((int) handoffCovered, totalAgents),
-                ratio((int) retryableAgents, totalAgents));
+                ratio((int) handoffCovered, totalCapabilities),
+                ratio((int) retryableCapabilities, totalCapabilities));
     }
 
     private byte[] readDataset() {

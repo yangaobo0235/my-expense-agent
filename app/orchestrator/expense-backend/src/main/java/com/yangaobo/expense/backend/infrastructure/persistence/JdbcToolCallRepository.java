@@ -57,7 +57,7 @@ public class JdbcToolCallRepository implements ToolCallRepository {
         return jdbcClient
                 .sql(
                         """
-                        SELECT id, tool_name, write_operation, status, output_data::text,
+                        SELECT id, tool_name, request_id, write_operation, status, output_data::text,
                                duration_ms, error_code, approval_reference,
                                created_at, completed_at
                         FROM expense_tool_call
@@ -70,6 +70,7 @@ public class JdbcToolCallRepository implements ToolCallRepository {
                                 new ToolCallDetail(
                                         rs.getObject("id", UUID.class),
                                         rs.getString("tool_name"),
+                                        rs.getString("request_id"),
                                         rs.getBoolean("write_operation"),
                                         rs.getString("status"),
                                         read(rs.getString("output_data")),
@@ -133,7 +134,7 @@ public class JdbcToolCallRepository implements ToolCallRepository {
                     MyExpenseAgentErrorCode.DUPLICATE_REQUEST,
                     "相同 requestId 的 Tool 调用正在处理中");
         }
-        if ("FAILED".equals(existing.status())) {
+        if ("FAILED_RETRYABLE".equals(existing.status())) {
             jdbcClient
                     .sql(
                             """
@@ -152,6 +153,11 @@ public class JdbcToolCallRepository implements ToolCallRepository {
                     requestId,
                     "RUNNING",
                     Map.of());
+        }
+        if ("FAILED_MANUAL".equals(existing.status()) || "COMPENSATED".equals(existing.status())) {
+            throw new MyExpenseAgentException(
+                    MyExpenseAgentErrorCode.INVALID_STATE_TRANSITION,
+                    "该写 Tool 已转人工或完成补偿，不能自动重放");
         }
         return existing;
     }
@@ -186,15 +192,26 @@ public class JdbcToolCallRepository implements ToolCallRepository {
             String errorCode,
             long durationMs,
             Instant now) {
+        fail(id, errorCode, false, durationMs, now);
+    }
+
+    @Override
+    public void fail(
+            UUID id,
+            String errorCode,
+            boolean retryable,
+            long durationMs,
+            Instant now) {
         jdbcClient
                 .sql(
                         """
                         UPDATE expense_tool_call
-                        SET status = 'FAILED', error_code = :errorCode,
+                        SET status = :status, error_code = :errorCode,
                             duration_ms = :durationMs, completed_at = :completedAt
                         WHERE id = :id
                         """)
                 .param("errorCode", errorCode)
+                .param("status", retryable ? "FAILED_RETRYABLE" : "FAILED_MANUAL")
                 .param("durationMs", durationMs)
                 .param("completedAt", Timestamp.from(now))
                 .param("id", id)

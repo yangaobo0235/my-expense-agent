@@ -16,11 +16,23 @@ public record ExpenseWorkflowResult(
         RiskLevel riskLevel,
         List<RiskSignal> riskSignals,
         List<Map<String, Object>> policyFindings,
-        UUID reviewTaskId)
+        UUID reviewTaskId,
+        UUID moreInfoTaskId,
+        RiskRoutingAction routeAction,
+        int documentVersion,
+        UUID previousRunId)
         implements Serializable {
 
     public ExpenseWorkflowResult {
         riskSignals = List.copyOf(riskSignals);
         policyFindings = List.copyOf(policyFindings);
+    }
+
+    public ExpenseWorkflowResult(
+            UUID caseId, UUID runId, ExpenseCaseStatus status, int riskScore,
+            RiskLevel riskLevel, List<RiskSignal> riskSignals,
+            List<Map<String, Object>> policyFindings, UUID reviewTaskId) {
+        this(caseId, runId, status, riskScore, riskLevel, riskSignals, policyFindings,
+                reviewTaskId, null, null, 1, null);
     }
 }

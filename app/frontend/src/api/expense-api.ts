@@ -7,10 +7,12 @@ import {
   ExpenseCaseStatus,
   ExpenseWorkflowRequest,
   ExpenseDocumentDetail,
+  DocumentVersion,
   EvidenceChatResponse,
   AgentSecurityEvaluationReport,
   CaseObservability,
   MoreInfoSuggestion,
+  MoreInfoTask,
   ModelCallRecord,
   ModelCallSummary,
   PolicyRagEvaluationReport,
@@ -25,8 +27,10 @@ import {
   ReviewDecisionRequest,
   ReviewTask,
   RiskEvaluationReport,
+  ExtractionEvaluationReport,
   SettlementResult,
   UpdateExpenseCaseRequest,
+  WorkflowRunDetail,
 } from './contracts';
 import type {
   OperationQuery,
@@ -144,6 +148,45 @@ export async function listCaseDocuments(
   ).data as ExpenseDocumentDetail[];
 }
 
+export async function listCaseReviewRuns(caseId: string): Promise<WorkflowRunDetail[]> {
+  return (await httpClient.get<WorkflowRunDetail[]>(`/api/v1/expense-cases/${caseId}/review-runs`)).data;
+}
+
+export async function listCaseDocumentVersions(caseId: string): Promise<DocumentVersion[]> {
+  return (await httpClient.get<DocumentVersion[]>(`/api/v1/expense-cases/${caseId}/document-versions`)).data;
+}
+
+export async function getCurrentMoreInfoRequest(caseId: string): Promise<MoreInfoTask> {
+  return (await httpClient.get<MoreInfoTask>(`/api/v1/expense-cases/${caseId}/more-info-request`)).data;
+}
+
+export interface MoreInfoSubmissionInput {
+  taskId: string;
+  file: File;
+  category: string;
+  expenseDate: string;
+  reopenReason: string;
+}
+
+export async function submitMoreInfo(
+  caseId: string,
+  input: MoreInfoSubmissionInput,
+): Promise<{ taskId: string; documentId: string; documentVersion: number }> {
+  const body = new FormData();
+  body.append('file', input.file);
+  body.append('taskId', input.taskId);
+  body.append('requestId', crypto.randomUUID());
+  body.append('category', input.category);
+  body.append('expenseDate', input.expenseDate);
+  body.append('reopenReason', input.reopenReason);
+  return (
+    await httpClient.post<{ taskId: string; documentId: string; documentVersion: number }>(
+      `/api/v1/expense-cases/${caseId}/more-info-submissions`,
+      body,
+    )
+  ).data;
+}
+
 export async function listReviewTasks(): Promise<ReviewTask[]> {
   return (
     await httpClient.get<OperationResponse<'openTasks'>>('/api/v1/review-tasks')
@@ -207,6 +250,14 @@ export async function getRiskEvaluationReport(): Promise<RiskEvaluationReport> {
       '/api/v1/evaluation/risk-report',
     )
   ).data as RiskEvaluationReport;
+}
+
+export async function getExtractionEvaluationReport(): Promise<ExtractionEvaluationReport> {
+  return (
+    await httpClient.get<ExtractionEvaluationReport>(
+      '/api/v1/evaluations/extraction/latest',
+    )
+  ).data;
 }
 
 export async function getPolicyRagEvaluationReport(): Promise<PolicyRagEvaluationReport> {
@@ -294,20 +345,6 @@ export async function getCaseObservability(caseId: string): Promise<CaseObservab
       `/api/v1/observability/fund-applications/${caseId}`,
     )
   ).data;
-}
-
-export function grafanaTraceUrl(traceId: string) {
-  const base = import.meta.env.VITE_GRAFANA_URL;
-  if (!base) return undefined;
-  const datasource = import.meta.env.VITE_TEMPO_DATASOURCE_UID || 'tempo';
-  const panes = {
-    trace: {
-      datasource,
-      queries: [{ refId: 'A', queryType: 'traceql', query: traceId }],
-      range: { from: 'now-24h', to: 'now' },
-    },
-  };
-  return `${base}/explore?schemaVersion=1&panes=${encodeURIComponent(JSON.stringify(panes))}`;
 }
 
 export async function listPrompts(promptKey?: string): Promise<PromptTemplate[]> {

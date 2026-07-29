@@ -18,14 +18,23 @@ public class ExpenseWorkflowGraphState extends AgentState {
     static final String COMMAND = "command";
     static final String EXPENSE_CASE = "expenseCase";
     static final String RESTORE_ONLY = "restoreOnly";
+    static final String DOCUMENT_VERSION = "documentVersion";
+    static final String PREVIOUS_RUN_ID = "previousRunId";
+    static final String REOPEN_REASON = "reopenReason";
     static final String EXTRACTED_DOCUMENTS = "extractedDocuments";
-    static final String AGENT_PLAN = "agentPlan";
+    static final String EXECUTION_POLICY = "executionPolicy";
     static final String APPLICANT_CONTEXT = "applicantContext";
     static final String DUPLICATE_CHECK = "duplicateCheck";
     static final String PROJECT_BUDGET = "projectBudget";
     static final String REIMBURSEMENT_HISTORY = "reimbursementHistory";
     static final String EVIDENCE_RESULT = "evidenceResult";
     static final String POLICY_FINDINGS = "policyFindings";
+    static final String EVIDENCE_QUALITY = "evidenceQuality";
+    static final String MISSING_MATERIALS = "missingMaterials";
+    static final String DEPENDENCY_FAILURES = "dependencyFailures";
+    static final String REPAIR_ATTEMPTS = "repairAttempts";
+    static final String ROUTE_ACTION = "routeAction";
+    static final String MORE_INFO_TASK_ID = "moreInfoTaskId";
     static final String RISK_ASSESSMENT = "riskAssessment";
     static final String ROUTING_DECISION = "routingDecision";
     static final String WORKFLOW_RESULT = "workflowResult";
@@ -41,7 +50,8 @@ public class ExpenseWorkflowGraphState extends AgentState {
             String requestId,
             ExpenseWorkflowCommand command,
             ExpenseCase expenseCase,
-            boolean restoreOnly) {
+            boolean restoreOnly,
+            WorkflowRunRepository.WorkflowRun run) {
         Map<String, Object> data = new HashMap<>();
         data.put(CASE_ID, caseId);
         data.put(RUN_ID, runId);
@@ -50,6 +60,10 @@ public class ExpenseWorkflowGraphState extends AgentState {
         data.put(COMMAND, command);
         data.put(EXPENSE_CASE, expenseCase);
         data.put(RESTORE_ONLY, restoreOnly);
+        data.put(DOCUMENT_VERSION, run.documentVersion());
+        data.put(PREVIOUS_RUN_ID, run.previousRunId());
+        data.put(REOPEN_REASON, run.reopenReason());
+        data.put(REPAIR_ATTEMPTS, 0);
         return data;
     }
 
@@ -80,6 +94,12 @@ public class ExpenseWorkflowGraphState extends AgentState {
     boolean restoreOnly() {
         return value(RESTORE_ONLY, false);
     }
+
+    int documentVersion() { return (Integer) value(DOCUMENT_VERSION).orElse(1); }
+
+    UUID previousRunId() { return (UUID) value(PREVIOUS_RUN_ID).orElse(null); }
+
+    String reopenReason() { return (String) value(REOPEN_REASON).orElse(null); }
 
     List<ExtractedExpenseDocument> extractedDocuments() {
         return (List<ExtractedExpenseDocument>) value(EXTRACTED_DOCUMENTS).orElseThrow();
@@ -113,6 +133,10 @@ public class ExpenseWorkflowGraphState extends AgentState {
 
     RiskAssessment riskAssessment() {
         return (RiskAssessment) value(RISK_ASSESSMENT).orElseThrow();
+    }
+
+    EvidenceQualityResult evidenceQuality() {
+        return (EvidenceQualityResult) value(EVIDENCE_QUALITY).orElseThrow();
     }
 
     RiskRoutingDecision routingDecision() {

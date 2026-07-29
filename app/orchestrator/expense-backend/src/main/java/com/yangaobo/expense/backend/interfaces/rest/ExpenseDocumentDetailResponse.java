@@ -2,6 +2,7 @@ package com.yangaobo.expense.backend.interfaces.rest;
 
 import com.yangaobo.expense.backend.application.document.DocumentQueryService;
 import com.yangaobo.expense.backend.application.extraction.ExtractedExpenseDocument;
+import com.yangaobo.expense.backend.application.extraction.ExtractionValidationError;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +17,7 @@ public record ExpenseDocumentDetailResponse(
         URI previewUrl,
         Instant previewExpiresAt,
         Extraction extraction,
+        List<ExtractionAttempt> extractionAttempts,
         Instant createdAt) {
 
     static ExpenseDocumentDetailResponse from(DocumentQueryService.DocumentView view) {
@@ -39,6 +41,7 @@ public record ExpenseDocumentDetailResponse(
                 view.previewUrl(),
                 view.previewExpiresAt(),
                 extraction,
+                view.extractionAttempts().stream().map(ExtractionAttempt::from).toList(),
                 view.createdAt());
     }
 
@@ -50,4 +53,31 @@ public record ExpenseDocumentDetailResponse(
             int tokenUsage,
             long extractionLatencyMs,
             String extractorMode) {}
+
+    public record ExtractionAttempt(
+            int attemptNo,
+            String attemptType,
+            List<ExtractionValidationError> validationErrors,
+            String outputHash,
+            int tokenUsage,
+            long latencyMs,
+            int networkRetryCount,
+            String status,
+            Instant createdAt) {
+
+        static ExtractionAttempt from(
+                com.yangaobo.expense.backend.application.extraction.ExtractionAttemptRepository
+                        .ExtractionAttempt attempt) {
+            return new ExtractionAttempt(
+                    attempt.attemptNo(),
+                    attempt.attemptType(),
+                    attempt.validationErrors(),
+                    attempt.outputHash(),
+                    attempt.tokenUsage(),
+                    attempt.latencyMs(),
+                    attempt.networkRetryCount(),
+                    attempt.status(),
+                    attempt.createdAt());
+        }
+    }
 }

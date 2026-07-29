@@ -1,6 +1,5 @@
-import { Button, Card, Collapse, Empty, Space, Table, Tag, Timeline, Typography } from 'antd';
+import { Card, Collapse, Empty, Space, Table, Tag, Timeline, Typography } from 'antd';
 import { CaseObservability } from '../api/contracts';
-import { grafanaTraceUrl } from '../api/expense-api';
 import { workflowStepLabel } from '../features/cases/case-workbench-model';
 
 export function CaseObservabilityPanel({
@@ -10,9 +9,6 @@ export function CaseObservabilityPanel({
   observability?: CaseObservability;
   loading?: boolean;
 }) {
-  const traceUrl = observability?.latestRun?.traceId
-    ? grafanaTraceUrl(observability.latestRun.traceId)
-    : undefined;
   return (
     <Space orientation="vertical" size="middle" className="page-stack">
       <Card size="small" title="处理记录" loading={loading}>
@@ -53,17 +49,6 @@ export function CaseObservabilityPanel({
                       <Typography.Text type="secondary">
                         处理编号：<Typography.Text code copyable>{shortId(observability.latestRun.runId)}</Typography.Text>
                       </Typography.Text>
-                      <Typography.Text type="secondary">
-                        链路编号：{observability.latestRun.traceId ? (
-                          <Typography.Text code copyable>{shortId(observability.latestRun.traceId)}</Typography.Text>
-                        ) : '暂无'}
-                      </Typography.Text>
-                      <Space wrap>
-                        <Button size="small" disabled={!traceUrl} href={traceUrl} target="_blank">查看链路</Button>
-                        {import.meta.env.VITE_LANGFUSE_URL && (
-                          <Button size="small" href={import.meta.env.VITE_LANGFUSE_URL} target="_blank">查看生成记录</Button>
-                        )}
-                      </Space>
                     </Space>
                   ),
                 },

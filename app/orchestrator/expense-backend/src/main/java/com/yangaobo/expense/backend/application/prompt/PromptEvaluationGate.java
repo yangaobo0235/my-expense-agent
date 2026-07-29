@@ -6,12 +6,15 @@ import com.yangaobo.expense.backend.application.evaluation.PolicyRagEvaluationRe
 import com.yangaobo.expense.backend.application.evaluation.PolicyRagEvaluationService;
 import com.yangaobo.expense.backend.application.evaluation.RiskEvaluationReport;
 import com.yangaobo.expense.backend.application.evaluation.RiskEvaluationService;
+import com.yangaobo.expense.backend.application.evaluation.ExtractionEvaluationReport;
+import com.yangaobo.expense.backend.application.evaluation.ExtractionEvaluationService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class PromptEvaluationGate {
@@ -19,14 +22,26 @@ public class PromptEvaluationGate {
     private final Optional<RiskEvaluationService> riskEvaluationService;
     private final Optional<PolicyRagEvaluationService> policyRagEvaluationService;
     private final Optional<AgentSecurityEvaluationService> agentSecurityEvaluationService;
+    private final Optional<ExtractionEvaluationService> extractionEvaluationService;
+
+    @Autowired
+    public PromptEvaluationGate(
+            Optional<RiskEvaluationService> riskEvaluationService,
+            Optional<PolicyRagEvaluationService> policyRagEvaluationService,
+            Optional<AgentSecurityEvaluationService> agentSecurityEvaluationService,
+            Optional<ExtractionEvaluationService> extractionEvaluationService) {
+        this.riskEvaluationService = riskEvaluationService;
+        this.policyRagEvaluationService = policyRagEvaluationService;
+        this.agentSecurityEvaluationService = agentSecurityEvaluationService;
+        this.extractionEvaluationService = extractionEvaluationService;
+    }
 
     public PromptEvaluationGate(
             Optional<RiskEvaluationService> riskEvaluationService,
             Optional<PolicyRagEvaluationService> policyRagEvaluationService,
             Optional<AgentSecurityEvaluationService> agentSecurityEvaluationService) {
-        this.riskEvaluationService = riskEvaluationService;
-        this.policyRagEvaluationService = policyRagEvaluationService;
-        this.agentSecurityEvaluationService = agentSecurityEvaluationService;
+        this(riskEvaluationService, policyRagEvaluationService, agentSecurityEvaluationService,
+                Optional.empty());
     }
 
     public Map<String, Object> evaluate(PromptTemplate template) {
@@ -41,6 +56,9 @@ public class PromptEvaluationGate {
         }
         if (Boolean.FALSE.equals(regression.get("policyRagPassed"))) {
             gateFailures.add("制度 RAG 评测基线未通过");
+        }
+        if (Boolean.FALSE.equals(regression.get("extractionPassed"))) {
+            gateFailures.add("票据抽取评测基线未通过");
         }
         Map<String, Object> report = new LinkedHashMap<>();
         report.put("passed", gateFailures.isEmpty());
@@ -73,7 +91,25 @@ public class PromptEvaluationGate {
         summary.putAll(agentSecuritySummary());
         summary.putAll(riskSummary());
         summary.putAll(policyRagSummary());
+        summary.putAll(extractionSummary());
         return summary;
+    }
+
+    private Map<String, Object> extractionSummary() {
+        if (extractionEvaluationService.isEmpty()) {
+            return unavailable("extraction", "评测服务未装配");
+        }
+        try {
+            ExtractionEvaluationReport report = extractionEvaluationService.get().evaluate();
+            return Map.of(
+                    "extractionPassed", report.gatePassed(),
+                    "extractionDataset", report.datasetVersion(),
+                    "extractionSchemaPassRate", report.metrics().schemaPassRate(),
+                    "extractionAmountAccuracy", report.metrics().amountExactMatch(),
+                    "extractionFailures", report.failures().size());
+        } catch (RuntimeException exception) {
+            return unavailable("extraction", exception.getMessage());
+        }
     }
 
     private Map<String, Object> agentSecuritySummary() {

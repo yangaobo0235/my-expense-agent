@@ -93,7 +93,7 @@ public class PromptGovernanceService {
             int maxTokens,
             String actor) {
         PromptTemplate current = template(id);
-        requireStatus(current, PromptStatus.DRAFT, PromptStatus.REJECTED);
+        requireStatus(current, PromptStatus.DRAFT);
         PromptTemplate updated =
                 new PromptTemplate(
                         current.id(),
@@ -124,10 +124,14 @@ public class PromptGovernanceService {
     @Transactional
     public PromptChangeRequest submit(UUID templateId, String diffSummary, String actor) {
         PromptTemplate current = template(templateId);
-        requireStatus(current, PromptStatus.DRAFT, PromptStatus.REJECTED);
+        requireStatus(current, PromptStatus.DRAFT);
+        PromptTemplate submitted =
+                withStatus(current, PromptStatus.SUBMITTED, actor, null, null, null, clock.instant());
+        repository.update(submitted);
+        repository.appendAudit(current.promptKey(), current.version(), "SUBMITTED", actor, Map.of());
         Map<String, Object> report = evaluationGate.evaluate(current);
         PromptTemplate inReview =
-                withStatus(current, PromptStatus.IN_REVIEW, actor, null, null, null, clock.instant());
+                withStatus(current, PromptStatus.EVALUATING, actor, null, null, null, clock.instant());
         repository.update(inReview);
         PromptChangeRequest request =
                 new PromptChangeRequest(
@@ -162,7 +166,7 @@ public class PromptGovernanceService {
             throw new MyExpenseAgentException(MyExpenseAgentErrorCode.VALIDATION_FAILED, "Prompt 自动门禁未通过，不能审批");
         }
         PromptTemplate current = template(request.promptTemplateId());
-        requireStatus(current, PromptStatus.IN_REVIEW);
+        requireStatus(current, PromptStatus.EVALUATING);
         Instant now = clock.instant();
         PromptTemplate approved =
                 new PromptTemplate(
@@ -217,7 +221,7 @@ public class PromptGovernanceService {
         }
         requireComment(comment, "驳回");
         PromptTemplate current = template(request.promptTemplateId());
-        repository.update(withStatus(current, PromptStatus.REJECTED, actor, null, null, null, clock.instant()));
+        repository.update(withStatus(current, PromptStatus.DRAFT, actor, null, null, null, clock.instant()));
         PromptChangeRequest updated =
                 new PromptChangeRequest(
                         request.id(),
@@ -240,7 +244,7 @@ public class PromptGovernanceService {
     @Transactional
     public PromptTemplate activate(UUID templateId, String actor) {
         PromptTemplate current = template(templateId);
-        requireStatus(current, PromptStatus.APPROVED, PromptStatus.DEPRECATED);
+        requireStatus(current, PromptStatus.APPROVED);
         if (sameActor(current.approvedBy(), actor)) {
             throw new MyExpenseAgentException(MyExpenseAgentErrorCode.VALIDATION_FAILED, "Prompt 审批人不能激活同一版本");
         }
@@ -388,7 +392,7 @@ public class PromptGovernanceService {
                 Math.abs(candidateLines - activeLines),
                 List.copyOf(changedFields),
                 !active.promptHash().equals(candidate.promptHash()),
-                candidate.status() == PromptStatus.DEPRECATED,
+                candidate.status() == PromptStatus.RETIRED,
                 active.id().equals(candidate.id()));
     }
 

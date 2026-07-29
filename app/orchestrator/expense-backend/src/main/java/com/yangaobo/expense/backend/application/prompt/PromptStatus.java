@@ -2,9 +2,9 @@ package com.yangaobo.expense.backend.application.prompt;
 
 public enum PromptStatus {
     DRAFT,
-    IN_REVIEW,
+    SUBMITTED,
+    EVALUATING,
     APPROVED,
     ACTIVE,
-    REJECTED,
-    DEPRECATED
+    RETIRED
 }

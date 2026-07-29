@@ -13,6 +13,7 @@ import com.yangaobo.expense.common.error.MyExpenseAgentErrorCode;
 import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class ReviewApplicationService {
     private final PromptRenderService promptRenderService;
     private final ChatModelClient chatModelClient;
     private final ObjectMapper objectMapper;
+    private final MoreInfoTaskRepository moreInfoTaskRepository;
+    private final WorkflowRunRepository runRepository;
     private final Clock clock;
 
     public ReviewApplicationService(
@@ -37,12 +40,16 @@ public class ReviewApplicationService {
             PromptRenderService promptRenderService,
             ChatModelClient chatModelClient,
             ObjectMapper objectMapper,
+            MoreInfoTaskRepository moreInfoTaskRepository,
+            WorkflowRunRepository runRepository,
             Clock clock) {
         this.reviewRepository = reviewRepository;
         this.caseService = caseService;
         this.promptRenderService = promptRenderService;
         this.chatModelClient = chatModelClient;
         this.objectMapper = objectMapper;
+        this.moreInfoTaskRepository = moreInfoTaskRepository;
+        this.runRepository = runRepository;
         this.clock = clock;
     }
 
@@ -271,13 +278,35 @@ public class ReviewApplicationService {
         ExpenseCase expenseCase = waitingCase(task.caseId());
         reviewRepository.requestMoreInfo(
                 taskId, version, reviewerSubject, comment, clock.instant());
+        ExpenseCase waitingMoreInfo =
+                caseService.transition(expenseCase.id(), ExpenseCaseStatus.WAITING_MORE_INFO);
+        WorkflowRunRepository.WorkflowRunDetail run =
+                runRepository
+                        .latestRun(task.caseId())
+                        .orElseThrow(
+                                () ->
+                                        new MyExpenseAgentException(
+                                                MyExpenseAgentErrorCode.VALIDATION_FAILED,
+                                                "案例尚无可关联的审核 Run"));
+        List<String> requiredMaterials =
+                task.requiredEvidence().isEmpty()
+                        ? List.of("补充审核所需材料")
+                        : task.requiredEvidence();
+        moreInfoTaskRepository.create(
+                task.caseId(),
+                run.id(),
+                requiredMaterials,
+                task.reasonCodes(),
+                reviewerSubject,
+                clock.instant().plus(Duration.ofHours(48)),
+                clock.instant());
         audit(
                 task,
                 reviewerSubject,
                 requestId,
                 "REVIEW_MORE_INFO_REQUESTED",
                 comment);
-        return expenseCase;
+        return waitingMoreInfo;
     }
 
     public ExpenseCase approve(

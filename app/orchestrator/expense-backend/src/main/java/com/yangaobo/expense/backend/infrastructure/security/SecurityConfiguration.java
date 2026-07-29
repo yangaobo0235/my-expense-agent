@@ -49,9 +49,28 @@ public class SecurityConfiguration {
                                                 "/swagger-ui/**",
                                                 "/swagger-ui.html",
                                                 "/actuator/health/**",
-                                                "/actuator/info",
-                                                "/actuator/prometheus")
+                                                "/actuator/info")
                                         .permitAll()
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.POST,
+                                                "/api/v1/expense-cases/*/more-info-requests")
+                                        .hasAnyRole("COLLEGE_REVIEWER", "FINANCE_ADMIN")
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.POST,
+                                                "/api/v1/expense-cases/*/more-info-submissions",
+                                                "/api/v1/expense-cases/*/review-runs")
+                                        .hasAnyRole("STUDENT", "ADVISOR")
+                                        .requestMatchers(
+                                                org.springframework.http.HttpMethod.GET,
+                                                "/api/v1/expense-cases/*/more-info-request",
+                                                "/api/v1/expense-cases/*/review-runs",
+                                                "/api/v1/expense-cases/*/document-versions")
+                                        .hasAnyRole(
+                                                "STUDENT",
+                                                "ADVISOR",
+                                                "COLLEGE_REVIEWER",
+                                                "FINANCE_ADMIN",
+                                                "AUDITOR")
                                         .requestMatchers(
                                                 org.springframework.http.HttpMethod.POST,
                                                 "/api/v1/policies")
@@ -79,7 +98,9 @@ public class SecurityConfiguration {
                                                 "ADVISOR",
                                                 "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN")
-                                        .requestMatchers("/api/v1/evaluation/**")
+                                        .requestMatchers(
+                                                "/api/v1/evaluation/**",
+                                                "/api/v1/evaluations/**")
                                         .hasAnyRole(
                                                 "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN",

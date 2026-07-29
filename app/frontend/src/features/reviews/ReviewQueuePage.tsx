@@ -105,7 +105,7 @@ export function ReviewQueuePage() {
             <Descriptions.Item label="任务类型">{queueLabel(selected.routingQueue)}</Descriptions.Item>
             <Descriptions.Item label="需要补充">{(selected.requiredEvidence ?? []).map(requiredEvidenceLabel).join('、') || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="辅助信息">
-              {selected.debateAssistEnabled ? '已准备正反证据供参考' : '按常规审核处理'}
+              {selected.summaryRequired ? '已准备经引用核验的复核摘要' : '按常规审核处理'}
             </Descriptions.Item>
           </Descriptions>
         )}

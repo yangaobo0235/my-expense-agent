@@ -28,7 +28,6 @@ import {
   getMoreInfoSuggestion,
   getReviewReport,
   getReviewTask,
-  grafanaTraceUrl,
   listCaseDocuments,
 } from '../../api/expense-api';
 import { CaseObservabilityPanel } from '../../components/CaseObservabilityPanel';
@@ -124,9 +123,6 @@ export function ReviewTaskDetailPage() {
   if (!taskQuery.data || !caseQuery.data) return <Alert type="warning" showIcon title="审核任务不存在或无权访问" />;
   const task = taskQuery.data;
   const expenseCase = caseQuery.data;
-  const traceUrl = evidenceQuery.data?.run?.traceId
-    ? grafanaTraceUrl(evidenceQuery.data.run.traceId)
-    : undefined;
 
   return (
     <Space orientation="vertical" size="large" className="page-stack">
@@ -140,7 +136,6 @@ export function ReviewTaskDetailPage() {
         <Space>
           <StatusBadge status={expenseCase.status} />
           <RiskBadge level={expenseCase.riskLevel} score={expenseCase.riskScore} />
-          {traceUrl && <Button href={traceUrl} target="_blank">Tempo Trace</Button>}
         </Space>
       </div>
 
@@ -170,7 +165,7 @@ export function ReviewTaskDetailPage() {
           <Card title="风险解释">
             <RiskExplanationPanel evidence={evidenceQuery.data} expenseCase={expenseCase} />
           </Card>
-          <Card title="正反证据辅助">
+        <Card title="复核证据摘要">
             <RiskEvidenceBoard evidence={evidenceQuery.data} task={task} />
           </Card>
         </Space>
@@ -181,7 +176,7 @@ export function ReviewTaskDetailPage() {
               type="info"
               showIcon
               title="人工决定会写入审计日志，并成为后续入账的唯一依据。"
-              description="Agent、模型和制度检索只作为证据，不能直接改变审批结论。"
+          description="模型输出和制度检索只作为候选证据，不能直接改变审批结论。"
             />
             <Form form={form} layout="vertical" initialValues={{ action: 'approve' }}>
               <Form.Item name="action" label="审核动作" rules={[{ required: true }]}>
@@ -240,13 +235,13 @@ export function ReviewTaskDetailPage() {
           <Card title={`票据 ${documentsQuery.data?.length ?? 0}`}>
             <DocumentSummaryPanel documents={documentsQuery.data ?? []} />
           </Card>
-          <Card title="链路与审计">
+          <Card title="运行与审计记录">
             <Collapse
               ghost
               items={[
                 {
                   key: 'observability',
-                  label: '查看模型调用、Trace 与审计日志',
+                  label: '查看模型调用、工作流步骤与审计日志',
                   children: (
                     <CaseObservabilityPanel
                       observability={observabilityQuery.data}

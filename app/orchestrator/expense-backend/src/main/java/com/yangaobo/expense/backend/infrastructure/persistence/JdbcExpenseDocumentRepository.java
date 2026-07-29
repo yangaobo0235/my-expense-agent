@@ -53,6 +53,34 @@ public class JdbcExpenseDocumentRepository implements ExpenseDocumentRepository 
                 .param("createdAt", Timestamp.from(document.createdAt()))
                 .param("updatedAt", Timestamp.from(document.updatedAt()))
                 .update();
+        jdbcClient
+                .sql(
+                        """
+                        INSERT INTO expense_document_version (
+                            case_id, version, document_id, sha256, source_type,
+                            uploaded_by, replaces_version, created_at
+                        )
+                        SELECT expense_case.id,
+                               COALESCE(MAX(version.version), 0) + 1,
+                               :documentId,
+                               :sha256,
+                               CASE WHEN expense_case.status = 'WAITING_MORE_INFO'
+                                    THEN 'MORE_INFO_SUBMISSION' ELSE 'INITIAL_UPLOAD' END,
+                               expense_case.owner_subject,
+                               NULLIF(MAX(version.version), 0),
+                               :createdAt
+                        FROM expense_case
+                        LEFT JOIN expense_document_version version
+                               ON version.case_id = expense_case.id
+                        WHERE expense_case.id = :caseId
+                        GROUP BY expense_case.id, expense_case.status, expense_case.owner_subject
+                        ON CONFLICT (document_id) DO NOTHING
+                        """)
+                .param("documentId", document.id())
+                .param("sha256", document.sha256())
+                .param("createdAt", Timestamp.from(document.createdAt()))
+                .param("caseId", document.caseId())
+                .update();
         return document;
     }
 

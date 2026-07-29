@@ -80,17 +80,15 @@ expense:
     risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v2.json}
     policy-rag-dataset: ${EXPENSE_POLICY_RAG_EVALUATION_DATASET:classpath:evaluation/cases/policy-rag-golden-v1.json}
     agent-security-dataset: ${EXPENSE_AGENT_SECURITY_EVALUATION_DATASET:classpath:evaluation/cases/agent-security-golden-v1.json}
+    extraction-dataset: ${EXPENSE_EXTRACTION_EVALUATION_DATASET:classpath:evaluation/cases/extraction-golden-v1.json}
+    gates:
+      extraction-schema-pass-rate: ${EXPENSE_EXTRACTION_SCHEMA_PASS_GATE:0.95}
+      extraction-amount-accuracy: ${EXPENSE_EXTRACTION_AMOUNT_GATE:0.95}
 management:
-  tracing:
-    sampling:
-      probability: ${EXPENSE_TRACING_SAMPLING_PROBABILITY:1.0}
-  otlp:
-    tracing:
-      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}/v1/traces
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info
   endpoint:
     health:
       probes:

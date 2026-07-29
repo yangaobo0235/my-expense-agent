@@ -13,7 +13,7 @@ import java.util.Map;
 public record RiskRoutingDecision(
         RiskRoutingAction action,
         boolean requiresHumanReview,
-        boolean debateAssistEnabled,
+        boolean summaryRequired,
         String queue,
         String assigneeRole,
         int slaHours,
@@ -40,7 +40,7 @@ public record RiskRoutingDecision(
         Map<String, Object> evidence = new LinkedHashMap<>();
         evidence.put("action", action.name());
         evidence.put("requiresHumanReview", requiresHumanReview);
-        evidence.put("debateAssistEnabled", debateAssistEnabled);
+        evidence.put("summaryRequired", summaryRequired);
         evidence.put("queue", queue);
         evidence.put("assigneeRole", assigneeRole);
         evidence.put("slaHours", slaHours);
@@ -59,33 +59,33 @@ public record RiskRoutingDecision(
                 || codes.contains(RiskSignalCode.FORBIDDEN_EXPENSE_ITEM)
                 || codes.contains(RiskSignalCode.PROMPT_INJECTION_DETECTED)) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.POSSIBLE_FRAUD_ESCALATE,
+                    RiskRoutingAction.FINANCE_REVIEW,
                     true,
                     true,
                     "FRAUD_REVIEW",
                     "FINANCE_ADMIN",
                     8,
-                    List.of("重复票据检查", "商户异常证据", "提示注入证据", "历史报销", "原始票据", "正反证据摘要"),
+                    List.of("重复票据检查", "商户异常证据", "提示注入证据", "历史报销", "原始票据", "经引用核验的复核摘要"),
                     "该案例存在疑似舞弊或提示注入信号，已升级财务管理员复核。",
                     "ESCALATE_FRAUD_REVIEW",
                     reasons);
         }
         if (risk.level() == RiskLevel.HIGH) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.HIGH_RISK_ESCALATE_WITH_DEBATE_ASSIST,
+                    RiskRoutingAction.FINANCE_REVIEW,
                     true,
                     true,
                     "HIGH_RISK_REVIEW",
                     "FINANCE_ADMIN",
                     12,
-                    List.of("风险信号", "制度引用", "历史报销", "重复票据检查", "正反证据摘要"),
+                    List.of("风险信号", "制度引用", "历史报销", "重复票据检查", "经引用核验的复核摘要"),
                     "该案例风险较高，已升级财务管理员复核。",
-                    "ESCALATE_WITH_DEBATE_ASSIST",
+                    "FINANCE_REVIEW_WITH_VERIFIED_SUMMARY",
                     reasons);
         }
         if (codes.contains(RiskSignalCode.DEPENDENCY_UNAVAILABLE)) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.DEPENDENCY_FAILURE_HUMAN_REVIEW,
+                    RiskRoutingAction.DEPENDENCY_REVIEW,
                     true,
                     false,
                     "DEPENDENCY_RECOVERY",
@@ -101,7 +101,7 @@ public record RiskRoutingDecision(
                 || codes.contains(RiskSignalCode.POLICY_EVIDENCE_MISSING)
                 || codes.contains(RiskSignalCode.AMOUNT_MISMATCH)) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.POLICY_CONFLICT_MANUAL_REVIEW,
+                    RiskRoutingAction.COLLEGE_REVIEW,
                     true,
                     false,
                     "POLICY_CONFLICT_REVIEW",
@@ -116,7 +116,7 @@ public record RiskRoutingDecision(
                 || codes.contains(RiskSignalCode.LOW_EXTRACTION_CONFIDENCE)
                 || codes.contains(RiskSignalCode.DATE_ANOMALY)) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.MISSING_INFO_REQUEST_MORE,
+                    RiskRoutingAction.REQUEST_MORE_INFO,
                     true,
                     false,
                     "MISSING_INFO",
@@ -129,7 +129,7 @@ public record RiskRoutingDecision(
         }
         if (risk.requiresHumanReview()) {
             return new RiskRoutingDecision(
-                    RiskRoutingAction.MEDIUM_RISK_HUMAN_REVIEW,
+                    RiskRoutingAction.COLLEGE_REVIEW,
                     true,
                     false,
                     "STANDARD_REVIEW",
@@ -141,7 +141,7 @@ public record RiskRoutingDecision(
                     reasons);
         }
         return new RiskRoutingDecision(
-                RiskRoutingAction.LOW_RISK_AUTO_APPROVE,
+                RiskRoutingAction.LOW_RISK_PATH,
                 false,
                 false,
                 "AUTO_APPROVAL",

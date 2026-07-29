@@ -16,11 +16,13 @@ import {
 } from 'antd';
 import {
   getAgentSecurityEvaluationReport,
+  getExtractionEvaluationReport,
   getPolicyRagEvaluationReport,
   getRiskEvaluationReport,
 } from '../../api/expense-api';
 import {
   AgentSecurityEvaluationReport,
+  ExtractionEvaluationReport,
   PolicyRagEvaluationReport,
   RiskEvaluationReport,
 } from '../../api/contracts';
@@ -35,6 +37,10 @@ export function EvaluationReportPage() {
   const rag = useQuery({
     queryKey: ['policy-rag-evaluation-report'],
     queryFn: getPolicyRagEvaluationReport,
+  });
+  const extraction = useQuery({
+    queryKey: ['extraction-evaluation-report'],
+    queryFn: getExtractionEvaluationReport,
   });
   const security = useQuery({
     queryKey: ['agent-security-evaluation-report'],
@@ -58,7 +64,7 @@ export function EvaluationReportPage() {
         <div>
           <Typography.Title level={2}>离线评测报告</Typography.Title>
           <Typography.Text type="secondary">
-            固定数据集的可重复基线，覆盖风险规则、制度 RAG 和 Agent 安全边界。
+            固定数据集的可重复基线，覆盖票据抽取、风险规则、制度 RAG 和 Tool 安全边界。
           </Typography.Text>
         </div>
         <Space>
@@ -70,6 +76,17 @@ export function EvaluationReportPage() {
       <Tabs
         defaultActiveKey="risk"
         items={[
+          {
+            key: 'extraction',
+            label: '票据抽取评测',
+            children: (
+              <ExtractionReportPanel
+                data={extraction.data}
+                loading={extraction.isLoading}
+                error={extraction.isError}
+              />
+            ),
+          },
           {
             key: 'risk',
             label: '风险评测',
@@ -88,7 +105,7 @@ export function EvaluationReportPage() {
           },
           {
             key: 'security',
-            label: 'Agent 安全评测',
+            label: 'Tool 安全评测',
             children: (
               <AgentSecurityPanel
                 data={security.data}
@@ -103,6 +120,58 @@ export function EvaluationReportPage() {
   );
 }
 
+function ExtractionReportPanel({
+  data,
+  loading,
+  error,
+}: {
+  data?: ExtractionEvaluationReport;
+  loading: boolean;
+  error: boolean;
+}) {
+  if (error) return <Alert type="warning" showIcon title="票据抽取评测报告加载失败" />;
+  return (
+    <Space orientation="vertical" size="large" className="page-stack">
+      <Card loading={loading}>
+        <Row gutter={[20, 20]}>
+          <Col span={4}><Statistic title="合成样本" value={data?.caseCount ?? 0} suffix="条" /></Col>
+          <Col span={4}><Statistic title="JSON 有效率" value={percent(data?.metrics.jsonValidRate ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="结构通过率" value={percent(data?.metrics.schemaPassRate ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="金额精确匹配" value={percent(data?.metrics.amountExactMatch ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="修正成功率" value={percent(data?.metrics.repairSuccessRate ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="人工接管率" value={percent(data?.metrics.humanHandoffRate ?? 0)} suffix="%" /></Col>
+        </Row>
+      </Card>
+      <Card title="字段级门禁">
+        <Space wrap>
+          <Tag color={data?.gatePassed ? 'green' : 'red'}>{data?.gatePassed ? '门禁通过' : '门禁未通过'}</Tag>
+          <Tag color="blue">{data?.datasetVersion ?? 'extraction-golden-v1'}</Tag>
+          <Tag>P95 {data?.metrics.p95LatencyMs ?? 0} ms</Tag>
+          <Tag>平均 Token {Math.round(data?.metrics.averageTokenUsage ?? 0)}</Tag>
+        </Space>
+        <div className="evaluation-grid">
+          <Metric label="发票号码精确匹配" value={data?.metrics.invoiceNumberExactMatch ?? 0} />
+          <Metric label="日期准确率" value={data?.metrics.dateAccuracy ?? 0} />
+          <Metric label="币种准确率" value={data?.metrics.currencyAccuracy ?? 0} />
+          <Metric label="明细 F1" value={data?.metrics.itemF1 ?? 0} />
+        </div>
+      </Card>
+      <Card title={`失败样本（${data?.failures.length ?? 0}）`}>
+        <Table
+          rowKey="caseId"
+          pagination={false}
+          dataSource={data?.failures ?? []}
+          locale={{ emptyText: <Empty description="当前抽取基线没有失败样本" /> }}
+          columns={[
+            { title: '样本', dataIndex: 'caseId' },
+            { title: '不匹配字段', dataIndex: 'mismatchedFields', render: (values: string[]) => values.join('、') },
+          ]}
+        />
+      </Card>
+    </Space>
+  );
+}
+
 function RiskReportPanel({
   data,
   loading,
@@ -110,7 +179,7 @@ function RiskReportPanel({
   data?: RiskEvaluationReport;
   loading: boolean;
 }) {
-  const governance = data?.agentGovernance;
+  const governance = data?.executionGovernance;
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>
@@ -145,7 +214,7 @@ function RiskReportPanel({
             ]}
           />
         </Card>
-        <Card title="Agent 治理门禁">
+        <Card title="执行策略治理门禁">
           <Space orientation="vertical" className="full-width">
             <Space wrap>
               <Tag color={governance?.writeToolIsolationPassed ? 'green' : 'red'}>
@@ -154,16 +223,16 @@ function RiskReportPanel({
               <Tag color={governance?.settlementWriteRetryProtected ? 'green' : 'orange'}>
                 审批后入账幂等重试{governance?.settlementWriteRetryProtected ? '已保护' : '待确认'}
               </Tag>
-              <Tag color="blue">{governance?.planVersion ?? '未生成 Agent 计划'}</Tag>
+              <Tag color="blue">{governance?.planVersion ?? '未生成执行策略'}</Tag>
             </Space>
             <Descriptions size="small" column={1}>
-              <Descriptions.Item label="Agent 总数">{governance?.totalAgents ?? 0}</Descriptions.Item>
-              <Descriptions.Item label="写 Agent">
-                {governance?.writeAgentCount ?? 0} 个，其中幂等写 Agent {governance?.idempotentWriteAgentCount ?? 0} 个
+              <Descriptions.Item label="能力步骤数">{governance?.totalCapabilities ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="写能力">
+                {governance?.writeCapabilityCount ?? 0} 个，其中幂等写能力 {governance?.idempotentWriteCapabilityCount ?? 0} 个
               </Descriptions.Item>
             </Descriptions>
             <Metric label="人工交接覆盖率" value={governance?.humanHandoffCoverage ?? 0} />
-            <Metric label="可重试 Agent 占比" value={governance?.retryableAgentRate ?? 0} />
+            <Metric label="可重试能力占比" value={governance?.retryableCapabilityRate ?? 0} />
           </Space>
         </Card>
       </div>
@@ -232,7 +301,7 @@ function AgentSecurityPanel({
   loading: boolean;
   error: boolean;
 }) {
-  if (error) return <Alert type="warning" showIcon title="Agent 安全评测报告加载失败" />;
+  if (error) return <Alert type="warning" showIcon title="Tool 安全评测报告加载失败" />;
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>

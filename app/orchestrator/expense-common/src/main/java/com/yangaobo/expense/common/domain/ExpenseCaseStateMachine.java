@@ -46,17 +46,25 @@ public final class ExpenseCaseStateMachine {
                 EnumSet.of(ExpenseCaseStatus.POLICY_CHECKING, ExpenseCaseStatus.FAILED));
         transitions.put(
                 ExpenseCaseStatus.POLICY_CHECKING,
-                EnumSet.of(ExpenseCaseStatus.RISK_CHECKING, ExpenseCaseStatus.FAILED));
+                EnumSet.of(
+                        ExpenseCaseStatus.RISK_CHECKING,
+                        ExpenseCaseStatus.WAITING_MORE_INFO,
+                        ExpenseCaseStatus.FAILED));
         transitions.put(
                 ExpenseCaseStatus.RISK_CHECKING,
                 EnumSet.of(
+                        ExpenseCaseStatus.WAITING_MORE_INFO,
                         ExpenseCaseStatus.WAITING_HUMAN,
                         ExpenseCaseStatus.APPROVED,
                         ExpenseCaseStatus.REJECTED,
                         ExpenseCaseStatus.FAILED));
         transitions.put(
+                ExpenseCaseStatus.WAITING_MORE_INFO,
+                EnumSet.of(ExpenseCaseStatus.UPLOADED, ExpenseCaseStatus.FAILED));
+        transitions.put(
                 ExpenseCaseStatus.WAITING_HUMAN,
                 EnumSet.of(
+                        ExpenseCaseStatus.WAITING_MORE_INFO,
                         ExpenseCaseStatus.APPROVED,
                         ExpenseCaseStatus.REJECTED,
                         ExpenseCaseStatus.FAILED));
@@ -66,6 +74,7 @@ public final class ExpenseCaseStateMachine {
                         ExpenseCaseStatus.EXTRACTING,
                         ExpenseCaseStatus.POLICY_CHECKING,
                         ExpenseCaseStatus.RISK_CHECKING,
+                        ExpenseCaseStatus.WAITING_MORE_INFO,
                         ExpenseCaseStatus.WAITING_HUMAN));
         return Map.copyOf(transitions);
     }

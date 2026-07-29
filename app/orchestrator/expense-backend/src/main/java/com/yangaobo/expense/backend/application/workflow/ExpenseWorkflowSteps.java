@@ -2,10 +2,9 @@ package com.yangaobo.expense.backend.application.workflow;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yangaobo.expense.agents.ExpenseMultiAgentPlanner;
+import com.yangaobo.expense.agents.ExpenseExecutionPolicy;
 import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
 import com.yangaobo.expense.backend.application.extraction.ExtractedExpenseDocument;
-import com.yangaobo.expense.backend.application.observability.WorkflowObservability;
 import com.yangaobo.expense.backend.application.policy.PolicyRetrievalService;
 import com.yangaobo.expense.backend.application.policy.PolicySearchQuery;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
@@ -42,7 +41,7 @@ import org.springframework.stereotype.Component;
 class ExpenseWorkflowSteps {
 
     private static final String APPLICANT_CONTEXT_STEP = "MCP_APPLICANT_CONTEXT";
-    private static final String AGENT_PLAN_STEP = ExpenseWorkflowNodeNames.AGENT_PLAN;
+    private static final String EXECUTION_POLICY_STEP = ExpenseWorkflowNodeNames.EXECUTION_POLICY;
     private static final String DUPLICATE_CHECK_STEP = "MCP_DUPLICATE_CHECK";
     private static final String PROJECT_BUDGET_STEP = "MCP_PROJECT_BUDGET";
     private static final String REIMBURSEMENT_HISTORY_STEP = "MCP_REIMBURSEMENT_HISTORY";
@@ -51,6 +50,8 @@ class ExpenseWorkflowSteps {
             ExpenseWorkflowNodeNames.PARALLEL_EVIDENCE_COLLECTION;
     private static final String POLICY_STEP = "POLICY_RETRIEVAL";
     private static final String RISK_STEP = ExpenseWorkflowNodeNames.RISK_ASSESSMENT;
+    private static final String QUALITY_STEP = ExpenseWorkflowNodeNames.EVIDENCE_QUALITY_GATE;
+    private static final String MORE_INFO_STEP = ExpenseWorkflowNodeNames.CREATE_MORE_INFO_TASK;
     private static final String ROUTING_STEP = ExpenseWorkflowNodeNames.RISK_ROUTING;
     private static final String FINALIZE_STEP = ExpenseWorkflowNodeNames.FINALIZE;
 
@@ -62,10 +63,10 @@ class ExpenseWorkflowSteps {
     private final DeterministicRiskEngine riskEngine;
     private final WorkflowRunRepository runRepository;
     private final ReviewRepository reviewRepository;
+    private final MoreInfoTaskRepository moreInfoTaskRepository;
     private final ObjectMapper objectMapper;
     private final Clock clock;
-    private final WorkflowObservability observability;
-    private final ExpenseMultiAgentPlanner agentPlanner = new ExpenseMultiAgentPlanner();
+    private final ExpenseExecutionPolicy executionPolicy = new ExpenseExecutionPolicy();
 
     ExpenseWorkflowSteps(
             ExpenseCaseApplicationService caseService,
@@ -76,9 +77,9 @@ class ExpenseWorkflowSteps {
             DeterministicRiskEngine riskEngine,
             WorkflowRunRepository runRepository,
             ReviewRepository reviewRepository,
+            MoreInfoTaskRepository moreInfoTaskRepository,
             ObjectMapper objectMapper,
-            Clock clock,
-            WorkflowObservability observability) {
+            Clock clock) {
         this.caseService = caseService;
         this.documentRepository = documentRepository;
         this.policyService = policyService;
@@ -87,9 +88,9 @@ class ExpenseWorkflowSteps {
         this.riskEngine = riskEngine;
         this.runRepository = runRepository;
         this.reviewRepository = reviewRepository;
+        this.moreInfoTaskRepository = moreInfoTaskRepository;
         this.objectMapper = objectMapper;
         this.clock = clock;
-        this.observability = observability;
     }
 
     Map<String, Object> restoreResultNode(ExpenseWorkflowGraphState state) {
@@ -103,31 +104,22 @@ class ExpenseWorkflowSteps {
                 loadExtracted(state.caseId()));
     }
 
-    Map<String, Object> agentPlanNode(ExpenseWorkflowGraphState state) {
+    Map<String, Object> executionPolicyNode(ExpenseWorkflowGraphState state) {
         Map<String, Object> output =
-                observability.step(
-                        AGENT_PLAN_STEP,
-                        state.caseId(),
-                        state.runId(),
-                        () -> agentPlanStep(state.runId(), state.caseId(), state.requestId()));
-        return Map.of(ExpenseWorkflowGraphState.AGENT_PLAN, output.get("plan"));
+                executionPolicyStep(state.runId(), state.caseId(), state.requestId());
+        return Map.of(ExpenseWorkflowGraphState.EXECUTION_POLICY, output.get("policy"));
     }
 
     Map<String, Object> parallelEvidenceNode(ExpenseWorkflowGraphState state) {
         ParallelEvidence evidence =
-                observability.step(
-                        PARALLEL_EVIDENCE_STEP,
-                        state.caseId(),
+                parallelEvidenceStep(
                         state.runId(),
-                        () ->
-                                parallelEvidenceStep(
-                                        state.runId(),
-                                        state.caseId(),
-                                        state.ownerSubject(),
-                                        state.requestId(),
-                                        state.expenseCase(),
-                                        state.command(),
-                                        state.extractedDocuments()));
+                        state.caseId(),
+                        state.ownerSubject(),
+                        state.requestId(),
+                        state.expenseCase(),
+                        state.command(),
+                        state.extractedDocuments());
         return Map.of(
                 ExpenseWorkflowGraphState.APPLICANT_CONTEXT,
                 evidence.applicantContext(),
@@ -151,49 +143,79 @@ class ExpenseWorkflowSteps {
                         || state.reimbursementHistory().dependencyFailure()
                         || "MCP_FAILURE".equals(state.evidenceResult().source());
         RiskAssessment risk =
-                observability.step(
-                        RISK_STEP,
-                        state.caseId(),
+                riskStep(
                         state.runId(),
-                        () ->
-                                riskStep(
-                                        state.runId(),
-                                        state.caseId(),
-                                        state.expenseCase(),
-                                        state.extractedDocuments(),
-                                        state.command(),
-                                        state.duplicateCheck(),
-                                        state.projectBudget(),
-                                        state.policyFindings(),
-                                        dependencyFailure));
+                        state.caseId(),
+                        state.expenseCase(),
+                        state.extractedDocuments(),
+                        state.command(),
+                        state.duplicateCheck(),
+                        state.projectBudget(),
+                        state.policyFindings(),
+                        dependencyFailure);
         return Map.of(ExpenseWorkflowGraphState.RISK_ASSESSMENT, risk);
+    }
+
+    Map<String, Object> evidenceQualityNode(ExpenseWorkflowGraphState state) {
+        EvidenceQualityResult quality = evidenceQualityStep(state);
+        return Map.of(
+                ExpenseWorkflowGraphState.EVIDENCE_QUALITY, quality,
+                ExpenseWorkflowGraphState.MISSING_MATERIALS, quality.missingMaterials(),
+                ExpenseWorkflowGraphState.DEPENDENCY_FAILURES, quality.dependencyFailures());
+    }
+
+    Map<String, Object> createMoreInfoTaskNode(ExpenseWorkflowGraphState state) {
+        ExpenseWorkflowResult result = createMoreInfoStep(state);
+        return Map.of(
+                ExpenseWorkflowGraphState.WORKFLOW_RESULT, result,
+                ExpenseWorkflowGraphState.MORE_INFO_TASK_ID, result.moreInfoTaskId(),
+                ExpenseWorkflowGraphState.ROUTE_ACTION, RiskRoutingAction.REQUEST_MORE_INFO);
+    }
+
+    Map<String, Object> generateReviewSummaryNode(ExpenseWorkflowGraphState state) {
+        List<String> factIds = state.riskAssessment().signals().stream()
+                .map(signal -> signal.code().name()).toList();
+        List<String> chunkIds = state.policyFindings().stream()
+                .map(item -> String.valueOf(item.getOrDefault("chunkId", "")))
+                .filter(value -> !value.isBlank()).toList();
+        return Map.of("reviewSummary", Map.of(
+                "riskSignalIds", factIds,
+                "policyChunkIds", chunkIds,
+                "text", "高风险复核摘要仅基于已记录风险信号和制度引用生成。"));
+    }
+
+    Map<String, Object> verifySummaryReferencesNode(ExpenseWorkflowGraphState state) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> summary = (Map<String, Object>) state.value("reviewSummary").orElse(Map.of());
+        List<String> validSignals = state.riskAssessment().signals().stream()
+                .map(signal -> signal.code().name()).toList();
+        List<String> validChunks = state.policyFindings().stream()
+                .map(item -> String.valueOf(item.getOrDefault("chunkId", ""))).toList();
+        boolean valid = list(summary.get("riskSignalIds")).stream().allMatch(validSignals::contains)
+                && list(summary.get("policyChunkIds")).stream().allMatch(validChunks::contains);
+        return Map.of("summaryReferencesVerified", valid);
+    }
+
+    Map<String, Object> createReviewTaskNode(ExpenseWorkflowGraphState state) {
+        return finalizeNode(state);
     }
 
     Map<String, Object> riskRoutingNode(ExpenseWorkflowGraphState state) {
         RiskRoutingDecision routing =
-                observability.step(
-                        ROUTING_STEP,
-                        state.caseId(),
-                        state.runId(),
-                        () -> routingStep(state.runId(), state.caseId(), state.riskAssessment()));
+                routingStep(state.runId(), state.caseId(), state.riskAssessment());
         return Map.of(ExpenseWorkflowGraphState.ROUTING_DECISION, routing);
     }
 
     Map<String, Object> finalizeNode(ExpenseWorkflowGraphState state) {
         ExpenseWorkflowResult result =
-                observability.step(
-                        FINALIZE_STEP,
-                        state.caseId(),
+                finalizeStep(
                         state.runId(),
-                        () ->
-                                finalizeStep(
-                                        state.runId(),
-                                        state.expenseCase(),
-                                        state.riskAssessment(),
-                                        state.routingDecision(),
-                                        state.policyFindings(),
-                                        state.ownerSubject(),
-                                        state.requestId()));
+                        state.expenseCase(),
+                        state.riskAssessment(),
+                        state.routingDecision(),
+                        state.policyFindings(),
+                        state.ownerSubject(),
+                        state.requestId());
         return Map.of(ExpenseWorkflowGraphState.WORKFLOW_RESULT, result);
     }
 
@@ -212,19 +234,19 @@ class ExpenseWorkflowSteps {
                                                 .contains(step.name()));
     }
 
-    private Map<String, Object> agentPlanStep(UUID runId, UUID caseId, String requestId) {
-        var stored = runRepository.successfulStep(runId, AGENT_PLAN_STEP);
+    private Map<String, Object> executionPolicyStep(UUID runId, UUID caseId, String requestId) {
+        var stored = runRepository.successfulStep(runId, EXECUTION_POLICY_STEP);
         if (stored.isPresent()) {
             return stored.get();
         }
-        runRepository.startStep(runId, caseId, AGENT_PLAN_STEP, 1, hash(caseId + "|" + requestId));
+        runRepository.startStep(runId, caseId, EXECUTION_POLICY_STEP, 1, hash(caseId + "|" + requestId));
         try {
-            Map<String, Object> plan = agentPlanner.plan(caseId.toString(), requestId).toEvidence();
-            runRepository.succeedStep(runId, AGENT_PLAN_STEP, 1, Map.of("plan", plan));
-            return Map.of("plan", plan);
+            Map<String, Object> policy = executionPolicy.plan(caseId.toString(), requestId).toEvidence();
+            runRepository.succeedStep(runId, EXECUTION_POLICY_STEP, 1, Map.of("policy", policy));
+            return Map.of("policy", policy);
         } catch (RuntimeException exception) {
             runRepository.failStep(
-                    runId, AGENT_PLAN_STEP, 1, errorCode(exception), safeMessage(exception));
+                    runId, EXECUTION_POLICY_STEP, 1, errorCode(exception), safeMessage(exception));
             throw exception;
         }
     }
@@ -561,21 +583,24 @@ class ExpenseWorkflowSteps {
         runRepository.startStep(runId, caseId, POLICY_STEP, 1, hash(command));
         try {
             caseService.transition(caseId, ExpenseCaseStatus.POLICY_CHECKING);
+            LocalDate effectiveDate = policyDate(extractedDocuments, command.expenseDate());
+            PolicySearchQuery query = new PolicySearchQuery(
+                    command.category(), command.category(), applicantContext.region(),
+                    applicantContext.applicantType(), effectiveDate, 5, 0.25);
             List<Map<String, Object>> findings =
                     policyService
-                            .search(
-                                    new PolicySearchQuery(
-                                            command.category(),
-                                            command.category(),
-                                            applicantContext.region(),
-                                            applicantContext.applicantType(),
-                                            policyDate(extractedDocuments, command.expenseDate()),
-                                            5,
-                                            0.25))
+                            .search(query)
                             .stream()
                             .map(ExpenseWorkflowSteps::policyFinding)
                             .toList();
-            runRepository.succeedStep(runId, POLICY_STEP, 1, Map.of("findings", findings));
+            runRepository.succeedStep(runId, POLICY_STEP, 1, Map.of(
+                    "findings", findings,
+                    "appliedFilters", Map.of(
+                            "category", query.category(),
+                            "region", query.region(),
+                            "applicantType", query.applicantType(),
+                            "expenseDate", query.expenseDate().toString(),
+                            "status", "ACTIVE")));
             return findings;
         } catch (RuntimeException exception) {
             runRepository.failStep(
@@ -599,7 +624,7 @@ class ExpenseWorkflowSteps {
             return new RiskRoutingDecision(
                     RiskRoutingAction.valueOf(String.valueOf(stored.get().get("action"))),
                     Boolean.TRUE.equals(stored.get().get("requiresHumanReview")),
-                    Boolean.TRUE.equals(stored.get().get("debateAssistEnabled")),
+                    Boolean.TRUE.equals(stored.get().get("summaryRequired")),
                     String.valueOf(stored.get().getOrDefault("queue", "")),
                     String.valueOf(stored.get().getOrDefault("assigneeRole", "")),
                     Integer.parseInt(String.valueOf(stored.get().getOrDefault("slaHours", "48"))),
@@ -710,11 +735,22 @@ class ExpenseWorkflowSteps {
             List<Map<String, Object>> policyFindings,
             String actorSubject,
             String requestId) {
+        ExpenseCase current = caseService.getById(originalCase.id());
+        String completedRoute =
+                runRepository
+                        .findRun(runId)
+                        .map(WorkflowRunRepository.WorkflowRunDetail::routeAction)
+                        .orElse(null);
+        if (runRepository.successfulStep(runId, FINALIZE_STEP).isPresent()
+                && current.riskScore() != null
+                && current.riskScore() == risk.score()
+                && routing.action().name().equals(completedRoute)) {
+            return restoreResult(current, runId);
+        }
         runRepository.startStep(runId, originalCase.id(), FINALIZE_STEP, 1, hash(risk));
         try {
             UUID reviewTaskId = null;
             ExpenseCaseStatus finalStatus;
-            ExpenseCase current = caseService.getById(originalCase.id());
             if (routing.requiresHumanReview()) {
                 ExpenseCase waiting =
                         current.status() == ExpenseCaseStatus.WAITING_HUMAN
@@ -770,8 +806,8 @@ class ExpenseWorkflowSteps {
                             risk.level().name(),
                             "routingAction",
                             routing.action().name(),
-                            "debateAssistEnabled",
-                            routing.debateAssistEnabled(),
+                            "summaryRequired",
+                            routing.summaryRequired(),
                             "assigneeRole",
                             routing.assigneeRole(),
                             "slaHours",
@@ -783,6 +819,10 @@ class ExpenseWorkflowSteps {
             output.put("status", finalStatus.name());
             output.put("reviewTaskId", reviewTaskId == null ? "" : reviewTaskId.toString());
             runRepository.succeedStep(runId, FINALIZE_STEP, 1, output);
+            runRepository.updateOutcome(
+                    runId,
+                    routing.action().name(),
+                    routing.requiresHumanReview() ? "WAITING_REVIEW" : null);
             runRepository.succeedRun(runId);
             return new ExpenseWorkflowResult(
                     originalCase.id(),
@@ -792,7 +832,11 @@ class ExpenseWorkflowSteps {
                     risk.level(),
                     risk.signals(),
                     policyFindings,
-                    reviewTaskId);
+                    reviewTaskId,
+                    null,
+                    routing.action(),
+                    runRepository.findRun(runId).map(WorkflowRunRepository.WorkflowRunDetail::documentVersion).orElse(1),
+                    runRepository.findRun(runId).map(WorkflowRunRepository.WorkflowRunDetail::previousRunId).orElse(null));
         } catch (RuntimeException exception) {
             runRepository.failStep(
                     runId, FINALIZE_STEP, 1, errorCode(exception), safeMessage(exception));
@@ -838,7 +882,77 @@ class ExpenseWorkflowSteps {
                 risk.level(),
                 risk.signals(),
                 policies,
-                taskId);
+                taskId,
+                moreInfoTaskRepository.findOpenByCaseId(expenseCase.id())
+                        .map(MoreInfoTaskRepository.MoreInfoTask::id).orElse(null),
+                runRepository.findRun(runId).map(WorkflowRunRepository.WorkflowRunDetail::routeAction)
+                        .filter(value -> value != null && !value.isBlank())
+                        .map(RiskRoutingAction::valueOf).orElse(null),
+                runRepository.findRun(runId).map(WorkflowRunRepository.WorkflowRunDetail::documentVersion).orElse(1),
+                runRepository.findRun(runId).map(WorkflowRunRepository.WorkflowRunDetail::previousRunId).orElse(null));
+    }
+
+    private EvidenceQualityResult evidenceQualityStep(ExpenseWorkflowGraphState state) {
+        var stored = runRepository.successfulStep(state.runId(), QUALITY_STEP);
+        if (stored.isPresent()) {
+            return objectMapper.convertValue(stored.get().get("quality"), EvidenceQualityResult.class);
+        }
+        runRepository.startStep(state.runId(), state.caseId(), QUALITY_STEP, 1,
+                hash(state.documentVersion()));
+        List<String> missing = new ArrayList<>();
+        for (ExtractedExpenseDocument document : state.extractedDocuments()) {
+            if (document.issueDate() == null) missing.add("票据日期");
+            if (document.totalAmount() == null) missing.add("票据金额");
+            if (document.sellerName() == null || document.sellerName().isBlank()) missing.add("销售方信息");
+            if (document.currency() == null || document.currency().isBlank()) missing.add("币种");
+            if (document.confidence() < 0.6) missing.add("清晰可核验的票据原件");
+        }
+        List<String> dependencies = new ArrayList<>();
+        if (state.applicantContext().dependencyFailure()) dependencies.add("APPLICANT_CONTEXT");
+        if (state.duplicateCheck().dependencyFailure()) dependencies.add("DUPLICATE_CHECK");
+        if (state.projectBudget().dependencyFailure()) dependencies.add("PROJECT_BUDGET");
+        if (state.reimbursementHistory().dependencyFailure()) dependencies.add("REIMBURSEMENT_HISTORY");
+        if ("MCP_FAILURE".equals(state.evidenceResult().source())) dependencies.add("AUDIT_EVIDENCE");
+        EvidenceQuality quality = !missing.isEmpty()
+                ? EvidenceQuality.MISSING_MATERIALS
+                : (!dependencies.isEmpty() ? EvidenceQuality.DEPENDENCY_UNAVAILABLE : EvidenceQuality.COMPLETE);
+        EvidenceQualityResult result = new EvidenceQualityResult(
+                quality, missing.stream().distinct().toList(), dependencies.stream().distinct().toList());
+        runRepository.succeedStep(state.runId(), QUALITY_STEP, 1, Map.of("quality", result));
+        return result;
+    }
+
+    private ExpenseWorkflowResult createMoreInfoStep(ExpenseWorkflowGraphState state) {
+        runRepository.startStep(state.runId(), state.caseId(), MORE_INFO_STEP, 1,
+                hash(state.evidenceQuality()));
+        List<String> materials = state.evidenceQuality().missingMaterials().isEmpty()
+                ? List.of("补充能够核验费用真实性和必要性的材料")
+                : state.evidenceQuality().missingMaterials();
+        List<String> reasons = List.of(RiskSignalCode.MISSING_REQUIRED_DOCUMENT.name());
+        MoreInfoTaskRepository.MoreInfoTask task = moreInfoTaskRepository.create(
+                state.caseId(), state.runId(), materials, reasons, state.ownerSubject(),
+                clock.instant().plus(Duration.ofHours(48)), clock.instant());
+        ExpenseCase current = caseService.getById(state.caseId());
+        if (current.status() != ExpenseCaseStatus.WAITING_MORE_INFO) {
+            caseService.transition(state.caseId(), ExpenseCaseStatus.WAITING_MORE_INFO);
+        }
+        RiskSignal signal = new RiskSignal(
+                RiskSignalCode.MISSING_REQUIRED_DOCUMENT, 20,
+                "证据质量门禁要求补充材料", Map.of("materials", String.join(",", materials)));
+        RiskAssessment risk = new RiskAssessment(20, RiskLevel.LOW, true, List.of(signal));
+        runRepository.succeedStep(state.runId(), MORE_INFO_STEP, 1, Map.of(
+                "taskId", task.id().toString(), "requiredMaterials", materials));
+        runRepository.updateOutcome(state.runId(), RiskRoutingAction.REQUEST_MORE_INFO.name(),
+                "WAITING_MORE_INFO");
+        runRepository.succeedRun(state.runId());
+        return new ExpenseWorkflowResult(
+                state.caseId(), state.runId(), ExpenseCaseStatus.WAITING_MORE_INFO,
+                risk.score(), risk.level(), risk.signals(), state.policyFindings(), null,
+                task.id(), RiskRoutingAction.REQUEST_MORE_INFO, state.documentVersion(), state.previousRunId());
+    }
+
+    private static List<String> list(Object value) {
+        return value instanceof List<?> values ? values.stream().map(String::valueOf).toList() : List.of();
     }
 
     private List<ExtractedExpenseDocument> loadExtracted(UUID caseId) {
@@ -882,6 +996,12 @@ class ExpenseWorkflowSteps {
                 Map.entry("policyCode", match.policyCode()),
                 Map.entry("policyName", match.policyName()),
                 Map.entry("version", match.policyVersion()),
+                Map.entry("category", match.category()),
+                Map.entry("region", match.region()),
+                Map.entry("applicantType", match.applicantType()),
+                Map.entry("effectiveFrom", match.effectiveFrom().toString()),
+                Map.entry("effectiveTo", match.effectiveTo() == null ? "" : match.effectiveTo().toString()),
+                Map.entry("sourceUri", match.sourceUri() == null ? "" : match.sourceUri()),
                 Map.entry("section", match.section()),
                 Map.entry("chunkId", match.chunkId().toString()),
                 Map.entry("content", match.content()),

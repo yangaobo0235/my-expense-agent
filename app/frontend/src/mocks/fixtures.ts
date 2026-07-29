@@ -103,22 +103,21 @@ export const fixtureEvidence: CaseEvidence = {
     status: 'SUCCEEDED',
     startedAt: '2026-06-22T09:20:00+08:00',
     completedAt: '2026-06-22T09:20:20+08:00',
-    traceId: 'trace-fixture-001',
   },
   steps: [
     {
       id: 'step-plan',
-      name: 'AGENT_PLAN',
+      name: 'EXECUTION_POLICY',
       attempt: 1,
       status: 'SUCCEEDED',
       durationMs: 4,
       evidence: {
-        planVersion: 'my-expense-agent-multi-agent-v1',
-        agents: [
+        planVersion: 'my-expense-governed-policy-v1',
+        steps: [
           {
             sequence: 1,
-            role: 'RECEIPT_EXTRACTION_AGENT',
-            name: '票据提取 Agent',
+            capability: 'RECEIPT_EXTRACTION_AGENT',
+            name: '票据结构化抽取',
             responsibility: '结构化票据字段并输出置信度。',
             allowedTools: [],
             writeOperationAllowed: false,
@@ -128,8 +127,8 @@ export const fixtureEvidence: CaseEvidence = {
           },
           {
             sequence: 2,
-            role: 'MCP_CONTEXT_AGENT',
-            name: '申请人与项目上下文 Agent',
+            capability: 'MCP_CONTEXT_AGENT',
+            name: '申请人与项目上下文查询',
             responsibility: '只读查询申请人、学院、项目预算、历史报销和重复票据证据。',
             allowedTools: ['get_applicant_profile', 'check_duplicate_document', 'get_fund_reimbursement_history'],
             writeOperationAllowed: false,
@@ -139,8 +138,8 @@ export const fixtureEvidence: CaseEvidence = {
           },
           {
             sequence: 3,
-            role: 'POLICY_RAG_AGENT',
-            name: '制度检索 Agent',
+            capability: 'POLICY_RAG_AGENT',
+            name: '制度检索',
             responsibility: '检索制度片段并保留可追溯引用。',
             allowedTools: ['calculate_allowed_amount', 'validate_invoice_number'],
             writeOperationAllowed: false,
@@ -150,8 +149,8 @@ export const fixtureEvidence: CaseEvidence = {
           },
           {
             sequence: 4,
-            role: 'RISK_RULE_AGENT',
-            name: '风险规则 Agent',
+            capability: 'RISK_RULE_AGENT',
+            name: '风险规则评估',
             responsibility: '合成确定性风险信号、分值和人工复核结论。',
             allowedTools: [],
             writeOperationAllowed: false,
@@ -161,8 +160,8 @@ export const fixtureEvidence: CaseEvidence = {
           },
           {
             sequence: 5,
-            role: 'REVIEW_SUMMARY_AGENT',
-            name: '复核摘要 Agent',
+            capability: 'REVIEW_SUMMARY_AGENT',
+            name: '复核摘要',
             responsibility: '组织制度引用、风险信号和 MCP 证据。',
             allowedTools: [],
             writeOperationAllowed: false,
@@ -172,8 +171,8 @@ export const fixtureEvidence: CaseEvidence = {
           },
           {
             sequence: 6,
-            role: 'APPROVED_SETTLEMENT_AGENT',
-            name: '审批后入账 Agent',
+            capability: 'APPROVED_SETTLEMENT_AGENT',
+            name: '审批后入账',
             responsibility: '审批通过后扣减共享项目预算，提交报销与入账，并回写票据历史。',
             allowedTools: [
               'debit_project_budget',
@@ -248,7 +247,7 @@ export const fixtureReviewTasks: ReviewTask[] = [
     requiredEvidence: ['重复票据检查', '票据抬头核验', '历史报销', '原始票据'],
     userFacingMessage: '该申请存在预算超标和疑似重复票据信号，已升级学院财务复核。',
     fallbackStrategy: 'ESCALATE_FRAUD_REVIEW',
-    debateAssistEnabled: true,
+  summaryRequired: true,
     version: 1,
     createdAt: '2026-06-22T10:31:00+08:00',
     updatedAt: '2026-06-22T10:31:00+08:00',
@@ -337,15 +336,15 @@ export const fixtureRiskReport: RiskEvaluationReport = {
     highRiskMissRate: 0,
     humanReviewTriggerRate: 0.6428571429,
   },
-  agentGovernance: {
-    planVersion: 'my-expense-agent-multi-agent-v1',
-    totalAgents: 6,
-    writeAgentCount: 1,
-    idempotentWriteAgentCount: 1,
+  executionGovernance: {
+    planVersion: 'my-expense-governed-policy-v1',
+    totalCapabilities: 6,
+    writeCapabilityCount: 1,
+    idempotentWriteCapabilityCount: 1,
     writeToolIsolationPassed: true,
     settlementWriteRetryProtected: true,
     humanHandoffCoverage: 1,
-    retryableAgentRate: 0.5,
+    retryableCapabilityRate: 0.5,
   },
   failures: Array.from({ length: 10 }, (_, index) => ({
     caseId: `low-confidence-review-${String(index + 1).padStart(3, '0')}`,
@@ -366,12 +365,11 @@ export const fixtureObservableRuns: ObservableWorkflowRun[] = [
     status: 'SUCCEEDED',
     startedAt: '2026-06-22T09:20:00+08:00',
     completedAt: '2026-06-22T09:20:20+08:00',
-    traceId: 'trace-fixture-001',
     stepCount: 6,
     succeededStepCount: 6,
     failedStepCount: 0,
     durationMs: 20_000,
-    agentPlanRecorded: true,
+  executionPolicyRecorded: true,
   },
 ];
 
@@ -462,7 +460,7 @@ export const fixturePrompts: PromptTemplate[] = [
     modelName: 'qwen-plus',
     temperature: 0,
     maxTokens: 1024,
-    status: 'IN_REVIEW',
+  status: 'EVALUATING',
     promptHash: 'e'.repeat(64),
     createdBy: 'finance01',
     updatedBy: 'finance01',

@@ -4,6 +4,7 @@ import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
 import com.yangaobo.expense.backend.application.observability.CaseAuditRepository;
 import com.yangaobo.expense.backend.application.observability.ModelCallRepository;
 import com.yangaobo.expense.backend.application.workflow.WorkflowRunRepository;
+import com.yangaobo.expense.backend.application.workflow.WorkflowCommandType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.security.Principal;
@@ -102,12 +103,17 @@ public class ObservabilityController {
             Instant startedAt,
             Instant completedAt,
             String errorCode,
-            String traceId,
             int stepCount,
             int succeededStepCount,
             int failedStepCount,
             Long durationMs,
-            boolean agentPlanRecorded) {
+            boolean executionPolicyRecorded,
+            WorkflowCommandType commandType,
+            int documentVersion,
+            UUID previousRunId,
+            String reopenReason,
+            String routeAction,
+            String waitingReason) {
 
         static ObservableRunResponse from(
                 WorkflowRunRepository.WorkflowRunDetail run,
@@ -116,11 +122,11 @@ public class ObservabilityController {
                     (int) steps.stream().filter(step -> "SUCCEEDED".equals(step.status())).count();
             int failedSteps =
                     (int) steps.stream().filter(step -> "FAILED".equals(step.status())).count();
-            boolean agentPlanRecorded =
+            boolean executionPolicyRecorded =
                     steps.stream()
                             .anyMatch(
                                     step ->
-                                            "AGENT_PLAN".equals(step.name())
+                                            "EXECUTION_POLICY".equals(step.name())
                                                     && "SUCCEEDED".equals(step.status()));
             return new ObservableRunResponse(
                     run.id(),
@@ -130,12 +136,17 @@ public class ObservabilityController {
                     run.startedAt(),
                     run.completedAt(),
                     run.errorCode(),
-                    run.traceId(),
                     steps.size(),
                     succeededSteps,
                     failedSteps,
                     durationMs(run.startedAt(), run.completedAt()),
-                    agentPlanRecorded);
+                    executionPolicyRecorded,
+                    run.commandType(),
+                    run.documentVersion(),
+                    run.previousRunId(),
+                    run.reopenReason(),
+                    run.routeAction(),
+                    run.waitingReason());
         }
 
         private static Long durationMs(Instant startedAt, Instant completedAt) {

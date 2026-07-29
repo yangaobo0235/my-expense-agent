@@ -7,6 +7,7 @@ public enum ExpenseCaseStatus {
     EXTRACTED,
     POLICY_CHECKING,
     RISK_CHECKING,
+    WAITING_MORE_INFO,
     WAITING_HUMAN,
     APPROVED,
     REJECTED,

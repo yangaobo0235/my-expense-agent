@@ -36,11 +36,11 @@ const promptKeys = ['receipt-extraction', 'review-report', 'evidence-chat', 'mor
 
 const statusColor: Record<PromptTemplate['status'], string> = {
   DRAFT: 'gold',
-  IN_REVIEW: 'blue',
+  SUBMITTED: 'blue',
+  EVALUATING: 'blue',
   APPROVED: 'cyan',
   ACTIVE: 'green',
-  REJECTED: 'red',
-  DEPRECATED: 'default',
+  RETIRED: 'default',
 };
 
 export function PromptGovernancePage() {
@@ -268,7 +268,7 @@ export function PromptGovernancePage() {
                         保存草稿
                       </Button>
                       <Button
-                        disabled={!canAuthorPrompt || !selected || !['DRAFT', 'REJECTED'].includes(selected.status)}
+                        disabled={!canAuthorPrompt || !selected || selected.status !== 'DRAFT'}
                         loading={submit.isPending}
                         onClick={() =>
                           Modal.confirm({
@@ -281,17 +281,17 @@ export function PromptGovernancePage() {
                         提交审批
                       </Button>
                       <Button
-                        disabled={!canPublishPrompt || !selected || !['APPROVED', 'DEPRECATED'].includes(selected.status)}
+                        disabled={!canPublishPrompt || !selected || selected.status !== 'APPROVED'}
                         loading={activate.isPending}
                         onClick={() =>
                           Modal.confirm({
-                            title: selected?.status === 'DEPRECATED' ? '确认回滚 Prompt 版本' : '确认激活 Prompt 版本',
+                            title: '确认激活 Prompt 版本',
                             content: '激活后运行时会读取该版本作为 Active Prompt。',
                             onOk: () => activate.mutate(),
                           })
                         }
                       >
-                        {selected?.status === 'DEPRECATED' ? '回滚到此版本' : '激活版本'}
+                        激活版本
                       </Button>
                     </Space>
                   </Form>

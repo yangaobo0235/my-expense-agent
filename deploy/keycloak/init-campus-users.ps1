@@ -1,9 +1,12 @@
 param(
-    [string] $KeycloakBaseUrl = 'http://192.168.23.66:18080',
+    [string] $KeycloakBaseUrl = 'http://localhost:18080',
     [string] $Realm = 'my-expense-agent',
     [string] $AdminUsername = 'admin',
-    [string] $AdminPassword = 'admin',
-    [string] $UserPassword = 'MyExpense123!',
+    [Parameter(Mandatory = $true)]
+    [string] $AdminPassword,
+    [Parameter(Mandatory = $true)]
+    [string] $UserPassword,
+    [string[]] $WebOrigins = @('http://localhost:25105', 'http://127.0.0.1:25105'),
     [string] $BackendClientSecret = $env:KEYCLOAK_BACKEND_CLIENT_SECRET
 )
 
@@ -60,16 +63,8 @@ $webClient = Invoke-KeycloakJson `
     -Method Get `
     -Uri "$KeycloakBaseUrl/admin/realms/$Realm/clients/$($webClients[0].id)" `
     -Headers $headers
-$webClient.redirectUris = @(
-    'http://localhost:25105/*',
-    'http://127.0.0.1:25105/*',
-    'http://192.168.23.66:25105/*'
-)
-$webClient.webOrigins = @(
-    'http://localhost:25105',
-    'http://127.0.0.1:25105',
-    'http://192.168.23.66:25105'
-)
+$webClient.redirectUris = @($WebOrigins | ForEach-Object { "$_/*" })
+$webClient.webOrigins = @($WebOrigins)
 $webClient.standardFlowEnabled = $true
 $webClient.directAccessGrantsEnabled = $false
 if ($null -eq $webClient.attributes) {

@@ -42,6 +42,7 @@ import {
 } from './case-workbench-model';
 import { EvidenceSourceBoard, PolicyEvidenceWorkbench, RiskExplanationPanel, SettlementWorkbench } from './workbench-panels';
 import { WorkflowLauncher } from './WorkflowLauncher';
+import { GovernedReviewTimeline } from './GovernedReviewTimeline';
 
 interface CaseEditForm {
   applicantName: string;
@@ -322,6 +323,7 @@ export function CaseDetailPage() {
               onSettle={() => settlementMutation.mutate()}
               settlementCompleted={Boolean(settlementCompleted)}
               readOnly={isReadOnlyAuditor}
+              canSubmitMoreInfo={isApplicant}
             />
           </Card>
           <DiagnosisSidebar
@@ -464,6 +466,7 @@ function StageWorkspace({
   onSettle,
   settlementCompleted,
   readOnly,
+  canSubmitMoreInfo,
 }: {
   stage: CaseStageKey;
   expenseCase: ExpenseCase;
@@ -481,6 +484,7 @@ function StageWorkspace({
   onSettle: () => void;
   settlementCompleted: boolean;
   readOnly: boolean;
+  canSubmitMoreInfo: boolean;
 }) {
   if (stage === 'summary') {
     return (
@@ -544,6 +548,17 @@ function StageWorkspace({
     return (
       <Tabs
         items={[
+          {
+            key: 'timeline',
+            label: '版本与重审',
+            children: (
+              <GovernedReviewTimeline
+                caseId={caseId}
+                status={expenseCase.status}
+                canSubmit={canSubmitMoreInfo}
+              />
+            ),
+          },
           {
             key: 'report',
             label: '审核报告',
@@ -911,6 +926,48 @@ function DocumentEvidence({ document }: { document: ExpenseDocumentDetail }) {
                 {extraction.tokenUsage ?? 0} / {extraction.extractionLatencyMs ?? 0} ms
               </Descriptions.Item>
             </Descriptions>
+            <Table
+              rowKey="attemptNo"
+              size="small"
+              pagination={false}
+              dataSource={document.extractionAttempts ?? []}
+              locale={{ emptyText: '该票据没有发生输出修正' }}
+              columns={[
+                {
+                  title: '输出阶段',
+                  dataIndex: 'attemptType',
+                  width: 110,
+                  render: (value: string) => value === 'REPAIR' ? '修正输出' : '原始输出',
+                },
+                {
+                  title: '校验结果',
+                  dataIndex: 'status',
+                  width: 130,
+                  render: (value: string) => (
+                    <Tag color={value === 'SUCCEEDED' ? 'green' : 'orange'}>
+                      {value === 'SUCCEEDED' ? '通过' : '未通过'}
+                    </Tag>
+                  ),
+                },
+                {
+                  title: '校验错误',
+                  dataIndex: 'validationErrors',
+                  render: (values: Array<{ code: string; field: string; message: string }>) =>
+                    values?.map((item) => `${item.field || 'response'}: ${item.message}`).join('；') || '-',
+                },
+                {
+                  title: '输出 Hash',
+                  dataIndex: 'outputHash',
+                  width: 145,
+                  render: (value?: string) => value ? <Typography.Text code>{shortTechnicalId(value)}</Typography.Text> : '-',
+                },
+                {
+                  title: '网络重试',
+                  dataIndex: 'networkRetryCount',
+                  width: 90,
+                },
+              ]}
+            />
             <Table<ExtractedExpenseItem>
               rowKey={(_, index) => String(index)}
               size="small"

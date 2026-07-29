@@ -15,6 +15,8 @@ import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.Clock;
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,6 +30,9 @@ public class ExpenseExtractionService {
     private final ExpenseExtractionValidator validator;
     private final ObjectMapper objectMapper;
     private final ModelCallRecorder modelCallRecorder;
+    private final ExtractionRepairPolicy repairPolicy;
+    private final ExtractionAttemptRepository attemptRepository;
+    private final Clock clock;
 
     public ExpenseExtractionService(
             ExpenseCaseApplicationService caseService,
@@ -37,7 +42,10 @@ public class ExpenseExtractionService {
             ExpenseDocumentExtractor extractor,
             ExpenseExtractionValidator validator,
             ObjectMapper objectMapper,
-            ModelCallRecorder modelCallRecorder) {
+            ModelCallRecorder modelCallRecorder,
+            ExtractionRepairPolicy repairPolicy,
+            ExtractionAttemptRepository attemptRepository,
+            Clock clock) {
         this.caseService = caseService;
         this.documentRepository = documentRepository;
         this.objectStorage = objectStorage;
@@ -46,6 +54,9 @@ public class ExpenseExtractionService {
         this.validator = validator;
         this.objectMapper = objectMapper;
         this.modelCallRecorder = modelCallRecorder;
+        this.repairPolicy = repairPolicy;
+        this.attemptRepository = attemptRepository;
+        this.clock = clock;
     }
 
     public CaseExtractionResult extract(UUID caseId, String ownerSubject) {
@@ -88,7 +99,9 @@ public class ExpenseExtractionService {
                     document.id(),
                     readDocument(stored.resultJson()),
                     stored.validationErrors(),
-                    true);
+                    true,
+                    false,
+                    false);
         }
 
         byte[] content = objectStorage.get(document.objectKey());
@@ -113,7 +126,24 @@ public class ExpenseExtractionService {
                             : MyExpenseAgentErrorCode.INTERNAL_ERROR.name());
             throw exception;
         }
+        int attemptNo = 1;
+        for (ExtractionAttemptMetadata priorAttempt : candidate.priorAttempts()) {
+            saveAttempt(document, candidate, priorAttempt, attemptNo++, "ORIGINAL");
+        }
         ExtractionValidationResult validation = validator.validate(candidate.document());
+        saveAttempt(
+                document,
+                candidate,
+                validation,
+                attemptNo,
+                candidate.repairUsed() ? "REPAIR" : "ORIGINAL");
+        if (!candidate.repairUsed()
+                && extractor.supportsRepair()
+                && repairPolicy.shouldRepair(validation.violations(), 0)) {
+            candidate = extractor.repair(prepared, candidate, validation.violations());
+            validation = validator.validate(candidate.document());
+            saveAttempt(document, candidate, validation, attemptNo + 1, "REPAIR");
+        }
         String resultJson = writeDocument(candidate.document());
         modelCallRecorder.succeeded(
                 document.caseId(),
@@ -127,7 +157,7 @@ public class ExpenseExtractionService {
                 candidate.promptTokens(),
                 candidate.completionTokens(),
                 candidate.latencyMs() > 0 ? candidate.latencyMs() : elapsedMs(startedNanos),
-                0);
+                candidate.networkRetryCount());
         StoredExtractionResult stored =
                 new StoredExtractionResult(
                         candidate.document().documentType(),
@@ -142,7 +172,58 @@ public class ExpenseExtractionService {
                         candidate.extractorMode());
         documentRepository.saveExtraction(document.id(), stored);
         return new DocumentExtractionOutcome(
-                document.id(), candidate.document(), validation.errors(), false);
+                document.id(),
+                candidate.document(),
+                validation.errors(),
+                false,
+                candidate.repairUsed(),
+                !validation.valid());
+    }
+
+    private void saveAttempt(
+            ExpenseDocument document,
+            ExtractionCandidate candidate,
+            ExtractionValidationResult validation,
+            int attemptNo,
+            String attemptType) {
+        attemptRepository.save(
+                new ExtractionAttemptRepository.ExtractionAttempt(
+                        UUID.randomUUID(),
+                        document.id(),
+                        attemptNo,
+                        attemptType,
+                        candidate.promptVersion(),
+                        candidate.modelName(),
+                        validation.violations(),
+                        candidate.rawResponseHash(),
+                        candidate.totalTokens(),
+                        candidate.latencyMs(),
+                        candidate.networkRetryCount(),
+                        validation.valid() ? "SUCCEEDED" : "VALIDATION_FAILED",
+                        Instant.now(clock)));
+    }
+
+    private void saveAttempt(
+            ExpenseDocument document,
+            ExtractionCandidate candidate,
+            ExtractionAttemptMetadata metadata,
+            int attemptNo,
+            String attemptType) {
+        attemptRepository.save(
+                new ExtractionAttemptRepository.ExtractionAttempt(
+                        UUID.randomUUID(),
+                        document.id(),
+                        attemptNo,
+                        attemptType,
+                        candidate.promptVersion(),
+                        candidate.modelName(),
+                        metadata.validationErrors(),
+                        metadata.outputHash(),
+                        metadata.totalTokens(),
+                        metadata.latencyMs(),
+                        metadata.networkRetryCount(),
+                        metadata.status(),
+                        Instant.now(clock)));
     }
 
     private String writeDocument(ExtractedExpenseDocument document) {

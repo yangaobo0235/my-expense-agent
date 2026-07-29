@@ -177,7 +177,7 @@ public class ExpenseCaseController {
         if (requiredWritesSucceeded) {
             return "SUBMITTED";
         }
-        if (calls.stream().anyMatch(call -> "FAILED".equals(call.status()))) {
+        if (calls.stream().anyMatch(call -> call.status().startsWith("FAILED"))) {
             return "FAILED";
         }
         return "NOT_SUBMITTED";

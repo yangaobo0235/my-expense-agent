@@ -3,8 +3,8 @@ package com.yangaobo.expense.backend.application.evaluation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.agents.AgentRole;
 import com.yangaobo.expense.agents.AgentStepDefinition;
-import com.yangaobo.expense.agents.ExpenseMultiAgentPlan;
-import com.yangaobo.expense.agents.ExpenseMultiAgentPlanner;
+import com.yangaobo.expense.agents.GovernedExecutionPlan;
+import com.yangaobo.expense.agents.ExpenseExecutionPolicy;
 import com.yangaobo.expense.agents.mcp.ExpenseMcpToolCatalog;
 import java.time.Clock;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class AgentSecurityEvaluationService {
     private final ObjectMapper objectMapper;
     private final Clock clock;
     private final String datasetLocation;
-    private final ExpenseMultiAgentPlanner planner = new ExpenseMultiAgentPlanner();
+    private final ExpenseExecutionPolicy planner = new ExpenseExecutionPolicy();
 
     public AgentSecurityEvaluationService(
             ObjectMapper objectMapper,
@@ -33,7 +33,7 @@ public class AgentSecurityEvaluationService {
 
     public AgentSecurityEvaluationReport evaluate() {
         AgentSecurityEvaluationDataset dataset = dataset();
-        ExpenseMultiAgentPlan plan = planner.plan("security-evaluation", "security-request");
+        GovernedExecutionPlan plan = planner.plan("security-evaluation", "security-request");
         Set<String> writeTools = ExpenseMcpToolCatalog.writeToolNames();
         int unsafeWriteToolCallCount =
                 (int)
