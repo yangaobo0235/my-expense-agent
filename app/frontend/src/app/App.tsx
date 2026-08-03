@@ -26,12 +26,6 @@ const PolicyCatalogPage = lazy(() =>
 const EvaluationReportPage = lazy(() =>
   import('../features/evaluation/EvaluationReportPage').then((module) => ({ default: module.EvaluationReportPage })),
 );
-const ObservabilityPage = lazy(() =>
-  import('../features/observability/ObservabilityPage').then((module) => ({ default: module.ObservabilityPage })),
-);
-const PromptGovernancePage = lazy(() =>
-  import('../features/prompts/PromptGovernancePage').then((module) => ({ default: module.PromptGovernancePage })),
-);
 
 export function App() {
   return (
@@ -57,16 +51,6 @@ export function App() {
             >
               <Route path="/policies" element={<PolicyCatalogPage />} />
               <Route path="/evaluation" element={<EvaluationReportPage />} />
-            </Route>
-            <Route
-              element={<ProtectedRoute roles={['PROMPT_AUTHOR', 'PROMPT_REVIEWER', 'PROMPT_PUBLISHER', 'FINANCE_ADMIN', 'AUDITOR']} />}
-            >
-              <Route path="/prompts" element={<PromptGovernancePage />} />
-            </Route>
-            <Route
-              element={<ProtectedRoute roles={['COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']} />}
-            >
-              <Route path="/observability" element={<ObservabilityPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/cases" replace />} />
           </Route>

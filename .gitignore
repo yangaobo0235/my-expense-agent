@@ -18,6 +18,7 @@ app/frontend/.env.local
 app/frontend/playwright-report/
 app/frontend/test-results/
 *.tsbuildinfo
+/tmp/
 
 # Tests are kept locally for verification, but are not part of submitted code.
 **/src/test/

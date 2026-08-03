@@ -87,6 +87,9 @@ public class LlmExpenseDocumentExtractor implements ExpenseDocumentExtractor {
     @Override
     public ExtractionCandidate extract(PreparedDocument document) {
         if (properties.getApiKey() == null || properties.getApiKey().isBlank()) {
+            if (properties.isFallbackEnabled()) {
+                return fallback(document, "LLM API key is not configured");
+            }
             throw dependency("LLM API key is not configured", null);
         }
         RenderedPrompt prompt = prompt(document);

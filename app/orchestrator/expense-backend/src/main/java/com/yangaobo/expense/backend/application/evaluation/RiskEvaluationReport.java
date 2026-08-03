@@ -12,27 +12,12 @@ public record RiskEvaluationReport(
         int caseCount,
         Map<String, Integer> categoryCounts,
         Metrics metrics,
-        ExecutionGovernance executionGovernance,
         List<Failure> failures) {
 
     public record Metrics(
-            double precision,
-            double recall,
-            double f1,
             double riskLevelAccuracy,
-            double humanReviewAccuracy,
-            double highRiskMissRate,
-            double humanReviewTriggerRate) {}
-
-    public record ExecutionGovernance(
-            String planVersion,
-            int totalCapabilities,
-            int writeCapabilityCount,
-            int idempotentWriteCapabilityCount,
-            boolean writeToolIsolationPassed,
-            boolean settlementWriteRetryProtected,
-            double humanHandoffCoverage,
-            double retryableCapabilityRate) {}
+            double routingAccuracy,
+            double highRiskRecall) {}
 
     public record Failure(
             String caseId,

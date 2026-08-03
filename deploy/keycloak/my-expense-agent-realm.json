@@ -10,9 +10,6 @@
       {"name": "ADVISOR"},
       {"name": "COLLEGE_REVIEWER"},
       {"name": "FINANCE_ADMIN"},
-      {"name": "PROMPT_AUTHOR"},
-      {"name": "PROMPT_REVIEWER"},
-      {"name": "PROMPT_PUBLISHER"},
       {"name": "AUDITOR"}
     ]
   },

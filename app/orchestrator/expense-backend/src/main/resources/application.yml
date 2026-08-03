@@ -33,12 +33,6 @@ expense:
     timeout: ${EXPENSE_EXTRACTION_TIMEOUT:30s}
     max-retries: ${EXPENSE_EXTRACTION_MAX_RETRIES:2}
     fallback-enabled: ${EXPENSE_EXTRACTION_FALLBACK_ENABLED:true}
-  review-report:
-    model-name: ${EXPENSE_REVIEW_REPORT_MODEL_NAME:qwen-plus}
-    prompt-version: ${EXPENSE_REVIEW_REPORT_PROMPT_VERSION:review-report-v1}
-  evidence-chat:
-    model-name: ${EXPENSE_EVIDENCE_CHAT_MODEL_NAME:qwen-plus}
-    prompt-version: ${EXPENSE_EVIDENCE_CHAT_PROMPT_VERSION:evidence-chat-v1}
   security:
     issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/my-expense-agent}
     jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/certs}
@@ -51,12 +45,6 @@ expense:
     secret-key: ${EXPENSE_MINIO_SECRET_KEY}
     bucket: ${EXPENSE_MINIO_BUCKET:my-expense-agent-documents}
   ai:
-    chat:
-      base-url: ${EXPENSE_AI_CHAT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
-      api-key: ${EXPENSE_AI_CHAT_API_KEY:${DASHSCOPE_API_KEY:}}
-      timeout: ${EXPENSE_AI_CHAT_TIMEOUT:30s}
-      max-retries: ${EXPENSE_AI_CHAT_MAX_RETRIES:2}
-      fallback-enabled: ${EXPENSE_AI_CHAT_FALLBACK_ENABLED:true}
     embedding:
       provider: ${EXPENSE_AI_EMBEDDING_PROVIDER:dashscope}
       base-url: ${EXPENSE_AI_EMBEDDING_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
@@ -72,18 +60,13 @@ expense:
       account-url: ${EXPENSE_ACCOUNT_MCP_URL:http://localhost:25102/mcp}
       expense-url: ${EXPENSE_EXPENSE_MCP_URL:http://localhost:25103/mcp}
       audit-history-url: ${EXPENSE_AUDIT_HISTORY_MCP_URL:http://localhost:25104/mcp}
-      connection-timeout: ${EXPENSE_MCP_CONNECTION_TIMEOUT:10s}
-      tool-timeout: ${EXPENSE_MCP_TOOL_TIMEOUT:15s}
+      connection-timeout: ${EXPENSE_MCP_CONNECTION_TIMEOUT:30s}
+      tool-timeout: ${EXPENSE_MCP_TOOL_TIMEOUT:30s}
       max-attempts: ${EXPENSE_MCP_MAX_ATTEMPTS:2}
       retry-delay: ${EXPENSE_MCP_RETRY_DELAY:200ms}
   evaluation:
-    risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v2.json}
-    policy-rag-dataset: ${EXPENSE_POLICY_RAG_EVALUATION_DATASET:classpath:evaluation/cases/policy-rag-golden-v1.json}
-    agent-security-dataset: ${EXPENSE_AGENT_SECURITY_EVALUATION_DATASET:classpath:evaluation/cases/agent-security-golden-v1.json}
+    risk-dataset: ${EXPENSE_RISK_EVALUATION_DATASET:classpath:evaluation/cases/risk-golden-v3.json}
     extraction-dataset: ${EXPENSE_EXTRACTION_EVALUATION_DATASET:classpath:evaluation/cases/extraction-golden-v1.json}
-    gates:
-      extraction-schema-pass-rate: ${EXPENSE_EXTRACTION_SCHEMA_PASS_GATE:0.95}
-      extraction-amount-accuracy: ${EXPENSE_EXTRACTION_AMOUNT_GATE:0.95}
 management:
   endpoints:
     web:

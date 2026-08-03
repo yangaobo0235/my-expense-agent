@@ -1,10 +1,6 @@
 package com.yangaobo.expense.backend.application.evaluation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yangaobo.expense.agents.AgentFailurePolicy;
-import com.yangaobo.expense.agents.AgentRole;
-import com.yangaobo.expense.agents.GovernedExecutionPlan;
-import com.yangaobo.expense.agents.ExpenseExecutionPolicy;
 import com.yangaobo.expense.backend.domain.risk.DeterministicRiskEngine;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessmentInput;
@@ -33,19 +29,17 @@ public class RiskEvaluationService {
     private final DeterministicRiskEngine engine;
     private final Clock clock;
     private final String datasetLocation;
-    private final ExpenseExecutionPolicy executionPolicy;
 
     public RiskEvaluationService(
             ObjectMapper objectMapper,
             DeterministicRiskEngine engine,
             Clock clock,
-            @Value("${expense.evaluation.risk-dataset:classpath:evaluation/cases/risk-golden-v2.json}")
+            @Value("${expense.evaluation.risk-dataset:classpath:evaluation/cases/risk-golden-v3.json}")
                     String datasetLocation) {
         this.objectMapper = objectMapper;
         this.engine = engine;
         this.clock = clock;
         this.datasetLocation = datasetLocation;
-        this.executionPolicy = new ExpenseExecutionPolicy();
     }
 
     public RiskEvaluationReport evaluate() {
@@ -60,14 +54,10 @@ public class RiskEvaluationService {
             throw unavailable("风险评测数据集不能为空", null);
         }
 
-        int truePositive = 0;
-        int falsePositive = 0;
-        int falseNegative = 0;
         int correctLevels = 0;
         int correctReview = 0;
         int expectedHigh = 0;
-        int missedHigh = 0;
-        int reviewTriggered = 0;
+        int matchedHigh = 0;
         Map<String, Integer> categoryCounts = new LinkedHashMap<>();
         List<RiskEvaluationReport.Failure> failures = new ArrayList<>();
 
@@ -81,18 +71,14 @@ public class RiskEvaluationService {
                             .collect(
                                     java.util.stream.Collectors.toCollection(
                                             LinkedHashSet::new));
-            truePositive += intersectionSize(expected, actual);
-            falsePositive += differenceSize(actual, expected);
-            falseNegative += differenceSize(expected, actual);
             boolean levelCorrect = assessment.level().name().equals(testCase.expectedRiskLevel());
             boolean reviewCorrect =
                     assessment.requiresHumanReview() == testCase.expectedHumanReview();
             correctLevels += levelCorrect ? 1 : 0;
             correctReview += reviewCorrect ? 1 : 0;
-            reviewTriggered += assessment.requiresHumanReview() ? 1 : 0;
             if ("HIGH".equals(testCase.expectedRiskLevel())) {
                 expectedHigh++;
-                missedHigh += assessment.level().name().equals("HIGH") ? 0 : 1;
+                matchedHigh += assessment.level().name().equals("HIGH") ? 1 : 0;
             }
             categoryCounts.merge(testCase.category(), 1, Integer::sum);
             if (!expected.equals(actual) || !levelCorrect || !reviewCorrect) {
@@ -109,9 +95,6 @@ public class RiskEvaluationService {
         }
 
         int count = dataset.cases().size();
-        double precision = ratio(truePositive, truePositive + falsePositive);
-        double recall = ratio(truePositive, truePositive + falseNegative);
-        double f1 = precision + recall == 0 ? 0 : 2 * precision * recall / (precision + recall);
         return new RiskEvaluationReport(
                 dataset.datasetVersion(),
                 sha256(bytes),
@@ -120,71 +103,10 @@ public class RiskEvaluationService {
                 count,
                 Map.copyOf(categoryCounts),
                 new RiskEvaluationReport.Metrics(
-                        precision,
-                        recall,
-                        f1,
                         ratio(correctLevels, count),
                         ratio(correctReview, count),
-                        ratio(missedHigh, expectedHigh),
-                        ratio(reviewTriggered, count)),
-                executionGovernance(),
+                        ratio(matchedHigh, expectedHigh)),
                 List.copyOf(failures));
-    }
-
-    private RiskEvaluationReport.ExecutionGovernance executionGovernance() {
-        GovernedExecutionPlan plan = executionPolicy.plan("evaluation-baseline", "evaluation-request");
-        int totalCapabilities = plan.steps().size();
-        int writeCapabilities =
-                (int) plan.steps().stream().filter(step -> step.writeOperationAllowed()).count();
-        int idempotentWriteCapabilities =
-                (int)
-                        plan.steps().stream()
-                                .filter(step -> step.writeOperationAllowed())
-                                .filter(
-                                        step ->
-                                                step.failurePolicy()
-                                                        == AgentFailurePolicy
-                                                                .IDEMPOTENT_WRITE_RETRY)
-                                .count();
-        boolean writeToolIsolationPassed =
-                writeCapabilities == 1
-                        && plan.steps().stream()
-                                .filter(step -> step.writeOperationAllowed())
-                                .allMatch(step -> step.role() == AgentRole.APPROVED_SETTLEMENT_AGENT);
-        boolean settlementWriteRetryProtected =
-                plan.steps().stream()
-                        .filter(step -> step.role() == AgentRole.APPROVED_SETTLEMENT_AGENT)
-                        .allMatch(
-                                step ->
-                                        step.writeOperationAllowed()
-                                                && step.failurePolicy()
-                                                        == AgentFailurePolicy
-                                                                .IDEMPOTENT_WRITE_RETRY
-                                                && step.maxAttempts() >= 3);
-        long handoffCovered =
-                plan.steps().stream()
-                        .filter(step -> !step.handoffTarget().isBlank())
-                        .count();
-        long retryableCapabilities =
-                plan.steps().stream()
-                        .filter(
-                                step ->
-                                        step.failurePolicy()
-                                                        == AgentFailurePolicy
-                                                                .RETRY_THEN_HUMAN_REVIEW
-                                                || step.failurePolicy()
-                                                        == AgentFailurePolicy
-                                                                .IDEMPOTENT_WRITE_RETRY)
-                        .count();
-        return new RiskEvaluationReport.ExecutionGovernance(
-                plan.planVersion(),
-                totalCapabilities,
-                writeCapabilities,
-                idempotentWriteCapabilities,
-                writeToolIsolationPassed,
-                settlementWriteRetryProtected,
-                ratio((int) handoffCovered, totalCapabilities),
-                ratio((int) retryableCapabilities, totalCapabilities));
     }
 
     private byte[] readDataset() {
@@ -210,14 +132,6 @@ public class RiskEvaluationService {
                 testCase.projectBudgetExceeded(),
                 testCase.policyEvidenceMissing(),
                 testCase.promptInjectionDetected());
-    }
-
-    private static int intersectionSize(Set<String> left, Set<String> right) {
-        return (int) left.stream().filter(right::contains).count();
-    }
-
-    private static int differenceSize(Set<String> left, Set<String> right) {
-        return (int) left.stream().filter(value -> !right.contains(value)).count();
     }
 
     private static double ratio(int numerator, int denominator) {

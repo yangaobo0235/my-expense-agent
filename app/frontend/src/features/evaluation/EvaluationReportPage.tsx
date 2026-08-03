@@ -1,118 +1,44 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  Alert,
-  Card,
-  Col,
-  Descriptions,
-  Empty,
-  Progress,
-  Row,
-  Space,
-  Statistic,
-  Table,
-  Tabs,
-  Tag,
-  Typography,
-} from 'antd';
-import {
-  getAgentSecurityEvaluationReport,
-  getExtractionEvaluationReport,
-  getPolicyRagEvaluationReport,
-  getRiskEvaluationReport,
-} from '../../api/expense-api';
-import {
-  AgentSecurityEvaluationReport,
-  ExtractionEvaluationReport,
-  PolicyRagEvaluationReport,
-  RiskEvaluationReport,
-} from '../../api/contracts';
+import { Alert, Card, Col, Empty, Row, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { getExtractionEvaluationReport, getRiskEvaluationReport } from '../../api/expense-api';
+import { ExtractionEvaluationReport, RiskEvaluationReport } from '../../api/contracts';
 
 const percent = (value: number) => Number((value * 100).toFixed(1));
 
 export function EvaluationReportPage() {
-  const risk = useQuery({
-    queryKey: ['risk-evaluation-report'],
-    queryFn: getRiskEvaluationReport,
-  });
-  const rag = useQuery({
-    queryKey: ['policy-rag-evaluation-report'],
-    queryFn: getPolicyRagEvaluationReport,
-  });
   const extraction = useQuery({
     queryKey: ['extraction-evaluation-report'],
     queryFn: getExtractionEvaluationReport,
   });
-  const security = useQuery({
-    queryKey: ['agent-security-evaluation-report'],
-    queryFn: getAgentSecurityEvaluationReport,
+  const risk = useQuery({
+    queryKey: ['risk-evaluation-report'],
+    queryFn: getRiskEvaluationReport,
   });
 
-  if (risk.isError) {
-    return (
-      <Alert
-        type="error"
-        showIcon
-        title="评测报告加载失败"
-        description="请确认后端从项目根目录启动，且评测数据集路径配置正确。"
-      />
-    );
+  if (extraction.isError || risk.isError) {
+    return <Alert type="error" showIcon title="评测报告加载失败" />;
   }
 
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <div className="page-heading">
         <div>
-          <Typography.Title level={2}>离线评测报告</Typography.Title>
-          <Typography.Text type="secondary">
-            固定数据集的可重复基线，覆盖票据抽取、风险规则、制度 RAG 和 Tool 安全边界。
-          </Typography.Text>
+          <Typography.Title level={2}>回归评测</Typography.Title>
+          <Typography.Text type="secondary">票据关键字段 30 条与风险分流 300 条固定样例。</Typography.Text>
         </div>
-        <Space>
-          <Tag color="blue">{risk.data?.datasetVersion ?? '加载中'}</Tag>
-          <Tag>{risk.data?.engineVersion ?? '规则引擎'}</Tag>
-        </Space>
       </div>
-
       <Tabs
-        defaultActiveKey="risk"
+        defaultActiveKey="extraction"
         items={[
           {
             key: 'extraction',
-            label: '票据抽取评测',
-            children: (
-              <ExtractionReportPanel
-                data={extraction.data}
-                loading={extraction.isLoading}
-                error={extraction.isError}
-              />
-            ),
+            label: '票据解析',
+            children: <ExtractionPanel data={extraction.data} loading={extraction.isLoading} />,
           },
           {
             key: 'risk',
-            label: '风险评测',
-            children: <RiskReportPanel data={risk.data} loading={risk.isLoading} />,
-          },
-          {
-            key: 'rag',
-            label: '制度 RAG 评测',
-            children: (
-              <PolicyRagPanel
-                data={rag.data}
-                loading={rag.isLoading}
-                error={rag.isError}
-              />
-            ),
-          },
-          {
-            key: 'security',
-            label: 'Tool 安全评测',
-            children: (
-              <AgentSecurityPanel
-                data={security.data}
-                loading={security.isLoading}
-                error={security.isError}
-              />
-            ),
+            label: '风险分流',
+            children: <RiskPanel data={risk.data} loading={risk.isLoading} />,
           },
         ]}
       />
@@ -120,241 +46,65 @@ export function EvaluationReportPage() {
   );
 }
 
-function ExtractionReportPanel({
-  data,
-  loading,
-  error,
-}: {
-  data?: ExtractionEvaluationReport;
-  loading: boolean;
-  error: boolean;
-}) {
-  if (error) return <Alert type="warning" showIcon title="票据抽取评测报告加载失败" />;
+function ExtractionPanel({ data, loading }: { data?: ExtractionEvaluationReport; loading: boolean }) {
   return (
     <Space orientation="vertical" size="large" className="page-stack">
       <Card loading={loading}>
         <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="合成样本" value={data?.caseCount ?? 0} suffix="条" /></Col>
+          <Col span={4}><Statistic title="样例" value={data?.caseCount ?? 0} suffix="条" /></Col>
           <Col span={4}><Statistic title="JSON 有效率" value={percent(data?.metrics.jsonValidRate ?? 0)} suffix="%" /></Col>
           <Col span={4}><Statistic title="结构通过率" value={percent(data?.metrics.schemaPassRate ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="金额精确匹配" value={percent(data?.metrics.amountExactMatch ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="修正成功率" value={percent(data?.metrics.repairSuccessRate ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="人工接管率" value={percent(data?.metrics.humanHandoffRate ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="金额匹配率" value={percent(data?.metrics.amountExactMatch ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="日期准确率" value={percent(data?.metrics.dateAccuracy ?? 0)} suffix="%" /></Col>
+          <Col span={4}><Statistic title="币种准确率" value={percent(data?.metrics.currencyAccuracy ?? 0)} suffix="%" /></Col>
         </Row>
       </Card>
-      <Card title="字段级门禁">
-        <Space wrap>
-          <Tag color={data?.gatePassed ? 'green' : 'red'}>{data?.gatePassed ? '门禁通过' : '门禁未通过'}</Tag>
-          <Tag color="blue">{data?.datasetVersion ?? 'extraction-golden-v1'}</Tag>
-          <Tag>P95 {data?.metrics.p95LatencyMs ?? 0} ms</Tag>
-          <Tag>平均 Token {Math.round(data?.metrics.averageTokenUsage ?? 0)}</Tag>
-        </Space>
-        <div className="evaluation-grid">
-          <Metric label="发票号码精确匹配" value={data?.metrics.invoiceNumberExactMatch ?? 0} />
-          <Metric label="日期准确率" value={data?.metrics.dateAccuracy ?? 0} />
-          <Metric label="币种准确率" value={data?.metrics.currencyAccuracy ?? 0} />
-          <Metric label="明细 F1" value={data?.metrics.itemF1 ?? 0} />
-        </div>
-      </Card>
-      <Card title={`失败样本（${data?.failures.length ?? 0}）`}>
-        <Table
-          rowKey="caseId"
-          pagination={false}
-          dataSource={data?.failures ?? []}
-          locale={{ emptyText: <Empty description="当前抽取基线没有失败样本" /> }}
-          columns={[
-            { title: '样本', dataIndex: 'caseId' },
-            { title: '不匹配字段', dataIndex: 'mismatchedFields', render: (values: string[]) => values.join('、') },
-          ]}
-        />
-      </Card>
-    </Space>
-  );
-}
-
-function RiskReportPanel({
-  data,
-  loading,
-}: {
-  data?: RiskEvaluationReport;
-  loading: boolean;
-}) {
-  const governance = data?.executionGovernance;
-  return (
-    <Space orientation="vertical" size="large" className="page-stack">
-      <Card loading={loading}>
-        <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="黄金样本" value={data?.caseCount ?? 0} suffix="条" /></Col>
-          <Col span={4}><Statistic title="精确率" value={percent(data?.metrics.precision ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="召回率" value={percent(data?.metrics.recall ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="综合得分" value={percent(data?.metrics.f1 ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="高风险漏报率" value={percent(data?.metrics.highRiskMissRate ?? 0)} suffix="%" styles={{ content: { color: data?.metrics.highRiskMissRate ? '#c53030' : '#0f766e' } }} /></Col>
-          <Col span={4}><Statistic title="人工复核触发率" value={percent(data?.metrics.humanReviewTriggerRate ?? 0)} suffix="%" /></Col>
-        </Row>
-      </Card>
-
-      <div className="evaluation-grid">
-        <Card title="质量门禁">
-          <Metric label="风险等级准确率" value={data?.metrics.riskLevelAccuracy ?? 0} />
-          <Metric label="人工复核判断准确率" value={data?.metrics.humanReviewAccuracy ?? 0} />
-          <Metric label="风险信号召回率" value={data?.metrics.recall ?? 0} />
-          <Typography.Text type="secondary">
-            数据集 SHA-256：<Typography.Text code copyable>{data?.datasetSha256}</Typography.Text>
-          </Typography.Text>
-        </Card>
-        <Card title="申请场景分布">
-          <Table
-            rowKey="category"
-            pagination={false}
-            size="small"
-            dataSource={Object.entries(data?.categoryCounts ?? {}).map(([category, count]) => ({ category, count }))}
-            columns={[
-              { title: '场景', dataIndex: 'category', key: 'category' },
-              { title: '样本数', dataIndex: 'count', key: 'count' },
-            ]}
-          />
-        </Card>
-        <Card title="执行策略治理门禁">
-          <Space orientation="vertical" className="full-width">
-            <Space wrap>
-              <Tag color={governance?.writeToolIsolationPassed ? 'green' : 'red'}>
-                写 Tool 隔离{governance?.writeToolIsolationPassed ? '通过' : '待确认'}
-              </Tag>
-              <Tag color={governance?.settlementWriteRetryProtected ? 'green' : 'orange'}>
-                审批后入账幂等重试{governance?.settlementWriteRetryProtected ? '已保护' : '待确认'}
-              </Tag>
-              <Tag color="blue">{governance?.planVersion ?? '未生成执行策略'}</Tag>
-            </Space>
-            <Descriptions size="small" column={1}>
-              <Descriptions.Item label="能力步骤数">{governance?.totalCapabilities ?? 0}</Descriptions.Item>
-              <Descriptions.Item label="写能力">
-                {governance?.writeCapabilityCount ?? 0} 个，其中幂等写能力 {governance?.idempotentWriteCapabilityCount ?? 0} 个
-              </Descriptions.Item>
-            </Descriptions>
-            <Metric label="人工交接覆盖率" value={governance?.humanHandoffCoverage ?? 0} />
-            <Metric label="可重试能力占比" value={governance?.retryableCapabilityRate ?? 0} />
-          </Space>
-        </Card>
-      </div>
-
-      <Card title={`失败样本（${data?.failures.length ?? 0}）`}>
-        <Table
-          rowKey="caseId"
-          pagination={false}
-          dataSource={data?.failures}
-          locale={{ emptyText: <Empty description="当前基线没有回归失败样本" /> }}
-          columns={[
-            { title: '样本', dataIndex: 'caseId', key: 'caseId' },
-            { title: '期望信号', dataIndex: 'expectedSignals', key: 'expectedSignals', render: (values: string[]) => values.join('、') },
-            { title: '实际信号', dataIndex: 'actualSignals', key: 'actualSignals', render: (values: string[]) => values.join('、') },
-            { title: '期望等级', dataIndex: 'expectedRiskLevel', key: 'expectedRiskLevel' },
-            { title: '实际等级', dataIndex: 'actualRiskLevel', key: 'actualRiskLevel' },
-          ]}
-        />
-      </Card>
-    </Space>
-  );
-}
-
-function PolicyRagPanel({
-  data,
-  loading,
-  error,
-}: {
-  data?: PolicyRagEvaluationReport;
-  loading: boolean;
-  error: boolean;
-}) {
-  if (error) return <Alert type="warning" showIcon title="制度 RAG 评测报告加载失败" />;
-  return (
-    <Space orientation="vertical" size="large" className="page-stack">
-      <Card loading={loading}>
-        <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="总样本数" value={data?.caseCount ?? 0} /></Col>
-          <Col span={4}><Statistic title="前 5 条召回率" value={percent(data?.metrics.recallAt5 ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="前 5 条精确率" value={percent(data?.metrics.precisionAt5 ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="制度命中率" value={percent(data?.metrics.expectedPolicyHitRate ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="章节命中率" value={percent(data?.metrics.expectedSectionHitRate ?? 0)} suffix="%" /></Col>
-          <Col span={4}><Statistic title="平均检索延迟" value={Math.round(data?.metrics.averageSearchLatencyMs ?? 0)} suffix="ms" /></Col>
-        </Row>
-      </Card>
-      <Card title="RAG 门禁">
-        <Space wrap>
-          <Tag color={data?.metrics.injectionDefensePassed ? 'green' : 'red'}>
-            提示注入防护{data?.metrics.injectionDefensePassed ? '通过' : '失败'}
-          </Tag>
-          <Tag color="blue">拒答准确率 {percent(data?.metrics.noAnswerAccuracy ?? 0)}%</Tag>
-          <Tag color="blue">{data?.datasetVersion ?? 'policy-rag-golden-v1'}</Tag>
-        </Space>
-      </Card>
-      <FailureTable failures={data?.failures ?? []} />
-    </Space>
-  );
-}
-
-function AgentSecurityPanel({
-  data,
-  loading,
-  error,
-}: {
-  data?: AgentSecurityEvaluationReport;
-  loading: boolean;
-  error: boolean;
-}) {
-  if (error) return <Alert type="warning" showIcon title="Tool 安全评测报告加载失败" />;
-  return (
-    <Space orientation="vertical" size="large" className="page-stack">
-      <Card loading={loading}>
-        <Row gutter={[20, 20]}>
-          <Col span={4}><Statistic title="安全样本" value={data?.caseCount ?? 0} /></Col>
-          <Col span={5}><Statistic title="阻断写 Tool" value={data?.metrics.blockedWriteToolCount ?? 0} /></Col>
-          <Col span={5}><Statistic title="越权写 Tool" value={data?.metrics.unsafeWriteToolCallCount ?? 0} /></Col>
-          <Col span={5}><Statistic title="注入识别" value={data?.metrics.injectionDetectedCount ?? 0} /></Col>
-          <Col span={5}><Statistic title="通过率" value={percent(data?.metrics.securityPassRate ?? 0)} suffix="%" /></Col>
-        </Row>
-      </Card>
-      <Card title={`失败样例（${data?.failures.length ?? 0}）`}>
-        <Table
-          rowKey="caseId"
-          pagination={false}
-          dataSource={data?.failures}
-          locale={{ emptyText: <Empty description="安全评测全部通过" /> }}
-          columns={[
-            { title: '样本', dataIndex: 'caseId', key: 'caseId' },
-            { title: '原因', dataIndex: 'reason', key: 'reason' },
-            { title: '恶意文本', dataIndex: 'maliciousText', key: 'maliciousText' },
-          ]}
-        />
-      </Card>
-    </Space>
-  );
-}
-
-function FailureTable({ failures }: { failures: PolicyRagEvaluationReport['failures'] }) {
-  return (
-    <Card title={`失败样本（${failures.length}）`}>
+      <Space wrap>
+        <Tag color={data?.gatePassed ? 'green' : 'red'}>{data?.gatePassed ? '关键字段回归通过' : '关键字段回归未通过'}</Tag>
+        <Tag color="blue">{data?.datasetVersion ?? 'extraction-golden-v1'}</Tag>
+      </Space>
       <Table
         rowKey="caseId"
         pagination={false}
-        dataSource={failures}
-        locale={{ emptyText: <Empty description="制度 RAG 评测全部通过" /> }}
+        dataSource={data?.failures ?? []}
+        locale={{ emptyText: <Empty description="没有失败样例" /> }}
         columns={[
-          { title: '样本', dataIndex: 'caseId', key: 'caseId' },
-          { title: 'Query', dataIndex: 'query', key: 'query' },
-          { title: '期望制度', dataIndex: 'expectedPolicyCode', key: 'expectedPolicyCode' },
-          { title: '期望章节', dataIndex: 'expectedSections', key: 'expectedSections', render: (values: string[]) => values.join('、') },
-          { title: '原因', dataIndex: 'reason', key: 'reason' },
+          { title: '样例', dataIndex: 'caseId' },
+          { title: '不匹配字段', dataIndex: 'mismatchedFields', render: (values: string[]) => values.join('、') },
         ]}
       />
-    </Card>
+    </Space>
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function RiskPanel({ data, loading }: { data?: RiskEvaluationReport; loading: boolean }) {
   return (
-    <div className="evaluation-metric">
-      <Typography.Text>{label}</Typography.Text>
-      <Progress percent={percent(value)} status={value >= 0.9 ? 'success' : 'normal'} />
-    </div>
+    <Space orientation="vertical" size="large" className="page-stack">
+      <Card loading={loading}>
+        <Row gutter={[20, 20]}>
+          <Col span={6}><Statistic title="案例" value={data?.caseCount ?? 0} suffix="条" /></Col>
+          <Col span={6}><Statistic title="分级准确率" value={percent(data?.metrics.riskLevelAccuracy ?? 0)} suffix="%" /></Col>
+          <Col span={6}><Statistic title="路由准确率" value={percent(data?.metrics.routingAccuracy ?? 0)} suffix="%" /></Col>
+          <Col span={6}><Statistic title="高风险召回率" value={percent(data?.metrics.highRiskRecall ?? 0)} suffix="%" /></Col>
+        </Row>
+      </Card>
+      <Space wrap>
+        <Tag color="blue">{data?.datasetVersion ?? 'risk-golden-v3'}</Tag>
+        <Tag>{data?.engineVersion ?? 'deterministic-risk-v1'}</Tag>
+      </Space>
+      <Table
+        rowKey="caseId"
+        pagination={{ pageSize: 10 }}
+        dataSource={data?.failures ?? []}
+        locale={{ emptyText: <Empty description="没有差异样例" /> }}
+        columns={[
+          { title: '样例', dataIndex: 'caseId' },
+          { title: '期望等级', dataIndex: 'expectedRiskLevel' },
+          { title: '实际等级', dataIndex: 'actualRiskLevel' },
+          { title: '期望信号', dataIndex: 'expectedSignals', render: (values: string[]) => values.join('、') },
+          { title: '实际信号', dataIndex: 'actualSignals', render: (values: string[]) => values.join('、') },
+        ]}
+      />
+    </Space>
   );
 }

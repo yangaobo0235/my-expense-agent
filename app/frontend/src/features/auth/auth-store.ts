@@ -5,9 +5,6 @@ export type UserRole =
   | 'ADVISOR'
   | 'COLLEGE_REVIEWER'
   | 'FINANCE_ADMIN'
-  | 'PROMPT_AUTHOR'
-  | 'PROMPT_REVIEWER'
-  | 'PROMPT_PUBLISHER'
   | 'AUDITOR';
 
 export interface AuthUser {

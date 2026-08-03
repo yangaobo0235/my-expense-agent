@@ -5,7 +5,6 @@ import {
   FolderOpenOutlined,
   LogoutOutlined,
   PlusOutlined,
-  ProfileOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Space, Tag, Typography } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -25,14 +24,6 @@ export function AppLayout() {
     'FINANCE_ADMIN',
     'AUDITOR',
   ]);
-  const canUsePromptGovernance = hasAnyRole(user?.roles, [
-    'PROMPT_AUTHOR',
-    'PROMPT_REVIEWER',
-    'PROMPT_PUBLISHER',
-    'FINANCE_ADMIN',
-    'AUDITOR',
-  ]);
-  const canObserve = hasAnyRole(user?.roles, ['COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']);
   const items = [
     { key: '/cases', icon: <FolderOpenOutlined />, label: '经费申请' },
     ...(canSubmit ? [{ key: '/cases/new', icon: <PlusOutlined />, label: '新建报销' }] : []),
@@ -44,12 +35,6 @@ export function AppLayout() {
           { key: '/policies', icon: <FileSearchOutlined />, label: '制度库' },
           { key: '/evaluation', icon: <BarChartOutlined />, label: '评测报告' },
         ]
-      : []),
-    ...(canUsePromptGovernance
-      ? [{ key: '/prompts', icon: <ProfileOutlined />, label: 'Prompt 审批' }]
-      : []),
-    ...(canObserve
-      ? [{ key: '/observability', icon: <AuditOutlined />, label: '运行审计' }]
       : []),
   ];
   const selected = items.find((item) => location.pathname.startsWith(item.key))?.key;

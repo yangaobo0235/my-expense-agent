@@ -44,7 +44,6 @@ public class SecurityConfiguration {
                         authorization ->
                                 authorization
                                         .requestMatchers(
-                                                "/api/v1/system",
                                                 "/v3/api-docs/**",
                                                 "/swagger-ui/**",
                                                 "/swagger-ui.html",
@@ -98,52 +97,11 @@ public class SecurityConfiguration {
                                                 "ADVISOR",
                                                 "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN")
-                                        .requestMatchers(
-                                                "/api/v1/evaluation/**",
-                                                "/api/v1/evaluations/**")
+                                        .requestMatchers("/api/v1/evaluations/**")
                                         .hasAnyRole(
                                                 "COLLEGE_REVIEWER",
                                                 "FINANCE_ADMIN",
                                                 "AUDITOR")
-                                        .requestMatchers("/api/v1/observability/**")
-                                        .hasAnyRole(
-                                                "COLLEGE_REVIEWER",
-                                                "FINANCE_ADMIN",
-                                                "AUDITOR")
-                                        .requestMatchers(
-                                                org.springframework.http.HttpMethod.GET,
-                                                "/api/v1/prompts/**")
-                                        .hasAnyRole(
-                                                "COLLEGE_REVIEWER",
-                                                "FINANCE_ADMIN",
-                                                "PROMPT_AUTHOR",
-                                                "PROMPT_REVIEWER",
-                                                "PROMPT_PUBLISHER",
-                                                "AUDITOR")
-                                        .requestMatchers(
-                                                org.springframework.http.HttpMethod.POST,
-                                                "/api/v1/prompts/changes/*/approve",
-                                                "/api/v1/prompts/changes/*/reject")
-                                        .hasAnyRole("PROMPT_REVIEWER", "FINANCE_ADMIN")
-                                        .requestMatchers(
-                                                org.springframework.http.HttpMethod.POST,
-                                                "/api/v1/prompts/*/activate")
-                                        .hasAnyRole("PROMPT_PUBLISHER", "FINANCE_ADMIN")
-                                        .requestMatchers(
-                                                org.springframework.http.HttpMethod.POST,
-                                                "/api/v1/prompts",
-                                                "/api/v1/prompts/*/submit")
-                                        .hasAnyRole("PROMPT_AUTHOR", "FINANCE_ADMIN")
-                                        .requestMatchers(
-                                                org.springframework.http.HttpMethod.PUT,
-                                                "/api/v1/prompts/**")
-                                        .hasAnyRole("PROMPT_AUTHOR", "FINANCE_ADMIN")
-                                        .requestMatchers("/api/v1/prompts/**")
-                                        .hasAnyRole(
-                                                "PROMPT_AUTHOR",
-                                                "PROMPT_REVIEWER",
-                                                "PROMPT_PUBLISHER",
-                                                "FINANCE_ADMIN")
                                         .requestMatchers(
                                                 org.springframework.http.HttpMethod.POST,
                                                 "/api/v1/fund-applications/*/posting")

@@ -21,12 +21,10 @@ import { useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   decideReview,
-  generateReviewReport,
   getCaseObservability,
   getCase,
   getCaseEvidence,
   getMoreInfoSuggestion,
-  getReviewReport,
   getReviewTask,
   listCaseDocuments,
 } from '../../api/expense-api';
@@ -35,7 +33,6 @@ import { RiskBadge } from '../../components/RiskBadge';
 import { RiskEvidenceBoard } from '../../components/RiskEvidenceBoard';
 import { StatusBadge } from '../../components/StatusBadge';
 import { hasAnyRole, useAuthStore } from '../auth/auth-store';
-import { ReviewReportPanel } from '../cases/CaseDetailPage';
 import { DocumentSummaryPanel, EvidenceSourceBoard, RiskExplanationPanel } from '../cases/workbench-panels';
 
 type Action = 'approve' | 'reject' | 'request-more-info';
@@ -67,23 +64,10 @@ export function ReviewTaskDetailPage() {
     queryFn: () => listCaseDocuments(caseId!),
     enabled: Boolean(caseId),
   });
-  const reportQuery = useQuery({
-    queryKey: ['review-report', caseId],
-    queryFn: () => getReviewReport(caseId!),
-    enabled: Boolean(caseId),
-    retry: false,
-  });
   const observabilityQuery = useQuery({
     queryKey: ['case-observability', caseId],
     queryFn: () => getCaseObservability(caseId!),
     enabled: Boolean(caseId),
-  });
-  const reportMutation = useMutation({
-    mutationFn: () => generateReviewReport(caseId!),
-    onSuccess: () => {
-      message.success('审核报告已生成');
-      void queryClient.invalidateQueries({ queryKey: ['review-report', caseId] });
-    },
   });
   const suggestionMutation = useMutation({
     mutationFn: () => getMoreInfoSuggestion(taskId),
@@ -219,13 +203,6 @@ export function ReviewTaskDetailPage() {
                 提交
               </Button>
             </Form>
-          </Card>
-          <Card title="智能审核摘要">
-            <ReviewReportPanel
-              report={reportQuery.data}
-              loading={reportQuery.isLoading || reportMutation.isPending}
-              onGenerate={() => reportMutation.mutate()}
-            />
           </Card>
         </Space>
         <Space orientation="vertical" size="middle" className="page-stack review-evidence-column">

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/observability")
+@RequestMapping("/api/v1/expense-cases")
 public class ObservabilityController {
 
     private final WorkflowRunRepository runRepository;
@@ -41,26 +41,7 @@ public class ObservabilityController {
         this.caseService = caseService;
     }
 
-    @GetMapping("/runs")
-    public List<ObservableRunResponse> recentRuns(
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit) {
-        return runRepository.recentRuns(limit).stream()
-                .map(run -> ObservableRunResponse.from(run, runRepository.steps(run.id())))
-                .toList();
-    }
-
-    @GetMapping("/model-calls")
-    public List<ModelCallRepository.ModelCallRecord> modelCalls(
-            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit) {
-        return modelCallRepository.recent(limit);
-    }
-
-    @GetMapping("/model-summary")
-    public ModelCallRepository.ModelCallSummary modelSummary() {
-        return modelCallRepository.summary();
-    }
-
-    @GetMapping("/fund-applications/{caseId}")
+    @GetMapping("/{caseId}/trace")
     public CaseObservabilityResponse caseObservability(
             @PathVariable UUID caseId,
             @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit,

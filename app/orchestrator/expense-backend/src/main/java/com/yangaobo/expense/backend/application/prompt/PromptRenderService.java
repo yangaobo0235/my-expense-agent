@@ -5,34 +5,23 @@ import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard;
 import com.yangaobo.expense.backend.application.governance.AgentInputGuard.GuardMode;
 import com.yangaobo.expense.backend.application.governance.SensitiveDataMasker;
-import java.time.Clock;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PromptRenderService {
 
     private static final Pattern VARIABLE = Pattern.compile("\\{\\{\\s*([A-Za-z0-9_.-]+)\\s*}}");
 
-    private final PromptTemplateRepository repository;
-    private final Clock clock;
     private final AgentInputGuard inputGuard;
     private final SensitiveDataMasker masker;
 
-    public PromptRenderService(
-            PromptTemplateRepository repository,
-            Clock clock,
-            AgentInputGuard inputGuard,
-            SensitiveDataMasker masker) {
-        this.repository = repository;
-        this.clock = clock;
+    public PromptRenderService(AgentInputGuard inputGuard, SensitiveDataMasker masker) {
         this.inputGuard = inputGuard;
         this.masker = masker;
     }
 
-    @Transactional
     public RenderedPrompt render(String promptKey, Map<String, ?> variables) {
         PromptTemplate template = activeOrSeed(promptKey);
         Map<String, Object> rawVariables = new java.util.LinkedHashMap<>();
@@ -52,22 +41,8 @@ public class PromptRenderService {
                 template.maxTokens());
     }
 
-    @Transactional
     public PromptTemplate activeOrSeed(String promptKey) {
-        return repository.active(promptKey)
-                .orElseGet(
-                        () -> {
-                            PromptTemplate seed =
-                                    PromptDefaults.template(promptKey, "SYSTEM_SEED", clock.instant());
-                            repository.save(seed);
-                            repository.appendAudit(
-                                    seed.promptKey(),
-                                    seed.version(),
-                                    "SEEDED_ACTIVE",
-                                    "SYSTEM_SEED",
-                                    Map.of("status", seed.status().name()));
-                            return seed;
-                        });
+        return PromptDefaults.template(promptKey);
     }
 
     private static String renderContent(String template, Map<String, ?> variables) {

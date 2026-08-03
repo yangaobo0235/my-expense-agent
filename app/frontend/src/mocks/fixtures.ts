@@ -6,12 +6,8 @@ import {
   ObservableWorkflowRun,
   CaseObservability,
   ModelCallRecord,
-  ModelCallSummary,
   PolicyCatalogEntry,
   PolicySearchMatch,
-  PromptChangeRequest,
-  PromptTemplate,
-  PromptVersionReview,
   ReviewTask,
   RiskEvaluationReport,
 } from '../api/contracts';
@@ -308,11 +304,11 @@ export const fixturePolicyMatches: PolicySearchMatch[] = [
 ];
 
 export const fixtureRiskReport: RiskEvaluationReport = {
-  datasetVersion: 'risk-golden-v2',
+  datasetVersion: 'risk-golden-v3',
   datasetSha256: 'fixture-dataset-sha256',
   engineVersion: 'deterministic-risk-v1',
   generatedAt: '2026-06-22T10:40:00+08:00',
-  caseCount: 140,
+  caseCount: 300,
   categoryCounts: {
     合规经费申请: 30,
     超出校园经费标准: 20,
@@ -328,23 +324,9 @@ export const fixtureRiskReport: RiskEvaluationReport = {
     严重低置信度人工复核: 10,
   },
   metrics: {
-    precision: 1,
-    recall: 1,
-    f1: 1,
-    riskLevelAccuracy: 0.9285714286,
-    humanReviewAccuracy: 0.9285714286,
-    highRiskMissRate: 0,
-    humanReviewTriggerRate: 0.6428571429,
-  },
-  executionGovernance: {
-    planVersion: 'my-expense-governed-policy-v1',
-    totalCapabilities: 6,
-    writeCapabilityCount: 1,
-    idempotentWriteCapabilityCount: 1,
-    writeToolIsolationPassed: true,
-    settlementWriteRetryProtected: true,
-    humanHandoffCoverage: 1,
-    retryableCapabilityRate: 0.5,
+    riskLevelAccuracy: 0.9067,
+    routingAccuracy: 0.9333,
+    highRiskRecall: 0.8769,
   },
   failures: Array.from({ length: 10 }, (_, index) => ({
     caseId: `low-confidence-review-${String(index + 1).padStart(3, '0')}`,
@@ -378,9 +360,9 @@ export const fixtureModelCalls: ModelCallRecord[] = [
     id: 'model-call-1',
     caseId: fixtureCaseId,
     runId: 'run-1',
-    stepName: 'REVIEW_REPORT_GENERATION',
-    modelName: 'qwen-plus',
-    promptVersion: 'review-report-v1',
+    stepName: 'RECEIPT_EXTRACTION',
+    modelName: 'gpt-5.4',
+    promptVersion: 'receipt-extraction-v2',
     promptHash: 'a'.repeat(64),
     inputHash: 'b'.repeat(64),
     outputHash: 'c'.repeat(64),
@@ -393,16 +375,6 @@ export const fixtureModelCalls: ModelCallRecord[] = [
     createdAt: '2026-06-22T10:32:00+08:00',
   },
 ];
-
-export const fixtureModelSummary: ModelCallSummary = {
-  totalCalls: 1,
-  successRate: 1,
-  averageLatencyMs: 860,
-  p95LatencyMs: 860,
-  totalTokens: 200,
-  callsByModel: { 'qwen-plus': 1 },
-  failuresByStep: {},
-};
 
 export const fixtureCaseObservability: CaseObservability = {
   latestRun: fixtureObservableRuns[0],
@@ -425,96 +397,5 @@ export const fixtureCaseObservability: CaseObservability = {
   modelCallCount: fixtureModelCalls.length,
   totalTokens: 200,
   failedStepCount: 0,
-};
-
-export const fixturePrompts: PromptTemplate[] = [
-  {
-    id: 'prompt-active-1',
-    promptKey: 'review-report',
-    version: 'review-report-v1',
-    name: '审核报告 V1',
-    description: '当前线上审核报告 Prompt',
-    content: 'Summarize {{evidence}} with citations.',
-    variableSchema: {},
-    modelName: 'qwen-plus',
-    temperature: 0,
-    maxTokens: 1024,
-    status: 'ACTIVE',
-    promptHash: 'd'.repeat(64),
-    createdBy: 'finance01',
-    updatedBy: 'finance01',
-    approvedBy: 'finance01',
-    createdAt: '2026-06-22T09:00:00+08:00',
-    updatedAt: '2026-06-22T09:00:00+08:00',
-    approvedAt: '2026-06-22T09:10:00+08:00',
-    activatedAt: '2026-06-22T09:20:00+08:00',
-  },
-  {
-    id: 'prompt-draft-1',
-    promptKey: 'review-report',
-    version: 'review-report-v2',
-    name: '审核报告 V2',
-    description: '增加限制说明',
-    content: 'Summarize {{evidence}} with citations and limitations.',
-    variableSchema: {},
-    modelName: 'qwen-plus',
-    temperature: 0,
-    maxTokens: 1024,
-  status: 'EVALUATING',
-    promptHash: 'e'.repeat(64),
-    createdBy: 'finance01',
-    updatedBy: 'finance01',
-    createdAt: '2026-06-22T10:00:00+08:00',
-    updatedAt: '2026-06-22T10:00:00+08:00',
-  },
-];
-
-export const fixturePromptChanges: PromptChangeRequest[] = [
-  {
-    id: 'prompt-change-1',
-    promptTemplateId: 'prompt-draft-1',
-    requestType: 'UPDATE',
-    status: 'PENDING',
-    diffSummary: '增加限制说明输出要求',
-    riskLevel: 'LOW',
-    evaluationReport: {
-      passed: true,
-      riskLevel: 'LOW',
-      violations: [],
-      gateFailures: [],
-      checks: ['prompt-injection-boundary', 'risk-routing-regression'],
-      regression: { agentSecurityPassed: true, riskRegressionPassed: true },
-      promptHash: 'e'.repeat(64),
-    },
-    reviewComment: '',
-    submittedBy: 'finance01',
-    submittedAt: '2026-06-22T10:05:00+08:00',
-  },
-];
-
-export const fixturePromptReview: PromptVersionReview = {
-  candidate: fixturePrompts[1],
-  active: fixturePrompts[0],
-  diff: {
-    activeLineCount: 1,
-    candidateLineCount: 1,
-    lineDelta: 0,
-    changedFields: ['content'],
-    contentChanged: true,
-    rollbackCandidate: false,
-    currentlyActive: false,
-  },
-  changes: fixturePromptChanges,
-  auditEvents: [
-    {
-      id: 'prompt-audit-1',
-      promptKey: 'review-report',
-      version: 'review-report-v2',
-      action: 'SUBMITTED',
-      actorSubject: 'finance01',
-      payload: { riskLevel: 'LOW' },
-      occurredAt: '2026-06-22T10:05:00+08:00',
-    },
-  ],
 };
 

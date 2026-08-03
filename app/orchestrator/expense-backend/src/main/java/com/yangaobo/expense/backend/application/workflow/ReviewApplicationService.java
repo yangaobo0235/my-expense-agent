@@ -1,11 +1,6 @@
 package com.yangaobo.expense.backend.application.workflow;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangaobo.expense.backend.application.ExpenseCaseApplicationService;
-import com.yangaobo.expense.backend.application.ai.ChatModelClient;
-import com.yangaobo.expense.backend.application.prompt.PromptRenderService;
-import com.yangaobo.expense.backend.application.prompt.RenderedPrompt;
 import com.yangaobo.expense.backend.domain.model.ExpenseCase;
 import com.yangaobo.expense.backend.domain.risk.RiskAssessment;
 import com.yangaobo.expense.common.domain.ExpenseCaseStatus;
@@ -14,7 +9,6 @@ import com.yangaobo.expense.common.error.MyExpenseAgentException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,9 +21,6 @@ public class ReviewApplicationService {
 
     private final ReviewRepository reviewRepository;
     private final ExpenseCaseApplicationService caseService;
-    private final PromptRenderService promptRenderService;
-    private final ChatModelClient chatModelClient;
-    private final ObjectMapper objectMapper;
     private final MoreInfoTaskRepository moreInfoTaskRepository;
     private final WorkflowRunRepository runRepository;
     private final Clock clock;
@@ -37,17 +28,11 @@ public class ReviewApplicationService {
     public ReviewApplicationService(
             ReviewRepository reviewRepository,
             ExpenseCaseApplicationService caseService,
-            PromptRenderService promptRenderService,
-            ChatModelClient chatModelClient,
-            ObjectMapper objectMapper,
             MoreInfoTaskRepository moreInfoTaskRepository,
             WorkflowRunRepository runRepository,
             Clock clock) {
         this.reviewRepository = reviewRepository;
         this.caseService = caseService;
-        this.promptRenderService = promptRenderService;
-        this.chatModelClient = chatModelClient;
-        this.objectMapper = objectMapper;
         this.moreInfoTaskRepository = moreInfoTaskRepository;
         this.runRepository = runRepository;
         this.clock = clock;
@@ -85,45 +70,7 @@ public class ReviewApplicationService {
     }
 
     private MoreInfoSuggestion suggestMoreInfo(ReviewRepository.ReviewTask task) {
-        try {
-            String taskContext =
-                    objectMapper.writeValueAsString(
-                            Map.of(
-                                    "taskId",
-                                    task.id(),
-                                    "caseId",
-                                    task.caseId(),
-                                    "reasonCodes",
-                                    task.reasonCodes(),
-                                    "requiredEvidence",
-                                    task.requiredEvidence(),
-                                    "assigneeRole",
-                                    task.assigneeRole(),
-                                    "slaHours",
-                                    task.slaHours()));
-            RenderedPrompt prompt =
-                    promptRenderService.render(
-                            "more-info-suggestion",
-                            Map.of("reviewTask", taskContext));
-            ChatModelClient.ChatCompletion completion =
-                    chatModelClient.complete(
-                            new ChatModelClient.ChatRequest(
-                                    "more-info-suggestion",
-                                    prompt.modelName(),
-                                    prompt.temperature(),
-                                    prompt.maxTokens(),
-                                    """
-                                    You generate user-facing missing-information requests for expense review.
-                                    Do not approve, reject, change status, or request secrets.
-                                    Return JSON with userFacingMessage, requestedEvidence, reviewerQuestions.
-                                    """,
-                                    prompt.content()));
-            return suggestionFromModel(completion.content());
-        } catch (RuntimeException exception) {
-            return fallbackMoreInfo(task);
-        } catch (Exception exception) {
-            return fallbackMoreInfo(task);
-        }
+        return fallbackMoreInfo(task);
     }
 
     private MoreInfoSuggestion fallbackMoreInfo(ReviewRepository.ReviewTask task) {
@@ -149,22 +96,6 @@ public class ReviewApplicationService {
             message += " 若存在特殊审批或例外场景，请上传对应审批记录。";
         }
         return new MoreInfoSuggestion(message, evidence, questions);
-    }
-
-    private MoreInfoSuggestion suggestionFromModel(String content) {
-        try {
-            JsonNode root = objectMapper.readTree(stripJsonFence(content));
-            String message = root.path("userFacingMessage").asText("");
-            if (message.isBlank()) {
-                throw new IllegalStateException("userFacingMessage is blank");
-            }
-            return new MoreInfoSuggestion(
-                    message,
-                    textList(root, "requestedEvidence"),
-                    textList(root, "reviewerQuestions"));
-        } catch (Exception exception) {
-            throw new IllegalStateException("补充材料建议模型输出不是有效 JSON：" + exception.getMessage(), exception);
-        }
     }
 
     @Transactional
@@ -446,29 +377,6 @@ public class ReviewApplicationService {
             return "费用发生日期是否落在已批准的出差周期内？";
         }
         return "该材料能否证明本次费用的真实性和业务必要性？";
-    }
-
-    private static List<String> textList(JsonNode root, String field) {
-        JsonNode node = root.get(field);
-        if (node == null || !node.isArray()) {
-            return List.of();
-        }
-        List<String> values = new ArrayList<>();
-        for (JsonNode item : node) {
-            if (item.isTextual() && !item.asText().isBlank()) {
-                values.add(item.asText());
-            }
-        }
-        return List.copyOf(values);
-    }
-
-    private static String stripJsonFence(String content) {
-        String normalized = content == null ? "" : content.trim();
-        if (normalized.startsWith("```")) {
-            normalized = normalized.replaceFirst("(?s)^```(?:json)?\\s*", "");
-            normalized = normalized.replaceFirst("(?s)\\s*```$", "");
-        }
-        return normalized.trim();
     }
 
     public record MoreInfoSuggestion(

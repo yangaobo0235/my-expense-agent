@@ -101,9 +101,6 @@ $requiredRoles = @(
     'ADVISOR',
     'COLLEGE_REVIEWER',
     'FINANCE_ADMIN',
-    'PROMPT_AUTHOR',
-    'PROMPT_REVIEWER',
-    'PROMPT_PUBLISHER',
     'AUDITOR'
 )
 
@@ -148,7 +145,7 @@ $users += [pscustomobject]@{
     firstName = 'Campus';
     lastName = 'Finance';
     email = 'finance01@example.local';
-    roles = @('FINANCE_ADMIN', 'PROMPT_AUTHOR', 'PROMPT_REVIEWER', 'PROMPT_PUBLISHER');
+    roles = @('FINANCE_ADMIN');
 }
 $users += [pscustomobject]@{
     username = 'auditor01';

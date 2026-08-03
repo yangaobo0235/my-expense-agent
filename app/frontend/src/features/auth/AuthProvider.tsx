@@ -20,9 +20,6 @@ function rolesOf(token?: KeycloakTokenParsed): UserRole[] {
       'ADVISOR',
       'COLLEGE_REVIEWER',
       'FINANCE_ADMIN',
-      'PROMPT_AUTHOR',
-      'PROMPT_REVIEWER',
-      'PROMPT_PUBLISHER',
       'AUDITOR',
     ].includes(role),
   );

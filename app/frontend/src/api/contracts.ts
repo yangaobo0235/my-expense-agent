@@ -250,23 +250,9 @@ export interface RiskEvaluationReport {
   caseCount: RequiredField<RiskEvaluationReportResponse, 'caseCount'>;
   categoryCounts: RequiredField<RiskEvaluationReportResponse, 'categoryCounts'>;
   metrics: {
-    precision: number;
-    recall: number;
-    f1: number;
     riskLevelAccuracy: number;
-    humanReviewAccuracy: number;
-    highRiskMissRate: number;
-    humanReviewTriggerRate: number;
-  };
-  executionGovernance?: {
-    planVersion?: string;
-    totalCapabilities?: number;
-    writeCapabilityCount?: number;
-    idempotentWriteCapabilityCount?: number;
-    writeToolIsolationPassed?: boolean;
-    settlementWriteRetryProtected?: boolean;
-    humanHandoffCoverage?: number;
-    retryableCapabilityRate?: number;
+    routingAccuracy: number;
+    highRiskRecall: number;
   };
   failures: Array<{
     caseId: string;
@@ -369,69 +355,6 @@ export interface ExtractionEvaluationReport {
   failures: Array<{ caseId: string; mismatchedFields: string[] }>;
 }
 
-export interface ReviewReport {
-  id: string;
-  caseId: string;
-  summary: string;
-  riskExplanation: string[];
-  policyCitations: Array<{
-    policyCode: string;
-    section: string;
-    chunkId: string;
-  }>;
-  humanReviewHints: string[];
-  limitations: string[];
-  modelName: string;
-  promptVersion: string;
-  createdAt: string;
-}
-
-export interface EvidenceChatResponse {
-  answer: string;
-  citations: Array<{ type: string; id: string }>;
-}
-
-export interface PolicyRagEvaluationReport {
-  datasetVersion: string;
-  generatedAt: string;
-  caseCount: number;
-  metrics: {
-    recallAt5: number;
-    precisionAt5: number;
-    expectedPolicyHitRate: number;
-    expectedSectionHitRate: number;
-    noAnswerAccuracy: number;
-    injectionDefensePassed: boolean;
-    averageSearchLatencyMs: number;
-  };
-  failures: Array<{
-    caseId: string;
-    query: string;
-    expectedPolicyCode: string;
-    expectedSections: string[];
-    actualMatches: Array<Record<string, unknown>>;
-    reason: string;
-  }>;
-}
-
-export interface AgentSecurityEvaluationReport {
-  datasetVersion: string;
-  generatedAt: string;
-  caseCount: number;
-  metrics: {
-    blockedWriteToolCount: number;
-    unsafeWriteToolCallCount: number;
-    injectionDetectedCount: number;
-    humanHandoffCount: number;
-    securityPassRate: number;
-  };
-  failures: Array<{
-    caseId: string;
-    reason: string;
-    maliciousText: string;
-  }>;
-}
-
 export interface ModelCallRecord {
   id: string;
   caseId?: string;
@@ -450,16 +373,6 @@ export interface ModelCallRecord {
   status: 'SUCCEEDED' | 'FAILED';
   errorCode?: string;
   createdAt: string;
-}
-
-export interface ModelCallSummary {
-  totalCalls: number;
-  successRate: number;
-  averageLatencyMs: number;
-  p95LatencyMs: number;
-  totalTokens: number;
-  callsByModel: Record<string, number>;
-  failuresByStep: Record<string, number>;
 }
 
 export interface CaseAuditEvent {
@@ -485,84 +398,8 @@ export interface CaseObservability {
   failedStepCount: number;
 }
 
-export interface PromptTemplate {
-  id: string;
-  promptKey: string;
-  version: string;
-  name: string;
-  description: string;
-  content: string;
-  variableSchema: Record<string, unknown>;
-  modelName: string;
-  temperature: number;
-  maxTokens: number;
-  status: 'DRAFT' | 'SUBMITTED' | 'EVALUATING' | 'APPROVED' | 'ACTIVE' | 'RETIRED';
-  promptHash: string;
-  createdBy: string;
-  updatedBy: string;
-  approvedBy?: string;
-  createdAt: string;
-  updatedAt: string;
-  approvedAt?: string;
-  activatedAt?: string;
-  replacedVersion?: string;
-}
-
-export interface PromptChangeRequest {
-  id: string;
-  promptTemplateId: string;
-  requestType: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
-  diffSummary: string;
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
-  evaluationReport: Record<string, unknown>;
-  reviewComment: string;
-  submittedBy: string;
-  reviewedBy?: string;
-  submittedAt: string;
-  reviewedAt?: string;
-}
-
-export interface PromptAuditEvent {
-  id: string;
-  promptKey: string;
-  version: string;
-  action: string;
-  actorSubject: string;
-  payload: Record<string, unknown>;
-  occurredAt: string;
-}
-
-export interface PromptVersionReview {
-  candidate: PromptTemplate;
-  active?: PromptTemplate;
-  diff: {
-    activeLineCount: number;
-    candidateLineCount: number;
-    lineDelta: number;
-    changedFields: string[];
-    contentChanged: boolean;
-    rollbackCandidate: boolean;
-    currentlyActive: boolean;
-  };
-  changes: PromptChangeRequest[];
-  auditEvents: PromptAuditEvent[];
-}
-
 export interface MoreInfoSuggestion {
   userFacingMessage: string;
   requestedEvidence: string[];
   reviewerQuestions: string[];
-}
-
-export interface PromptTemplateInput {
-  promptKey: string;
-  version: string;
-  name: string;
-  description?: string;
-  content: string;
-  variableSchema?: Record<string, unknown>;
-  modelName: string;
-  temperature?: number;
-  maxTokens: number;
 }

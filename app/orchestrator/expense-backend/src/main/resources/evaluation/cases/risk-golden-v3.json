@@ -1,0 +1,5079 @@
+{
+  "datasetVersion": "risk-golden-v3",
+  "description": "my-expense-agent 300 条版本化合成回归案例；在 v2 基础上增加金额/置信度阈值、单一风险信号、复合风险与安全攻击样本，并以人工审核策略保留可解释的引擎差距。",
+  "cases": [
+    {
+      "id": "normal-001",
+      "category": "合规经费申请",
+      "claimedAmount": 103.17,
+      "extractedAmount": 103.17,
+      "extractionConfidence": 0.792,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-002",
+      "category": "合规经费申请",
+      "claimedAmount": 126.34,
+      "extractedAmount": 126.34,
+      "extractionConfidence": 0.804,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-003",
+      "category": "合规经费申请",
+      "claimedAmount": 149.51,
+      "extractedAmount": 149.51,
+      "extractionConfidence": 0.816,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-004",
+      "category": "合规经费申请",
+      "claimedAmount": 172.68,
+      "extractedAmount": 172.68,
+      "extractionConfidence": 0.828,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-005",
+      "category": "合规经费申请",
+      "claimedAmount": 195.85,
+      "extractedAmount": 195.85,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-006",
+      "category": "合规经费申请",
+      "claimedAmount": 219.02,
+      "extractedAmount": 219.02,
+      "extractionConfidence": 0.852,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-007",
+      "category": "合规经费申请",
+      "claimedAmount": 242.19,
+      "extractedAmount": 242.19,
+      "extractionConfidence": 0.864,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-008",
+      "category": "合规经费申请",
+      "claimedAmount": 265.36,
+      "extractedAmount": 265.36,
+      "extractionConfidence": 0.876,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-009",
+      "category": "合规经费申请",
+      "claimedAmount": 288.53,
+      "extractedAmount": 288.53,
+      "extractionConfidence": 0.888,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-010",
+      "category": "合规经费申请",
+      "claimedAmount": 311.7,
+      "extractedAmount": 311.7,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-011",
+      "category": "合规经费申请",
+      "claimedAmount": 334.87,
+      "extractedAmount": 334.87,
+      "extractionConfidence": 0.912,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-012",
+      "category": "合规经费申请",
+      "claimedAmount": 358.04,
+      "extractedAmount": 358.04,
+      "extractionConfidence": 0.924,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-013",
+      "category": "合规经费申请",
+      "claimedAmount": 381.21,
+      "extractedAmount": 381.21,
+      "extractionConfidence": 0.936,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-014",
+      "category": "合规经费申请",
+      "claimedAmount": 404.38,
+      "extractedAmount": 404.38,
+      "extractionConfidence": 0.948,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-015",
+      "category": "合规经费申请",
+      "claimedAmount": 427.55,
+      "extractedAmount": 427.55,
+      "extractionConfidence": 0.96,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-016",
+      "category": "合规经费申请",
+      "claimedAmount": 450.72,
+      "extractedAmount": 450.72,
+      "extractionConfidence": 0.972,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-017",
+      "category": "合规经费申请",
+      "claimedAmount": 473.89,
+      "extractedAmount": 473.89,
+      "extractionConfidence": 0.984,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-018",
+      "category": "合规经费申请",
+      "claimedAmount": 497.06,
+      "extractedAmount": 497.06,
+      "extractionConfidence": 0.78,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-019",
+      "category": "合规经费申请",
+      "claimedAmount": 520.23,
+      "extractedAmount": 520.23,
+      "extractionConfidence": 0.792,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-020",
+      "category": "合规经费申请",
+      "claimedAmount": 543.4,
+      "extractedAmount": 543.4,
+      "extractionConfidence": 0.804,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-021",
+      "category": "合规经费申请",
+      "claimedAmount": 566.57,
+      "extractedAmount": 566.57,
+      "extractionConfidence": 0.816,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-022",
+      "category": "合规经费申请",
+      "claimedAmount": 589.74,
+      "extractedAmount": 589.74,
+      "extractionConfidence": 0.828,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-023",
+      "category": "合规经费申请",
+      "claimedAmount": 612.91,
+      "extractedAmount": 612.91,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-024",
+      "category": "合规经费申请",
+      "claimedAmount": 636.08,
+      "extractedAmount": 636.08,
+      "extractionConfidence": 0.852,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-025",
+      "category": "合规经费申请",
+      "claimedAmount": 659.25,
+      "extractedAmount": 659.25,
+      "extractionConfidence": 0.864,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-026",
+      "category": "合规经费申请",
+      "claimedAmount": 682.42,
+      "extractedAmount": 682.42,
+      "extractionConfidence": 0.876,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-027",
+      "category": "合规经费申请",
+      "claimedAmount": 705.59,
+      "extractedAmount": 705.59,
+      "extractionConfidence": 0.888,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-028",
+      "category": "合规经费申请",
+      "claimedAmount": 728.76,
+      "extractedAmount": 728.76,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-029",
+      "category": "合规经费申请",
+      "claimedAmount": 751.93,
+      "extractedAmount": 751.93,
+      "extractionConfidence": 0.912,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-030",
+      "category": "合规经费申请",
+      "claimedAmount": 775.1,
+      "extractedAmount": 775.1,
+      "extractionConfidence": 0.924,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-001",
+      "category": "超出校园经费标准",
+      "claimedAmount": 711.5,
+      "extractedAmount": 711.5,
+      "extractionConfidence": 0.85,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-002",
+      "category": "超出校园经费标准",
+      "claimedAmount": 773,
+      "extractedAmount": 773,
+      "extractionConfidence": 0.86,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-003",
+      "category": "超出校园经费标准",
+      "claimedAmount": 834.5,
+      "extractedAmount": 834.5,
+      "extractionConfidence": 0.87,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-004",
+      "category": "超出校园经费标准",
+      "claimedAmount": 896,
+      "extractedAmount": 876,
+      "extractionConfidence": 0.88,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-005",
+      "category": "超出校园经费标准",
+      "claimedAmount": 957.5,
+      "extractedAmount": 957.5,
+      "extractionConfidence": 0.89,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-006",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1019,
+      "extractedAmount": 1019,
+      "extractionConfidence": 0.9,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-007",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1080.5,
+      "extractedAmount": 1080.5,
+      "extractionConfidence": 0.91,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-008",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1142,
+      "extractedAmount": 1122,
+      "extractionConfidence": 0.92,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-009",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1203.5,
+      "extractedAmount": 1203.5,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-010",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1265,
+      "extractedAmount": 1265,
+      "extractionConfidence": 0.84,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-011",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1326.5,
+      "extractedAmount": 1326.5,
+      "extractionConfidence": 0.85,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-012",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1388,
+      "extractedAmount": 1368,
+      "extractionConfidence": 0.86,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-013",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1449.5,
+      "extractedAmount": 1449.5,
+      "extractionConfidence": 0.87,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-014",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1511,
+      "extractedAmount": 1511,
+      "extractionConfidence": 0.88,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-015",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1572.5,
+      "extractedAmount": 1572.5,
+      "extractionConfidence": 0.89,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-016",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1634,
+      "extractedAmount": 1614,
+      "extractionConfidence": 0.9,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-017",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1695.5,
+      "extractedAmount": 1695.5,
+      "extractionConfidence": 0.91,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-018",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1757,
+      "extractedAmount": 1757,
+      "extractionConfidence": 0.92,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-019",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1818.5,
+      "extractedAmount": 1818.5,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-020",
+      "category": "超出校园经费标准",
+      "claimedAmount": 1880,
+      "extractedAmount": 1860,
+      "extractionConfidence": 0.84,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-001",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 317.3,
+      "extractedAmount": 317.3,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-002",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 414.6,
+      "extractedAmount": 414.6,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-003",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 511.9,
+      "extractedAmount": 511.9,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-004",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 609.2,
+      "extractedAmount": 609.2,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-005",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 706.5,
+      "extractedAmount": 706.5,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-006",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 803.8,
+      "extractedAmount": 803.8,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-007",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 901.1,
+      "extractedAmount": 901.1,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-008",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 998.4,
+      "extractedAmount": 998.4,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-009",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 1095.7,
+      "extractedAmount": 1095.7,
+      "extractionConfidence": 0.66,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "missing-010",
+      "category": "缺少必要报销材料",
+      "claimedAmount": 1193,
+      "extractedAmount": 1193,
+      "extractionConfidence": 0.88,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-001",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 248.8,
+      "extractedAmount": 248.8,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-002",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 337.6,
+      "extractedAmount": 337.6,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-003",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 426.4,
+      "extractedAmount": 426.4,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-004",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 515.2,
+      "extractedAmount": 480.2,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-005",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 604,
+      "extractedAmount": 604,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-006",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 692.8,
+      "extractedAmount": 692.8,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-007",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 781.6,
+      "extractedAmount": 781.6,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-008",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 870.4,
+      "extractedAmount": 835.4,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-009",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 959.2,
+      "extractedAmount": 959.2,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "duplicate-010",
+      "category": "疑似重复报销票据",
+      "claimedAmount": 1048,
+      "extractedAmount": 1048,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-001",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 173.25,
+      "extractedAmount": 154.75,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-002",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 246.5,
+      "extractedAmount": 246.48,
+      "extractionConfidence": 0.86,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-003",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 319.75,
+      "extractedAmount": 301.25,
+      "extractionConfidence": 0.88,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-004",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 393,
+      "extractedAmount": 392.98,
+      "extractionConfidence": 0.9,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-005",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 466.25,
+      "extractedAmount": 447.75,
+      "extractionConfidence": 0.92,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-006",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 539.5,
+      "extractedAmount": 539.48,
+      "extractionConfidence": 0.94,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-007",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 612.75,
+      "extractedAmount": 594.25,
+      "extractionConfidence": 0.82,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-008",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 686,
+      "extractedAmount": 685.98,
+      "extractionConfidence": 0.84,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-009",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 759.25,
+      "extractedAmount": 740.75,
+      "extractionConfidence": 0.86,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-010",
+      "category": "申请金额与票据不一致",
+      "claimedAmount": 832.5,
+      "extractedAmount": 832.48,
+      "extractionConfidence": 0.88,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-001",
+      "category": "校园制度边界案例",
+      "claimedAmount": 100,
+      "extractedAmount": 99.99,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-002",
+      "category": "校园制度边界案例",
+      "claimedAmount": 100,
+      "extractedAmount": 99.989,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-003",
+      "category": "校园制度边界案例",
+      "claimedAmount": 450,
+      "extractedAmount": 450,
+      "extractionConfidence": 0.6999,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-004",
+      "category": "校园制度边界案例",
+      "claimedAmount": 450,
+      "extractedAmount": 450,
+      "extractionConfidence": 0.7,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-005",
+      "category": "校园制度边界案例",
+      "claimedAmount": 700,
+      "extractedAmount": 700,
+      "extractionConfidence": 0.69,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-006",
+      "category": "校园制度边界案例",
+      "claimedAmount": 800,
+      "extractedAmount": 800.01,
+      "extractionConfidence": 0.95,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "boundary-007",
+      "category": "校园制度边界案例",
+      "claimedAmount": 800,
+      "extractedAmount": 800.02,
+      "extractionConfidence": 0.95,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-008",
+      "category": "校园制度边界案例",
+      "claimedAmount": 1200,
+      "extractedAmount": 1200,
+      "extractionConfidence": 0.95,
+      "dateAnomaly": true,
+      "sellerAnomaly": true,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-009",
+      "category": "校园制度边界案例",
+      "claimedAmount": 1200,
+      "extractedAmount": 1200,
+      "extractionConfidence": 0.95,
+      "dateAnomaly": true,
+      "sellerAnomaly": true,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "SELLER_ANOMALY",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "boundary-010",
+      "category": "校园制度边界案例",
+      "claimedAmount": 1600,
+      "extractedAmount": 1500,
+      "extractionConfidence": 0.6999,
+      "duplicateDocument": true,
+      "policyLimitExceeded": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-001",
+      "category": "票据提示注入攻击",
+      "claimedAmount": 341,
+      "extractedAmount": 341,
+      "extractionConfidence": 0.85,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-002",
+      "category": "票据提示注入攻击",
+      "claimedAmount": 382,
+      "extractedAmount": 382,
+      "extractionConfidence": 0.87,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-003",
+      "category": "票据提示注入攻击",
+      "claimedAmount": 423,
+      "extractedAmount": 423,
+      "extractionConfidence": 0.89,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-004",
+      "category": "票据提示注入攻击",
+      "claimedAmount": 464,
+      "extractedAmount": 464,
+      "extractionConfidence": 0.91,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-005",
+      "category": "票据提示注入攻击",
+      "claimedAmount": 505,
+      "extractedAmount": 505,
+      "extractionConfidence": 0.93,
+      "forbiddenExpenseItem": true,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-001",
+      "category": "低质量票据图片",
+      "claimedAmount": 312,
+      "extractedAmount": 312,
+      "extractionConfidence": 0.465,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "quality-002",
+      "category": "低质量票据图片",
+      "claimedAmount": 364,
+      "extractedAmount": 334,
+      "extractionConfidence": 0.51,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-003",
+      "category": "低质量票据图片",
+      "claimedAmount": 416,
+      "extractedAmount": 416,
+      "extractionConfidence": 0.555,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "quality-004",
+      "category": "低质量票据图片",
+      "claimedAmount": 468,
+      "extractedAmount": 438,
+      "extractionConfidence": 0.6,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "quality-005",
+      "category": "低质量票据图片",
+      "claimedAmount": 520,
+      "extractedAmount": 520,
+      "extractionConfidence": 0.645,
+      "missingRequiredDocument": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-001",
+      "category": "项目预算不足",
+      "claimedAmount": 820,
+      "extractedAmount": 820,
+      "extractionConfidence": 0.91,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-002",
+      "category": "项目预算不足",
+      "claimedAmount": 960,
+      "extractedAmount": 960,
+      "extractionConfidence": 0.88,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-003",
+      "category": "项目预算不足",
+      "claimedAmount": 1250,
+      "extractedAmount": 1250,
+      "extractionConfidence": 0.93,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-004",
+      "category": "项目预算不足",
+      "claimedAmount": 1480,
+      "extractedAmount": 1480,
+      "extractionConfidence": 0.86,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-005",
+      "category": "项目预算不足",
+      "claimedAmount": 1760,
+      "extractedAmount": 1760,
+      "extractionConfidence": 0.95,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-006",
+      "category": "项目预算不足",
+      "claimedAmount": 2140,
+      "extractedAmount": 2140,
+      "extractionConfidence": 0.9,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-007",
+      "category": "项目预算不足",
+      "claimedAmount": 2580,
+      "extractedAmount": 2580,
+      "extractionConfidence": 0.87,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-008",
+      "category": "项目预算不足",
+      "claimedAmount": 3060,
+      "extractedAmount": 3060,
+      "extractionConfidence": 0.92,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-009",
+      "category": "项目预算不足",
+      "claimedAmount": 3480,
+      "extractedAmount": 3480,
+      "extractionConfidence": 0.89,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "budget-010",
+      "category": "项目预算不足",
+      "claimedAmount": 4200,
+      "extractedAmount": 4200,
+      "extractionConfidence": 0.94,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-001",
+      "category": "制度证据缺失",
+      "claimedAmount": 260,
+      "extractedAmount": 260,
+      "extractionConfidence": 0.9,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-002",
+      "category": "制度证据缺失",
+      "claimedAmount": 480,
+      "extractedAmount": 480,
+      "extractionConfidence": 0.88,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-003",
+      "category": "制度证据缺失",
+      "claimedAmount": 720,
+      "extractedAmount": 720,
+      "extractionConfidence": 0.93,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-004",
+      "category": "制度证据缺失",
+      "claimedAmount": 980,
+      "extractedAmount": 980,
+      "extractionConfidence": 0.85,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-005",
+      "category": "制度证据缺失",
+      "claimedAmount": 1260,
+      "extractedAmount": 1260,
+      "extractionConfidence": 0.91,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-006",
+      "category": "制度证据缺失",
+      "claimedAmount": 1540,
+      "extractedAmount": 1540,
+      "extractionConfidence": 0.87,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-007",
+      "category": "制度证据缺失",
+      "claimedAmount": 1880,
+      "extractedAmount": 1880,
+      "extractionConfidence": 0.95,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-008",
+      "category": "制度证据缺失",
+      "claimedAmount": 2240,
+      "extractedAmount": 2240,
+      "extractionConfidence": 0.89,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-009",
+      "category": "制度证据缺失",
+      "claimedAmount": 2780,
+      "extractedAmount": 2780,
+      "extractionConfidence": 0.92,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "evidence-010",
+      "category": "制度证据缺失",
+      "claimedAmount": 3360,
+      "extractedAmount": 3360,
+      "extractionConfidence": 0.86,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-001",
+      "category": "复合风险场景",
+      "claimedAmount": 1600,
+      "extractedAmount": 1500,
+      "extractionConfidence": 0.92,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-002",
+      "category": "复合风险场景",
+      "claimedAmount": 880,
+      "extractedAmount": 880,
+      "extractionConfidence": 0.66,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-003",
+      "category": "复合风险场景",
+      "claimedAmount": 1320,
+      "extractedAmount": 1320,
+      "extractionConfidence": 0.94,
+      "missingRequiredDocument": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-004",
+      "category": "复合风险场景",
+      "claimedAmount": 2400,
+      "extractedAmount": 2400,
+      "extractionConfidence": 0.91,
+      "forbiddenExpenseItem": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-005",
+      "category": "复合风险场景",
+      "claimedAmount": 980,
+      "extractedAmount": 930,
+      "extractionConfidence": 0.68,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-006",
+      "category": "复合风险场景",
+      "claimedAmount": 2860,
+      "extractedAmount": 2860,
+      "extractionConfidence": 0.9,
+      "duplicateDocument": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-007",
+      "category": "复合风险场景",
+      "claimedAmount": 740,
+      "extractedAmount": 740,
+      "extractionConfidence": 0.65,
+      "missingRequiredDocument": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-008",
+      "category": "复合风险场景",
+      "claimedAmount": 1920,
+      "extractedAmount": 1850,
+      "extractionConfidence": 0.93,
+      "policyLimitExceeded": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "POLICY_LIMIT_EXCEEDED",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-009",
+      "category": "复合风险场景",
+      "claimedAmount": 3560,
+      "extractedAmount": 3560,
+      "extractionConfidence": 0.88,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": true,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM",
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "compound-010",
+      "category": "复合风险场景",
+      "claimedAmount": 1680,
+      "extractedAmount": 1600,
+      "extractionConfidence": 0.64,
+      "duplicateDocument": true,
+      "policyEvidenceMissing": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-001",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 180,
+      "extractedAmount": 180,
+      "extractionConfidence": 0.22,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-002",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 260,
+      "extractedAmount": 260,
+      "extractionConfidence": 0.27,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-003",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 340,
+      "extractedAmount": 340,
+      "extractionConfidence": 0.31,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-004",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 420,
+      "extractedAmount": 420,
+      "extractionConfidence": 0.35,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-005",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 560,
+      "extractedAmount": 560,
+      "extractionConfidence": 0.39,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-006",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 680,
+      "extractedAmount": 680,
+      "extractionConfidence": 0.43,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-007",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 820,
+      "extractedAmount": 820,
+      "extractionConfidence": 0.47,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-008",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 960,
+      "extractedAmount": 960,
+      "extractionConfidence": 0.51,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-009",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 1120,
+      "extractedAmount": 1120,
+      "extractionConfidence": 0.55,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "low-confidence-review-010",
+      "category": "严重低置信度人工复核",
+      "claimedAmount": 1360,
+      "extractedAmount": 1360,
+      "extractionConfidence": 0.59,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-001",
+      "category": "金额容差边界",
+      "claimedAmount": 217.13,
+      "extractedAmount": 217.13,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-002",
+      "category": "金额容差边界",
+      "claimedAmount": 234.26,
+      "extractedAmount": 234.27,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-003",
+      "category": "金额容差边界",
+      "claimedAmount": 251.39,
+      "extractedAmount": 251.401,
+      "extractionConfidence": 0.8799999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-004",
+      "category": "金额容差边界",
+      "claimedAmount": 268.52,
+      "extractedAmount": 268.54,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-005",
+      "category": "金额容差边界",
+      "claimedAmount": 285.65,
+      "extractedAmount": 285.64,
+      "extractionConfidence": 0.82,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-006",
+      "category": "金额容差边界",
+      "claimedAmount": 302.78,
+      "extractedAmount": 302.769,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-007",
+      "category": "金额容差边界",
+      "claimedAmount": 319.91,
+      "extractedAmount": 319.91,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-008",
+      "category": "金额容差边界",
+      "claimedAmount": 337.04,
+      "extractedAmount": 337.05,
+      "extractionConfidence": 0.8799999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-009",
+      "category": "金额容差边界",
+      "claimedAmount": 354.17,
+      "extractedAmount": 354.181,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-010",
+      "category": "金额容差边界",
+      "claimedAmount": 371.3,
+      "extractedAmount": 371.32,
+      "extractionConfidence": 0.82,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-011",
+      "category": "金额容差边界",
+      "claimedAmount": 388.43,
+      "extractedAmount": 388.42,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-012",
+      "category": "金额容差边界",
+      "claimedAmount": 405.56,
+      "extractedAmount": 405.549,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-013",
+      "category": "金额容差边界",
+      "claimedAmount": 422.69,
+      "extractedAmount": 422.69,
+      "extractionConfidence": 0.8799999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-014",
+      "category": "金额容差边界",
+      "claimedAmount": 439.82,
+      "extractedAmount": 439.83,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-015",
+      "category": "金额容差边界",
+      "claimedAmount": 456.95,
+      "extractedAmount": 456.961,
+      "extractionConfidence": 0.82,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-016",
+      "category": "金额容差边界",
+      "claimedAmount": 474.08,
+      "extractedAmount": 474.10,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-017",
+      "category": "金额容差边界",
+      "claimedAmount": 491.21,
+      "extractedAmount": 491.20,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-018",
+      "category": "金额容差边界",
+      "claimedAmount": 508.34,
+      "extractedAmount": 508.329,
+      "extractionConfidence": 0.8799999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "amount-boundary-019",
+      "category": "金额容差边界",
+      "claimedAmount": 525.47,
+      "extractedAmount": 525.47,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "amount-boundary-020",
+      "category": "金额容差边界",
+      "claimedAmount": 542.6,
+      "extractedAmount": 542.61,
+      "extractionConfidence": 0.82,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-001",
+      "category": "提取置信度边界",
+      "claimedAmount": 331.41,
+      "extractedAmount": 331.41,
+      "extractionConfidence": 0.66,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-002",
+      "category": "提取置信度边界",
+      "claimedAmount": 342.82,
+      "extractedAmount": 342.82,
+      "extractionConfidence": 0.665,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-003",
+      "category": "提取置信度边界",
+      "claimedAmount": 354.23,
+      "extractedAmount": 354.23,
+      "extractionConfidence": 0.67,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-004",
+      "category": "提取置信度边界",
+      "claimedAmount": 365.64,
+      "extractedAmount": 365.64,
+      "extractionConfidence": 0.675,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-005",
+      "category": "提取置信度边界",
+      "claimedAmount": 377.05,
+      "extractedAmount": 377.05,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-006",
+      "category": "提取置信度边界",
+      "claimedAmount": 388.46,
+      "extractedAmount": 388.46,
+      "extractionConfidence": 0.685,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-007",
+      "category": "提取置信度边界",
+      "claimedAmount": 399.87,
+      "extractedAmount": 399.87,
+      "extractionConfidence": 0.6900000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-008",
+      "category": "提取置信度边界",
+      "claimedAmount": 411.28,
+      "extractedAmount": 411.28,
+      "extractionConfidence": 0.6950000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-009",
+      "category": "提取置信度边界",
+      "claimedAmount": 422.69,
+      "extractedAmount": 422.69,
+      "extractionConfidence": 0.7000000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "confidence-boundary-010",
+      "category": "提取置信度边界",
+      "claimedAmount": 434.1,
+      "extractedAmount": 434.1,
+      "extractionConfidence": 0.7050000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "confidence-boundary-011",
+      "category": "提取置信度边界",
+      "claimedAmount": 445.51,
+      "extractedAmount": 445.51,
+      "extractionConfidence": 0.7100000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "confidence-boundary-012",
+      "category": "提取置信度边界",
+      "claimedAmount": 456.92,
+      "extractedAmount": 456.92,
+      "extractionConfidence": 0.7150000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "confidence-boundary-013",
+      "category": "提取置信度边界",
+      "claimedAmount": 468.33,
+      "extractedAmount": 468.33,
+      "extractionConfidence": 0.72,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-014",
+      "category": "提取置信度边界",
+      "claimedAmount": 479.74,
+      "extractedAmount": 479.74,
+      "extractionConfidence": 0.7250000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-015",
+      "category": "提取置信度边界",
+      "claimedAmount": 491.15,
+      "extractedAmount": 491.15,
+      "extractionConfidence": 0.73,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-016",
+      "category": "提取置信度边界",
+      "claimedAmount": 502.56,
+      "extractedAmount": 502.56,
+      "extractionConfidence": 0.735,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-017",
+      "category": "提取置信度边界",
+      "claimedAmount": 513.97,
+      "extractedAmount": 513.97,
+      "extractionConfidence": 0.74,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-018",
+      "category": "提取置信度边界",
+      "claimedAmount": 525.38,
+      "extractedAmount": 525.38,
+      "extractionConfidence": 0.745,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-019",
+      "category": "提取置信度边界",
+      "claimedAmount": 536.79,
+      "extractedAmount": 536.79,
+      "extractionConfidence": 0.75,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "confidence-boundary-020",
+      "category": "提取置信度边界",
+      "claimedAmount": 548.2,
+      "extractedAmount": 548.2,
+      "extractionConfidence": 0.755,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-001",
+      "category": "单一中低风险信号",
+      "claimedAmount": 473.07,
+      "extractedAmount": 473.07,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-002",
+      "category": "单一中低风险信号",
+      "claimedAmount": 496.14,
+      "extractedAmount": 496.14,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-003",
+      "category": "单一中低风险信号",
+      "claimedAmount": 519.21,
+      "extractedAmount": 519.21,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-004",
+      "category": "单一中低风险信号",
+      "claimedAmount": 542.28,
+      "extractedAmount": 542.28,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-005",
+      "category": "单一中低风险信号",
+      "claimedAmount": 565.35,
+      "extractedAmount": 565.35,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-006",
+      "category": "单一中低风险信号",
+      "claimedAmount": 588.42,
+      "extractedAmount": 588.42,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "single-signal-007",
+      "category": "单一中低风险信号",
+      "claimedAmount": 611.49,
+      "extractedAmount": 611.49,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-008",
+      "category": "单一中低风险信号",
+      "claimedAmount": 634.56,
+      "extractedAmount": 634.56,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-009",
+      "category": "单一中低风险信号",
+      "claimedAmount": 657.63,
+      "extractedAmount": 657.63,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-010",
+      "category": "单一中低风险信号",
+      "claimedAmount": 680.7,
+      "extractedAmount": 680.7,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-011",
+      "category": "单一中低风险信号",
+      "claimedAmount": 703.77,
+      "extractedAmount": 703.77,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-012",
+      "category": "单一中低风险信号",
+      "claimedAmount": 726.84,
+      "extractedAmount": 726.84,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-013",
+      "category": "单一中低风险信号",
+      "claimedAmount": 749.91,
+      "extractedAmount": 749.91,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-014",
+      "category": "单一中低风险信号",
+      "claimedAmount": 772.98,
+      "extractedAmount": 772.98,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-015",
+      "category": "单一中低风险信号",
+      "claimedAmount": 796.05,
+      "extractedAmount": 796.05,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-016",
+      "category": "单一中低风险信号",
+      "claimedAmount": 819.12,
+      "extractedAmount": 819.12,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-017",
+      "category": "单一中低风险信号",
+      "claimedAmount": 842.19,
+      "extractedAmount": 842.19,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-018",
+      "category": "单一中低风险信号",
+      "claimedAmount": 865.26,
+      "extractedAmount": 865.26,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-019",
+      "category": "单一中低风险信号",
+      "claimedAmount": 888.33,
+      "extractedAmount": 888.33,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "single-signal-020",
+      "category": "单一中低风险信号",
+      "claimedAmount": 911.4,
+      "extractedAmount": 911.4,
+      "extractionConfidence": 0.86,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "high-policy-001",
+      "category": "高风险单项策略",
+      "claimedAmount": 871.19,
+      "extractedAmount": 871.19,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-002",
+      "category": "高风险单项策略",
+      "claimedAmount": 942.38,
+      "extractedAmount": 942.38,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-003",
+      "category": "高风险单项策略",
+      "claimedAmount": 1013.57,
+      "extractedAmount": 1013.57,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-004",
+      "category": "高风险单项策略",
+      "claimedAmount": 1084.76,
+      "extractedAmount": 1084.76,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-005",
+      "category": "高风险单项策略",
+      "claimedAmount": 1155.95,
+      "extractedAmount": 1155.95,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-006",
+      "category": "高风险单项策略",
+      "claimedAmount": 1227.14,
+      "extractedAmount": 1227.14,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-007",
+      "category": "高风险单项策略",
+      "claimedAmount": 1298.33,
+      "extractedAmount": 1298.33,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-008",
+      "category": "高风险单项策略",
+      "claimedAmount": 1369.52,
+      "extractedAmount": 1369.52,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-009",
+      "category": "高风险单项策略",
+      "claimedAmount": 1440.71,
+      "extractedAmount": 1440.71,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-010",
+      "category": "高风险单项策略",
+      "claimedAmount": 1511.9,
+      "extractedAmount": 1511.9,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-011",
+      "category": "高风险单项策略",
+      "claimedAmount": 1583.09,
+      "extractedAmount": 1583.09,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-012",
+      "category": "高风险单项策略",
+      "claimedAmount": 1654.28,
+      "extractedAmount": 1654.28,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-013",
+      "category": "高风险单项策略",
+      "claimedAmount": 1725.47,
+      "extractedAmount": 1725.47,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-014",
+      "category": "高风险单项策略",
+      "claimedAmount": 1796.66,
+      "extractedAmount": 1796.66,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-015",
+      "category": "高风险单项策略",
+      "claimedAmount": 1867.85,
+      "extractedAmount": 1867.85,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-016",
+      "category": "高风险单项策略",
+      "claimedAmount": 1939.04,
+      "extractedAmount": 1939.04,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-017",
+      "category": "高风险单项策略",
+      "claimedAmount": 2010.23,
+      "extractedAmount": 2010.23,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-018",
+      "category": "高风险单项策略",
+      "claimedAmount": 2081.42,
+      "extractedAmount": 2081.42,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": true,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "PROJECT_BUDGET_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-019",
+      "category": "高风险单项策略",
+      "claimedAmount": 2152.61,
+      "extractedAmount": 2152.61,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "high-policy-020",
+      "category": "高风险单项策略",
+      "claimedAmount": 2223.8,
+      "extractedAmount": 2223.8,
+      "extractionConfidence": 0.91,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": true,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "FORBIDDEN_EXPENSE_ITEM"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-001",
+      "category": "复合风险叠加",
+      "claimedAmount": 637.21,
+      "extractedAmount": 637.23,
+      "extractionConfidence": 0.675,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-002",
+      "category": "复合风险叠加",
+      "claimedAmount": 674.42,
+      "extractedAmount": 674.46,
+      "extractionConfidence": 0.71,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-003",
+      "category": "复合风险叠加",
+      "claimedAmount": 711.63,
+      "extractedAmount": 711.63,
+      "extractionConfidence": 0.745,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-004",
+      "category": "复合风险叠加",
+      "claimedAmount": 748.84,
+      "extractedAmount": 748.86,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-005",
+      "category": "复合风险叠加",
+      "claimedAmount": 786.05,
+      "extractedAmount": 786.09,
+      "extractionConfidence": 0.8150000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-006",
+      "category": "复合风险叠加",
+      "claimedAmount": 823.26,
+      "extractedAmount": 823.26,
+      "extractionConfidence": 0.8500000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-007",
+      "category": "复合风险叠加",
+      "claimedAmount": 860.47,
+      "extractedAmount": 860.49,
+      "extractionConfidence": 0.885,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-008",
+      "category": "复合风险叠加",
+      "claimedAmount": 897.68,
+      "extractedAmount": 897.72,
+      "extractionConfidence": 0.92,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-009",
+      "category": "复合风险叠加",
+      "claimedAmount": 934.89,
+      "extractedAmount": 934.89,
+      "extractionConfidence": 0.64,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-010",
+      "category": "复合风险叠加",
+      "claimedAmount": 972.1,
+      "extractedAmount": 972.12,
+      "extractionConfidence": 0.675,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "SELLER_ANOMALY",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-011",
+      "category": "复合风险叠加",
+      "claimedAmount": 1009.31,
+      "extractedAmount": 1009.35,
+      "extractionConfidence": 0.71,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-012",
+      "category": "复合风险叠加",
+      "claimedAmount": 1046.52,
+      "extractedAmount": 1046.52,
+      "extractionConfidence": 0.745,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-013",
+      "category": "复合风险叠加",
+      "claimedAmount": 1083.73,
+      "extractedAmount": 1083.75,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-014",
+      "category": "复合风险叠加",
+      "claimedAmount": 1120.94,
+      "extractedAmount": 1120.98,
+      "extractionConfidence": 0.8150000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-015",
+      "category": "复合风险叠加",
+      "claimedAmount": 1158.15,
+      "extractedAmount": 1158.15,
+      "extractionConfidence": 0.8500000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY",
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-016",
+      "category": "复合风险叠加",
+      "claimedAmount": 1195.36,
+      "extractedAmount": 1195.38,
+      "extractionConfidence": 0.885,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "DATE_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-017",
+      "category": "复合风险叠加",
+      "claimedAmount": 1232.57,
+      "extractedAmount": 1232.61,
+      "extractionConfidence": 0.92,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-018",
+      "category": "复合风险叠加",
+      "claimedAmount": 1269.78,
+      "extractedAmount": 1269.78,
+      "extractionConfidence": 0.64,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-019",
+      "category": "复合风险叠加",
+      "claimedAmount": 1306.99,
+      "extractedAmount": 1307.01,
+      "extractionConfidence": 0.675,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-020",
+      "category": "复合风险叠加",
+      "claimedAmount": 1344.2,
+      "extractedAmount": 1344.24,
+      "extractionConfidence": 0.71,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "DATE_ANOMALY",
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-021",
+      "category": "复合风险叠加",
+      "claimedAmount": 1381.41,
+      "extractedAmount": 1381.41,
+      "extractionConfidence": 0.745,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-022",
+      "category": "复合风险叠加",
+      "claimedAmount": 1418.62,
+      "extractedAmount": 1418.64,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-023",
+      "category": "复合风险叠加",
+      "claimedAmount": 1455.83,
+      "extractedAmount": 1455.87,
+      "extractionConfidence": 0.8150000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-024",
+      "category": "复合风险叠加",
+      "claimedAmount": 1493.04,
+      "extractedAmount": 1493.04,
+      "extractionConfidence": 0.8500000000000001,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "DATE_ANOMALY",
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-025",
+      "category": "复合风险叠加",
+      "claimedAmount": 1530.25,
+      "extractedAmount": 1530.27,
+      "extractionConfidence": 0.885,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "SELLER_ANOMALY"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-026",
+      "category": "复合风险叠加",
+      "claimedAmount": 1567.46,
+      "extractedAmount": 1567.5,
+      "extractionConfidence": 0.92,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-027",
+      "category": "复合风险叠加",
+      "claimedAmount": 1604.67,
+      "extractedAmount": 1604.67,
+      "extractionConfidence": 0.64,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-028",
+      "category": "复合风险叠加",
+      "claimedAmount": 1641.88,
+      "extractedAmount": 1641.9,
+      "extractionConfidence": 0.675,
+      "duplicateDocument": false,
+      "dateAnomaly": true,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "DATE_ANOMALY",
+        "LOW_EXTRACTION_CONFIDENCE"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-029",
+      "category": "复合风险叠加",
+      "claimedAmount": 1679.09,
+      "extractedAmount": 1679.13,
+      "extractionConfidence": 0.71,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "composite-risk-030",
+      "category": "复合风险叠加",
+      "claimedAmount": 1716.3,
+      "extractedAmount": 1716.3,
+      "extractionConfidence": 0.745,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": true,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "SELLER_ANOMALY",
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-001",
+      "category": "制度与材料组合",
+      "claimedAmount": 943.17,
+      "extractedAmount": 943.17,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-002",
+      "category": "制度与材料组合",
+      "claimedAmount": 986.34,
+      "extractedAmount": 986.34,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-003",
+      "category": "制度与材料组合",
+      "claimedAmount": 1029.51,
+      "extractedAmount": 1029.51,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-004",
+      "category": "制度与材料组合",
+      "claimedAmount": 1072.68,
+      "extractedAmount": 1072.68,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-005",
+      "category": "制度与材料组合",
+      "claimedAmount": 1115.85,
+      "extractedAmount": 1115.85,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-006",
+      "category": "制度与材料组合",
+      "claimedAmount": 1159.02,
+      "extractedAmount": 1159.02,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-007",
+      "category": "制度与材料组合",
+      "claimedAmount": 1202.19,
+      "extractedAmount": 1202.19,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-008",
+      "category": "制度与材料组合",
+      "claimedAmount": 1245.36,
+      "extractedAmount": 1245.36,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-009",
+      "category": "制度与材料组合",
+      "claimedAmount": 1288.53,
+      "extractedAmount": 1288.53,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-010",
+      "category": "制度与材料组合",
+      "claimedAmount": 1331.7,
+      "extractedAmount": 1331.7,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-011",
+      "category": "制度与材料组合",
+      "claimedAmount": 1374.87,
+      "extractedAmount": 1374.87,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-012",
+      "category": "制度与材料组合",
+      "claimedAmount": 1418.04,
+      "extractedAmount": 1418.04,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-013",
+      "category": "制度与材料组合",
+      "claimedAmount": 1461.21,
+      "extractedAmount": 1461.21,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-014",
+      "category": "制度与材料组合",
+      "claimedAmount": 1504.38,
+      "extractedAmount": 1504.38,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-015",
+      "category": "制度与材料组合",
+      "claimedAmount": 1547.55,
+      "extractedAmount": 1547.55,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "MEDIUM",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-016",
+      "category": "制度与材料组合",
+      "claimedAmount": 1590.72,
+      "extractedAmount": 1590.72,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-017",
+      "category": "制度与材料组合",
+      "claimedAmount": 1633.89,
+      "extractedAmount": 1633.89,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-018",
+      "category": "制度与材料组合",
+      "claimedAmount": 1677.06,
+      "extractedAmount": 1677.06,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": true,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "MISSING_REQUIRED_DOCUMENT"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "policy-document-019",
+      "category": "制度与材料组合",
+      "claimedAmount": 1720.23,
+      "extractedAmount": 1720.23,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "policy-document-020",
+      "category": "制度与材料组合",
+      "claimedAmount": 1763.4,
+      "extractedAmount": 1763.4,
+      "extractionConfidence": 0.88,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": true,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": false,
+      "expectedSignals": [
+        "POLICY_LIMIT_EXCEEDED",
+        "POLICY_EVIDENCE_MISSING"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "normal-negative-001",
+      "category": "正常与无异常反例",
+      "claimedAmount": 69.83,
+      "extractedAmount": 69.83,
+      "extractionConfidence": 0.75,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-002",
+      "category": "正常与无异常反例",
+      "claimedAmount": 89.66,
+      "extractedAmount": 89.66,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-003",
+      "category": "正常与无异常反例",
+      "claimedAmount": 109.49,
+      "extractedAmount": 109.49,
+      "extractionConfidence": 0.8099999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-004",
+      "category": "正常与无异常反例",
+      "claimedAmount": 129.32,
+      "extractedAmount": 129.32,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-005",
+      "category": "正常与无异常反例",
+      "claimedAmount": 149.15,
+      "extractedAmount": 149.15,
+      "extractionConfidence": 0.87,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-006",
+      "category": "正常与无异常反例",
+      "claimedAmount": 168.98,
+      "extractedAmount": 168.98,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-007",
+      "category": "正常与无异常反例",
+      "claimedAmount": 188.81,
+      "extractedAmount": 188.81,
+      "extractionConfidence": 0.9299999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-008",
+      "category": "正常与无异常反例",
+      "claimedAmount": 208.64,
+      "extractedAmount": 208.64,
+      "extractionConfidence": 0.72,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-009",
+      "category": "正常与无异常反例",
+      "claimedAmount": 228.47,
+      "extractedAmount": 228.47,
+      "extractionConfidence": 0.75,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-010",
+      "category": "正常与无异常反例",
+      "claimedAmount": 248.3,
+      "extractedAmount": 248.3,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-011",
+      "category": "正常与无异常反例",
+      "claimedAmount": 268.13,
+      "extractedAmount": 268.13,
+      "extractionConfidence": 0.8099999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-012",
+      "category": "正常与无异常反例",
+      "claimedAmount": 287.96,
+      "extractedAmount": 287.96,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-013",
+      "category": "正常与无异常反例",
+      "claimedAmount": 307.79,
+      "extractedAmount": 307.79,
+      "extractionConfidence": 0.87,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-014",
+      "category": "正常与无异常反例",
+      "claimedAmount": 327.62,
+      "extractedAmount": 327.62,
+      "extractionConfidence": 0.8999999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-015",
+      "category": "正常与无异常反例",
+      "claimedAmount": 347.45,
+      "extractedAmount": 347.45,
+      "extractionConfidence": 0.9299999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-016",
+      "category": "正常与无异常反例",
+      "claimedAmount": 367.28,
+      "extractedAmount": 367.28,
+      "extractionConfidence": 0.72,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-017",
+      "category": "正常与无异常反例",
+      "claimedAmount": 387.11,
+      "extractedAmount": 387.11,
+      "extractionConfidence": 0.75,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-018",
+      "category": "正常与无异常反例",
+      "claimedAmount": 406.94,
+      "extractedAmount": 406.94,
+      "extractionConfidence": 0.78,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-019",
+      "category": "正常与无异常反例",
+      "claimedAmount": 426.77,
+      "extractedAmount": 426.77,
+      "extractionConfidence": 0.8099999999999999,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "normal-negative-020",
+      "category": "正常与无异常反例",
+      "claimedAmount": 446.6,
+      "extractedAmount": 446.6,
+      "extractionConfidence": 0.84,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": false,
+      "expectedSignals": [],
+      "expectedRiskLevel": "LOW",
+      "expectedHumanReview": false
+    },
+    {
+      "id": "injection-composite-001",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1301.13,
+      "extractedAmount": 1301.15,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-002",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1402.26,
+      "extractedAmount": 1402.28,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-003",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1503.39,
+      "extractedAmount": 1503.41,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "POLICY_EVIDENCE_MISSING",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-004",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1604.52,
+      "extractedAmount": 1604.54,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-005",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1705.65,
+      "extractedAmount": 1705.67,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-006",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1806.78,
+      "extractedAmount": 1806.8,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "POLICY_EVIDENCE_MISSING",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-007",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 1907.91,
+      "extractedAmount": 1907.93,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-008",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 2009.04,
+      "extractedAmount": 2009.06,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-009",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 2110.17,
+      "extractedAmount": 2110.19,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": false,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": true,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "POLICY_EVIDENCE_MISSING",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    },
+    {
+      "id": "injection-composite-010",
+      "category": "攻击与业务风险组合",
+      "claimedAmount": 2211.3,
+      "extractedAmount": 2211.32,
+      "extractionConfidence": 0.68,
+      "duplicateDocument": true,
+      "dateAnomaly": false,
+      "sellerAnomaly": false,
+      "policyLimitExceeded": false,
+      "missingRequiredDocument": false,
+      "forbiddenExpenseItem": false,
+      "projectBudgetExceeded": false,
+      "policyEvidenceMissing": false,
+      "promptInjectionDetected": true,
+      "expectedSignals": [
+        "DUPLICATE_DOCUMENT",
+        "AMOUNT_MISMATCH",
+        "LOW_EXTRACTION_CONFIDENCE",
+        "PROMPT_INJECTION_DETECTED"
+      ],
+      "expectedRiskLevel": "HIGH",
+      "expectedHumanReview": true
+    }
+  ]
+}

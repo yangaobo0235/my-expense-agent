@@ -3,13 +3,11 @@ import {
   Alert,
   Button,
   Card,
-  Collapse,
   Descriptions,
   Empty,
   Form,
   Input,
   InputNumber,
-  List,
   message,
   Modal,
   Progress,
@@ -25,9 +23,9 @@ import {
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { CaseEvidence, EvidenceChatResponse, ExpenseCase, ExpenseDocumentDetail, ExpenseWorkflowEvent, ExtractedExpenseItem, ReviewReport } from '../../api/contracts';
+import { CaseEvidence, ExpenseCase, ExpenseDocumentDetail, ExpenseWorkflowEvent, ExtractedExpenseItem } from '../../api/contracts';
 import { consumeCaseEvents } from '../../api/event-client';
-import { analyzeCase, askEvidenceChat, deleteCase, generateReviewReport, getCase, getCaseEvidence, getCaseObservability, getReviewReport, listCaseDocuments, settleExpenseCase, updateCase } from '../../api/expense-api';
+import { analyzeCase, deleteCase, getCase, getCaseEvidence, getCaseObservability, listCaseDocuments, settleExpenseCase, updateCase } from '../../api/expense-api';
 import { CaseObservabilityPanel } from '../../components/CaseObservabilityPanel';
 import { RiskBadge } from '../../components/RiskBadge';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -75,12 +73,6 @@ export function CaseDetailPage() {
     queryFn: () => getCaseEvidence(caseId),
     enabled: Boolean(caseId),
   });
-  const reviewReportQuery = useQuery({
-    queryKey: ['review-report', caseId],
-    queryFn: () => getReviewReport(caseId),
-    enabled: Boolean(caseId),
-    retry: false,
-  });
   const observabilityQuery = useQuery({
     queryKey: ['case-observability', caseId],
     queryFn: () => getCaseObservability(caseId),
@@ -116,15 +108,6 @@ export function CaseDetailPage() {
       message.error(apiMessage ?? '草稿删除失败，请稍后重试。');
     },
   });
-  const reviewReportMutation = useMutation({
-    mutationFn: () => generateReviewReport(caseId),
-    onSuccess: () => {
-      message.success('审核报告已生成');
-      void queryClient.invalidateQueries({ queryKey: ['review-report', caseId] });
-      void queryClient.invalidateQueries({ queryKey: ['model-call-summary'] });
-      void queryClient.invalidateQueries({ queryKey: ['model-calls'] });
-    },
-  });
   const extractionMutation = useMutation({
     mutationFn: () => analyzeCase(caseId),
     onSuccess: () => {
@@ -133,9 +116,6 @@ export function CaseDetailPage() {
       void queryClient.invalidateQueries({ queryKey: ['case-documents', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['case-evidence', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['case-observability', caseId] });
-      void queryClient.invalidateQueries({ queryKey: ['observable-runs'] });
-      void queryClient.invalidateQueries({ queryKey: ['model-call-summary'] });
-      void queryClient.invalidateQueries({ queryKey: ['model-calls'] });
     },
     onError: (error) => {
       const apiMessage = axios.isAxiosError(error)
@@ -146,7 +126,6 @@ export function CaseDetailPage() {
       void queryClient.invalidateQueries({ queryKey: ['case-documents', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['case-evidence', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['case-observability', caseId] });
-      void queryClient.invalidateQueries({ queryKey: ['observable-runs'] });
     },
   });
   const settlementMutation = useMutation({
@@ -157,7 +136,6 @@ export function CaseDetailPage() {
       void queryClient.invalidateQueries({ queryKey: ['cases'] });
       void queryClient.invalidateQueries({ queryKey: ['case-evidence', caseId] });
       void queryClient.invalidateQueries({ queryKey: ['case-observability', caseId] });
-      void queryClient.invalidateQueries({ queryKey: ['observable-runs'] });
     },
     onError: (error) => {
       const fallback = '入账提交失败，请稍后重试。';
@@ -314,15 +292,11 @@ export function CaseDetailPage() {
               evidence={evidenceQuery.data}
               evidenceLoading={evidenceQuery.isLoading}
               events={events}
-              report={reviewReportQuery.data}
-              reportLoading={reviewReportQuery.isLoading || reviewReportMutation.isPending}
-              onGenerateReport={() => reviewReportMutation.mutate()}
               caseId={caseId}
               canSettle={Boolean(canSettle)}
               settling={settlementMutation.isPending}
               onSettle={() => settlementMutation.mutate()}
               settlementCompleted={Boolean(settlementCompleted)}
-              readOnly={isReadOnlyAuditor}
               canSubmitMoreInfo={isApplicant}
             />
           </Card>
@@ -457,15 +431,11 @@ function StageWorkspace({
   evidence,
   evidenceLoading,
   events,
-  report,
-  reportLoading,
-  onGenerateReport,
   caseId,
   canSettle,
   settling,
   onSettle,
   settlementCompleted,
-  readOnly,
   canSubmitMoreInfo,
 }: {
   stage: CaseStageKey;
@@ -475,15 +445,11 @@ function StageWorkspace({
   evidence?: CaseEvidence;
   evidenceLoading: boolean;
   events: ExpenseWorkflowEvent[];
-  report?: ReviewReport;
-  reportLoading: boolean;
-  onGenerateReport: () => void;
   caseId: string;
   canSettle: boolean;
   settling: boolean;
   onSettle: () => void;
   settlementCompleted: boolean;
-  readOnly: boolean;
   canSubmitMoreInfo: boolean;
 }) {
   if (stage === 'summary') {
@@ -546,37 +512,10 @@ function StageWorkspace({
 
   if (stage === 'review') {
     return (
-      <Tabs
-        items={[
-          {
-            key: 'timeline',
-            label: '版本与重审',
-            children: (
-              <GovernedReviewTimeline
-                caseId={caseId}
-                status={expenseCase.status}
-                canSubmit={canSubmitMoreInfo}
-              />
-            ),
-          },
-          {
-            key: 'report',
-            label: '审核报告',
-            children: (
-              <ReviewReportPanel
-                report={report}
-                loading={reportLoading}
-                onGenerate={onGenerateReport}
-                canGenerate={!readOnly}
-              />
-            ),
-          },
-          ...(!readOnly ? [{
-            key: 'chat',
-            label: '询问依据',
-            children: <EvidenceChatPanel caseId={caseId} />,
-          }] : []),
-        ]}
+      <GovernedReviewTimeline
+        caseId={caseId}
+        status={expenseCase.status}
+        canSubmit={canSubmitMoreInfo}
       />
     );
   }
@@ -659,145 +598,6 @@ function DiagnosisSidebar({
   );
 }
 
-export function ReviewReportPanel({
-  report,
-  loading,
-  onGenerate,
-  canGenerate = true,
-}: {
-  report?: ReviewReport;
-  loading: boolean;
-  onGenerate: () => void;
-  canGenerate?: boolean;
-}) {
-  if (!report) {
-    return (
-      <Space orientation="vertical">
-        <Empty description="尚未生成审核报告" />
-        {canGenerate && <Button type="primary" loading={loading} onClick={onGenerate}>生成审核报告</Button>}
-      </Space>
-    );
-  }
-  return (
-    <Space orientation="vertical" size="middle" className="page-stack">
-      <Space>
-        {canGenerate && <Button loading={loading} onClick={onGenerate}>重新生成</Button>}
-        <Tag color="blue">辅助建议</Tag>
-        <Typography.Text type="secondary">{new Date(report.createdAt).toLocaleString('zh-CN')}</Typography.Text>
-      </Space>
-      <Alert
-        type="info"
-        showIcon
-        title="审核建议"
-        description={businessText(report.summary) || '请结合票据、制度和历史记录完成审核判断。'}
-      />
-      <div className="review-report-grid">
-        <Card size="small" title="为什么需要关注">
-          <BusinessTextList
-            items={report.riskExplanation}
-            emptyText="暂无明确风险说明，请结合票据和制度人工判断。"
-          />
-        </Card>
-        <Card size="small" title="审核时重点看什么">
-          <BusinessTextList
-            items={report.humanReviewHints}
-            emptyText="暂无额外关注点。"
-          />
-        </Card>
-        <Card size="small" title="当前还缺什么依据">
-          <BusinessTextList
-            items={report.limitations}
-            emptyText="暂无明显缺失依据。"
-          />
-        </Card>
-      </div>
-      <Table
-        rowKey={(row) => `${row.policyCode}-${row.chunkId}`}
-        size="small"
-        pagination={false}
-        dataSource={report.policyCitations}
-        locale={{ emptyText: '暂无明确制度引用，请人工核对适用制度。' }}
-        columns={[
-          { title: '制度', dataIndex: 'policyCode', render: (value: string) => businessText(value) || '-' },
-          { title: '章节', dataIndex: 'section', render: (value: string) => businessText(value) || '-' },
-          {
-            title: '查看编号',
-            dataIndex: 'chunkId',
-            render: (value: string) => (
-              <Typography.Text copyable type="secondary">
-                {shortTechnicalId(value)}
-              </Typography.Text>
-            ),
-          },
-        ]}
-      />
-      <Collapse
-        ghost
-        items={[
-          {
-            key: 'raw-report-note',
-            label: '管理员排查信息',
-            children: (
-              <Typography.Text type="secondary">
-                以上内容已转成业务表述；完整生成记录可在处理记录页面查看。
-              </Typography.Text>
-            ),
-          },
-        ]}
-      />
-    </Space>
-  );
-}
-
-function BusinessTextList({ items, emptyText }: { items: string[]; emptyText: string }) {
-  const visibleItems = items.map(businessText).filter(Boolean);
-  if (visibleItems.length === 0) {
-    return <Typography.Text type="secondary">{emptyText}</Typography.Text>;
-  }
-  return (
-    <List
-      size="small"
-      split={false}
-      dataSource={visibleItems}
-      renderItem={(item) => (
-        <List.Item className="business-report-item">
-          <Typography.Text>{item}</Typography.Text>
-        </List.Item>
-      )}
-    />
-  );
-}
-
-function businessText(value?: string) {
-  if (!value) return '';
-  return value
-    .replace(/\s*（?\s*ID[:：]\s*[0-9a-f-]{20,}\s*）?/gi, '')
-    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '该申请')
-    .replaceAll('claimedAmount', '申报金额')
-    .replaceAll('score', '风险分')
-    .replaceAll('HIGH', '高')
-    .replaceAll('MEDIUM', '中')
-    .replaceAll('LOW', '低')
-    .replaceAll('POLICY_LIMIT_EXCEEDED', '金额可能超过适用标准')
-    .replaceAll('PROJECT_BUDGET_EXCEEDED', '项目可用预算不足或币种不一致')
-    .replaceAll('POLICY_EVIDENCE_MISSING', '缺少可追溯制度依据')
-    .replaceAll('DEPENDENCY_UNAVAILABLE', '外部数据暂时不可用')
-    .replaceAll('POLICY_RETRIEVAL', '制度依据核对')
-    .replaceAll('RISK_ASSESSMENT', '风险评估')
-    .replaceAll('RISK_ROUTING', '审核分配')
-    .replaceAll('MCP_CONTEXT_AGENT', '申请人信息核对')
-    .replaceAll('POLICY_RAG_AGENT', '制度依据核对')
-    .replaceAll('MCP', '外部数据')
-    .replaceAll('policyFindings', '制度依据')
-    .replaceAll('citations', '引用依据')
-    .replaceAll('evidence: {}', '暂无可展示依据')
-    .replace(/\bSHA256\b/gi, '文件指纹')
-    .replace(/\bCN\b/g, '中国区')
-    .replace(/\bG(\d)\b/g, '$1级')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 function shortTechnicalId(value?: string) {
   if (!value) return '-';
   if (value.length <= 12) return value;
@@ -818,53 +618,6 @@ function settlementErrorMessage(apiMessage?: string) {
     return '入账服务暂时不可用，本申请的审核结果已保留。请稍后重试入账，或联系管理员检查入账服务。';
   }
   return apiMessage;
-}
-
-function EvidenceChatPanel({ caseId }: { caseId: string }) {
-  const [question, setQuestion] = useState('');
-  const [history, setHistory] = useState<Array<{ question: string; response: EvidenceChatResponse }>>([]);
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (value: string) => askEvidenceChat(caseId, value),
-    onSuccess: (response, asked) => {
-      setHistory((current) => [...current, { question: asked, response }]);
-      setQuestion('');
-      void queryClient.invalidateQueries({ queryKey: ['model-call-summary'] });
-      void queryClient.invalidateQueries({ queryKey: ['model-calls'] });
-    },
-    onError: () => message.error('查询依据失败，请稍后重试。'),
-  });
-  return (
-    <Space orientation="vertical" size="middle" className="page-stack">
-      <Input.Search
-        value={question}
-        onChange={(event) => setQuestion(event.target.value)}
-        onSearch={(value) => value.trim() && mutation.mutate(value.trim())}
-        loading={mutation.isPending}
-        enterButton="提问"
-        placeholder="例如：为什么这笔经费申请需要人工审核？"
-      />
-      <List
-        dataSource={history}
-        locale={{ emptyText: <Empty description="暂无问答记录" /> }}
-        renderItem={(item) => (
-          <List.Item>
-            <Space orientation="vertical" className="page-stack">
-              <Typography.Text strong>{item.question}</Typography.Text>
-              <Typography.Text>{item.response.answer}</Typography.Text>
-              <Space wrap>
-                {item.response.citations.map((citation) => (
-                  <Tag key={`${citation.type}-${citation.id}`} color="blue">
-                    {citation.type}: {citation.id}
-                  </Tag>
-                ))}
-              </Space>
-            </Space>
-          </List.Item>
-        )}
-      />
-    </Space>
-  );
 }
 
 function DocumentEvidence({ document }: { document: ExpenseDocumentDetail }) {

@@ -8,22 +8,11 @@ import {
   ExpenseWorkflowRequest,
   ExpenseDocumentDetail,
   DocumentVersion,
-  EvidenceChatResponse,
-  AgentSecurityEvaluationReport,
   CaseObservability,
   MoreInfoSuggestion,
   MoreInfoTask,
-  ModelCallRecord,
-  ModelCallSummary,
-  PolicyRagEvaluationReport,
-  PromptChangeRequest,
-  PromptVersionReview,
-  PromptTemplate,
-  PromptTemplateInput,
   PolicyCatalogEntry,
   PolicySearchMatch,
-  ObservableWorkflowRun,
-  ReviewReport,
   ReviewDecisionRequest,
   ReviewTask,
   RiskEvaluationReport,
@@ -59,16 +48,16 @@ export async function listCases(filters: CaseFilters): Promise<ExpenseCasePage> 
 }
 
 export async function getCase(caseId: string): Promise<ExpenseCase> {
-  const response = await httpClient.get<OperationResponse<'get_1'>>(
+  const response = await httpClient.get<OperationResponse<'get'>>(
     `${FUND_APPLICATIONS_API}/${caseId}`,
   );
   return response.data as ExpenseCase;
 }
 
 export async function createCase(input: CreateCaseInput): Promise<ExpenseCase> {
-  const response = await httpClient.post<OperationResponse<'create_1'>>(
+  const response = await httpClient.post<OperationResponse<'create'>>(
     FUND_APPLICATIONS_API,
-    input satisfies OperationRequest<'create_1'>,
+    input satisfies OperationRequest<'create'>,
   );
   return response.data as ExpenseCase;
 }
@@ -195,7 +184,7 @@ export async function listReviewTasks(): Promise<ReviewTask[]> {
 
 export async function getReviewTask(taskId: string): Promise<ReviewTask> {
   return (
-    await httpClient.get<OperationResponse<'get_2'>>(
+    await httpClient.get<OperationResponse<'get_1'>>(
       `/api/v1/review-tasks/${taskId}`,
     )
   ).data as ReviewTask;
@@ -247,7 +236,7 @@ export async function searchPolicies(
 export async function getRiskEvaluationReport(): Promise<RiskEvaluationReport> {
   return (
     await httpClient.get<OperationResponse<'riskReport'>>(
-      '/api/v1/evaluation/risk-report',
+      '/api/v1/evaluations/risk/latest',
     )
   ).data as RiskEvaluationReport;
 }
@@ -256,50 +245,6 @@ export async function getExtractionEvaluationReport(): Promise<ExtractionEvaluat
   return (
     await httpClient.get<ExtractionEvaluationReport>(
       '/api/v1/evaluations/extraction/latest',
-    )
-  ).data;
-}
-
-export async function getPolicyRagEvaluationReport(): Promise<PolicyRagEvaluationReport> {
-  return (
-    await httpClient.get<PolicyRagEvaluationReport>(
-      '/api/v1/evaluation/policy-rag-report',
-    )
-  ).data;
-}
-
-export async function getAgentSecurityEvaluationReport(): Promise<AgentSecurityEvaluationReport> {
-  return (
-    await httpClient.get<AgentSecurityEvaluationReport>(
-      '/api/v1/evaluation/agent-security-report',
-    )
-  ).data;
-}
-
-export async function getReviewReport(caseId: string): Promise<ReviewReport> {
-  return (
-    await httpClient.get<ReviewReport>(
-      `${FUND_APPLICATIONS_API}/${caseId}/review-report`,
-    )
-  ).data;
-}
-
-export async function generateReviewReport(caseId: string): Promise<ReviewReport> {
-  return (
-    await httpClient.post<ReviewReport>(
-      `${FUND_APPLICATIONS_API}/${caseId}/review-report`,
-    )
-  ).data;
-}
-
-export async function askEvidenceChat(
-  caseId: string,
-  question: string,
-): Promise<EvidenceChatResponse> {
-  return (
-    await httpClient.post<EvidenceChatResponse>(
-      `${FUND_APPLICATIONS_API}/${caseId}/evidence-chat`,
-      { question },
     )
   ).data;
 }
@@ -313,76 +258,10 @@ export async function settleExpenseCase(caseId: string): Promise<SettlementResul
   ).data as SettlementResult;
 }
 
-export async function listObservableRuns(
-  limit = 20,
-): Promise<ObservableWorkflowRun[]> {
-  return (
-    await httpClient.get<OperationResponse<'recentRuns'>>(
-      '/api/v1/observability/runs',
-      { params: { limit } satisfies OperationQuery<'recentRuns'> },
-    )
-  ).data as ObservableWorkflowRun[];
-}
-
-export async function getModelCallSummary(): Promise<ModelCallSummary> {
-  return (
-    await httpClient.get<ModelCallSummary>('/api/v1/observability/model-summary')
-  ).data;
-}
-
-export async function listModelCalls(limit = 50): Promise<ModelCallRecord[]> {
-  return (
-    await httpClient.get<ModelCallRecord[]>(
-      '/api/v1/observability/model-calls',
-      { params: { limit } },
-    )
-  ).data;
-}
-
 export async function getCaseObservability(caseId: string): Promise<CaseObservability> {
   return (
     await httpClient.get<CaseObservability>(
-      `/api/v1/observability/fund-applications/${caseId}`,
+      `/api/v1/expense-cases/${caseId}/trace`,
     )
   ).data;
-}
-
-export async function listPrompts(promptKey?: string): Promise<PromptTemplate[]> {
-  return (
-    await httpClient.get<PromptTemplate[]>('/api/v1/prompts', {
-      params: promptKey ? { promptKey } : undefined,
-    })
-  ).data;
-}
-
-export async function createPrompt(input: PromptTemplateInput): Promise<PromptTemplate> {
-  return (await httpClient.post<PromptTemplate>('/api/v1/prompts', input)).data;
-}
-
-export async function updatePrompt(id: string, input: PromptTemplateInput): Promise<PromptTemplate> {
-  return (await httpClient.put<PromptTemplate>(`/api/v1/prompts/${id}`, input)).data;
-}
-
-export async function submitPrompt(id: string, diffSummary: string): Promise<PromptChangeRequest> {
-  return (await httpClient.post<PromptChangeRequest>(`/api/v1/prompts/${id}/submit`, { diffSummary })).data;
-}
-
-export async function listPromptChanges(id: string): Promise<PromptChangeRequest[]> {
-  return (await httpClient.get<PromptChangeRequest[]>(`/api/v1/prompts/${id}/changes`)).data;
-}
-
-export async function getPromptReview(id: string): Promise<PromptVersionReview> {
-  return (await httpClient.get<PromptVersionReview>(`/api/v1/prompts/${id}/review`)).data;
-}
-
-export async function approvePromptChange(id: string, comment: string): Promise<PromptChangeRequest> {
-  return (await httpClient.post<PromptChangeRequest>(`/api/v1/prompts/changes/${id}/approve`, { comment })).data;
-}
-
-export async function rejectPromptChange(id: string, comment: string): Promise<PromptChangeRequest> {
-  return (await httpClient.post<PromptChangeRequest>(`/api/v1/prompts/changes/${id}/reject`, { comment })).data;
-}
-
-export async function activatePrompt(id: string): Promise<PromptTemplate> {
-  return (await httpClient.post<PromptTemplate>(`/api/v1/prompts/${id}/activate`)).data;
 }
