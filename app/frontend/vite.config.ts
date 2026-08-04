@@ -18,7 +18,6 @@ export default defineConfig({
           if (id.includes('antd') || id.includes('@ant-design') || id.includes('@rc-component')) return 'vendor-antd';
           if (id.includes('react') || id.includes('scheduler')) return 'vendor-react';
           if (id.includes('@tanstack') || id.includes('axios') || id.includes('zustand')) return 'vendor-data';
-          if (id.includes('keycloak-js')) return 'vendor-auth';
           return 'vendor';
         },
       },

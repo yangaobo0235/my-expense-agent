@@ -7,25 +7,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class McpBearerTokenFilter extends HttpFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(McpBearerTokenFilter.class);
+    private final byte[] expectedToken;
 
-    private final JwtDecoder jwtDecoder;
-
-    McpBearerTokenFilter(JwtDecoder jwtDecoder) {
-        this.jwtDecoder = jwtDecoder;
+    McpBearerTokenFilter(String expectedToken) {
+        this.expectedToken = expectedToken.getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -39,22 +35,21 @@ final class McpBearerTokenFilter extends HttpFilter {
             unauthorized(response, "MCP endpoint requires a Bearer Token");
             return;
         }
-
-        String token = authorization.substring(7).trim();
-        if (token.isEmpty()) {
-            unauthorized(response, "MCP endpoint requires a Bearer Token");
+        byte[] provided = authorization.substring(7).trim().getBytes(StandardCharsets.UTF_8);
+        if (!MessageDigest.isEqual(expectedToken, provided)) {
+            unauthorized(response, "MCP Bearer Token is invalid");
             return;
         }
 
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(
+                UsernamePasswordAuthenticationToken.authenticated(
+                        "expense-backend",
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_MCP_SERVICE"))));
+        SecurityContextHolder.setContext(context);
         try {
-            Jwt jwt = jwtDecoder.decode(token);
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(new JwtAuthenticationToken(jwt));
-            SecurityContextHolder.setContext(context);
             chain.doFilter(request, response);
-        } catch (JwtException exception) {
-            log.warn("MCP Bearer Token is invalid: {}", exception.getMessage());
-            unauthorized(response, "MCP Bearer Token is invalid");
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -67,9 +62,6 @@ final class McpBearerTokenFilter extends HttpFilter {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter()
-                .write(
-                        "{\"code\":\"MCP_UNAUTHORIZED\",\"message\":\""
-                                + message
-                                + "\"}");
+                .write("{\"code\":\"MCP_UNAUTHORIZED\",\"message\":\"" + message + "\"}");
     }
 }

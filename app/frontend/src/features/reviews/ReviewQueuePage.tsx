@@ -1,15 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Alert, Button, Card, Descriptions, Form, Input, InputNumber, List, Modal, Radio, Space, Tag, Typography, message } from 'antd';
+import { Alert, Button, Card, Descriptions, Form, Input, InputNumber, Modal, Radio, Space, Spin, Tag, Typography, message } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { decideReview, listReviewTasks } from '../../api/expense-api';
 import { ReviewTask } from '../../api/contracts';
+import { hasAnyRole, useAuthStore } from '../auth/auth-store';
 
 type Action = 'approve' | 'reject' | 'request-more-info';
 
 export function ReviewQueuePage() {
   const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+  const canHandle = hasAnyRole(user?.roles, ['ADVISOR', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN']);
   const [selected, setSelected] = useState<ReviewTask>();
   const [form] = Form.useForm();
   const query = useQuery({ queryKey: ['review-tasks'], queryFn: listReviewTasks });
@@ -46,30 +49,19 @@ export function ReviewQueuePage() {
           title="优先处理需要人工判断的经费申请"
           description="列表已按系统判断生成待办。预算超标、疑似重复、依据缺失的申请建议进入工作台查看票据、制度和风险说明后再决定。"
         />
-        <List
-          loading={query.isLoading}
-          dataSource={query.data}
-          locale={{ emptyText: '当前没有待处理任务' }}
-          renderItem={(task) => (
-            <List.Item
-              className="review-queue-item"
-              actions={[
-                <Button key="detail" type="primary">
-                  <Link to={`/reviews/${task.id}`}>进入工作台</Link>
-                </Button>,
-                <Button key="quick" type="text" onClick={() => setSelected(task)}>快速处理</Button>,
-              ]}
-            >
-              <List.Item.Meta
-                title={
+        {query.isLoading ? (
+          <div className="review-queue-state"><Spin /></div>
+        ) : query.data?.length ? (
+          <div className="review-queue-list">
+            {query.data.map((task) => (
+              <article className="review-queue-item" key={task.id}>
+                <div className="review-queue-content">
                   <Space wrap>
                     <Typography.Text strong>申请 {shortCaseId(task.caseId)}</Typography.Text>
                     <Tag color={task.status === 'MORE_INFO' ? 'orange' : 'blue'}>{taskStatusLabel(task.status)}</Tag>
                     <Tag color={queueColor(task.routingQueue)}>{queueLabel(task.routingQueue)}</Tag>
                     {task.slaHours && <Tag color="orange">{task.slaHours} 小时内处理</Tag>}
                   </Space>
-                }
-                description={
                   <Space orientation="vertical" size={4}>
                     <Typography.Text>
                       {businessMessage(task.userFacingMessage) || '该申请需要人工复核后决定。'}
@@ -85,11 +77,19 @@ export function ReviewQueuePage() {
                       </Space>
                     )}
                   </Space>
-                }
-              />
-            </List.Item>
-          )}
-        />
+                </div>
+                <Space className="review-queue-actions">
+                  <Button type="primary">
+                    <Link to={`/reviews/${task.id}`}>{canHandle ? '进入工作台' : '查看记录'}</Link>
+                  </Button>
+                  {canHandle && <Button type="text" onClick={() => setSelected(task)}>快速处理</Button>}
+                </Space>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="review-queue-state">当前没有待处理任务</div>
+        )}
       </Card>
       <Modal
         title="提交人工审核动作"

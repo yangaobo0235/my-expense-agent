@@ -1,5 +1,4 @@
 import { ExpenseWorkflowEvent } from './contracts';
-import { getAccessToken } from './http-client';
 
 interface EventStreamOptions {
   caseId: string;
@@ -19,15 +18,14 @@ export async function consumeCaseEvents({
   const seen = new Set<string>();
 
   while (!signal.aborted) {
-    const token = await getAccessToken();
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1/fund-applications/${caseId}/events`,
       {
         headers: {
           Accept: 'text/event-stream',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...(lastEventId ? { 'Last-Event-ID': lastEventId } : {}),
         },
+        credentials: 'include',
         signal,
       },
     );

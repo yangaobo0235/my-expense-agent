@@ -11,14 +11,12 @@ import com.yangaobo.expense.backend.application.workflow.ExpenseContextGateway;
 import com.yangaobo.expense.backend.application.workflow.WorkflowEvidenceGateway;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.service.tool.ToolProvider;
-import java.time.Clock;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.client.RestClient;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(ExpenseMcpClientProperties.class)
@@ -29,12 +27,8 @@ import org.springframework.web.client.RestClient;
 public class ExpenseMcpClientConfiguration {
 
     @Bean
-    ClientCredentialsTokenProvider mcpAccessTokenProvider(
-            RestClient.Builder restClientBuilder,
-            ExpenseMcpClientProperties properties,
-            Clock clock) {
-        return new ClientCredentialsTokenProvider(
-                restClientBuilder.build(), properties, clock);
+    ServiceTokenProvider mcpAccessTokenProvider(ExpenseMcpClientProperties properties) {
+        return new ServiceTokenProvider(properties);
     }
 
     @Bean
@@ -48,7 +42,7 @@ public class ExpenseMcpClientConfiguration {
     @Bean(destroyMethod = "close")
     @Lazy
     ExpenseMcpGateway expenseMcpGateway(
-            ClientCredentialsTokenProvider tokenProvider,
+            ServiceTokenProvider tokenProvider,
             ExpenseMcpClientProperties properties) {
         McpClient account =
                 create(
@@ -116,7 +110,7 @@ public class ExpenseMcpClientConfiguration {
     private static McpClient create(
             String key,
             String url,
-            ClientCredentialsTokenProvider tokenProvider,
+            ServiceTokenProvider tokenProvider,
             ExpenseMcpClientProperties properties) {
         return ExpenseMcpClientFactory.create(
                 key,

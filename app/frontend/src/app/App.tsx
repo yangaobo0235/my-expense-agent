@@ -41,7 +41,7 @@ export function App() {
               <Route path="/cases/new" element={<NewCasePage />} />
             </Route>
             <Route
-              element={<ProtectedRoute roles={['ADVISOR', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN']} />}
+              element={<ProtectedRoute roles={['ADVISOR', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN', 'AUDITOR']} />}
             >
               <Route path="/reviews" element={<ReviewQueuePage />} />
               <Route path="/reviews/:taskId" element={<ReviewTaskDetailPage />} />

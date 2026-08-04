@@ -1,5 +1,11 @@
 server:
   port: ${ACCOUNT_PORT:25102}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-response: true
 spring:
   config:
     import:
@@ -22,11 +28,7 @@ spring:
 expense:
   mcp:
     security:
-      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/my-expense-agent}
-      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/certs}
-      jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
-      audiences:
-        - ${ACCOUNT_MCP_AUDIENCE:account-mcp}
+      service-token: ${EXPENSE_MCP_SERVICE_TOKEN:}
 management:
   endpoints:
     web:

@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -99,6 +100,18 @@ public class GlobalExceptionHandler {
                                 "请求参数校验失败",
                                 requestId(request),
                                 details));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    ResponseEntity<ApiErrorResponse> handleResponseStatus(
+            ResponseStatusException exception, HttpServletRequest request) {
+        return ResponseEntity.status(exception.getStatusCode())
+                .body(
+                        new ApiErrorResponse(
+                                MyExpenseAgentErrorCode.ACCESS_DENIED.name(),
+                                exception.getReason() == null ? "请求被拒绝" : exception.getReason(),
+                                requestId(request),
+                                Map.of()));
     }
 
     @ExceptionHandler(Exception.class)

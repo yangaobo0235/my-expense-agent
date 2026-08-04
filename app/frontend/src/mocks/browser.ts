@@ -18,6 +18,19 @@ const sseBody = fixtureEvents
   .join('');
 
 export const handlers = [
+  http.get('/api/v1/auth/session', () => HttpResponse.json({
+    authenticated: true,
+    subject: 'development-user',
+    displayName: '本地开发用户',
+    roles: ['STUDENT', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN'],
+  })),
+  http.post('/api/v1/auth/login', () => HttpResponse.json({
+    authenticated: true,
+    subject: 'development-user',
+    displayName: '本地开发用户',
+    roles: ['STUDENT', 'COLLEGE_REVIEWER', 'FINANCE_ADMIN'],
+  })),
+  http.post('/api/v1/auth/logout', () => new HttpResponse(null, { status: 204 })),
   http.get('/api/v1/fund-applications', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json({

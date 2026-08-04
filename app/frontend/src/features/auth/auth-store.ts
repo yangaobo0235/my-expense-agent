@@ -37,3 +37,13 @@ export const hasOnlyRole = (
   roles: UserRole[] | undefined,
   expected: UserRole,
 ) => roles?.length === 1 && roles[0] === expected;
+
+const roleLabels: Record<UserRole, string> = {
+  STUDENT: '学生',
+  ADVISOR: '指导教师',
+  COLLEGE_REVIEWER: '学院审核员',
+  FINANCE_ADMIN: '财务管理员',
+  AUDITOR: '审计员',
+};
+
+export const roleLabel = (role: UserRole) => roleLabels[role];

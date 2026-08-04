@@ -1,116 +1,118 @@
-# my-expense-agent
+# MyExpenseAgent
 
-面向高校经费报销场景的智能合规审核平台，覆盖票据解析、制度检索、风险分流、人工复核、审批后入账和全链路审计。
+[![CI](https://github.com/yangaobo0235/my-expense-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/yangaobo0235/my-expense-agent/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## 功能概览
+面向高校经费报销场景的可审计智能合规平台，覆盖申请、票据解析、制度检索、风险分流、人工复核、审批后入账和审计追踪。
 
-- 管理经费报销申请以及 PDF、PNG、JPG、JPEG 票据材料。
-- 将票据解析为结构化数据，并校验必填字段、金额、日期、币种和明细合计。
-- 通过 LangGraph4j 编排材料检查、风险审核、补充材料、学院复核和财务复核。
-- 使用 PostgreSQL/pgvector 检索与申请条件匹配的制度版本和章节引用。
-- 使用 Java 规则检查预算、金额一致性、重复票据和异常材料。
-- 通过 MCP 获取申请人、项目、预算和历史报销上下文。
-- 将只读 Tool 与审批后写 Tool 分离，写入前校验权限、状态和幂等标识。
-- 保存文档版本、工作流运行、检查点、模型调用、Tool 调用和审计事件。
+## 核心能力
+
+- 管理经费申请以及 PDF、PNG、JPG、JPEG 票据材料。
+- 将票据解析为结构化数据，并校验金额、日期、币种和明细。
+- 使用 LangGraph4j 编排证据收集、制度核对、风险评估和人工复核。
+- 使用 PostgreSQL 与 pgvector 返回可追溯的制度版本和章节引用。
+- 通过受保护的 MCP 服务读取项目、预算和历史报销上下文。
+- 将只读工具与审批后写工具分离，写入前校验权限、状态和幂等标识。
+- 保存文档版本、工作流步骤、模型调用、工具调用和审计事件。
+
+模型只提供候选事实和辅助证据。风险等级、审核路由、人工决定和财务入账始终由服务端规则与权限控制。
+
+## 界面预览
+
+登录入口：
+
+![财务管理信息平台登录页](docs/images/login.png)
+
+经费申请工作台（使用空数据响应拍摄，不包含真实业务数据）：
+
+![经费申请工作台](docs/images/application.png)
 
 ## 系统架构
 
 ```mermaid
 flowchart LR
     User["申请人 / 审核人员"] --> Web["React 前端<br/>:25105"]
-    Web -->|"REST + JWT"| Backend["主编排服务<br/>expense-backend :25101"]
-    Web -.->|"OIDC 登录"| Keycloak["Keycloak<br/>身份认证"]
-    Backend -.->|"JWT / JWK 校验"| Keycloak
+    Web -->|"REST + Session Cookie"| Backend["expense-backend<br/>:25101"]
+    Backend --> PostgreSQL[("PostgreSQL + pgvector")]
+    Backend --> MinIO[("MinIO")]
+    Backend --> Graph["LangGraph4j 工作流"]
+    Backend --> Extract["票据解析与校验"]
+    Backend --> Risk["Java 风险规则"]
+    Backend --> Rag["制度检索"]
+    Extract -->|"可选"| Model["OpenAI 兼容模型"]
 
-    subgraph Review["审核编排"]
-        Backend --> Graph["LangGraph4j<br/>工作流与 Checkpoint"]
-        Backend --> Extract["票据解析<br/>Schema 与业务校验"]
-        Backend --> Risk["Java 风险规则<br/>分级与路由"]
-        Backend --> Rag["制度 RAG<br/>适用性过滤"]
-    end
-
-    Backend -->|"文件读写"| MinIO[("MinIO<br/>票据与材料")]
-    Backend -->|"案例 / 制度 / 审计"| PostgreSQL[("PostgreSQL + pgvector")]
-    Extract -->|"可选"| Model["OpenAI 兼容<br/>多模态模型"]
-    Rag --> PostgreSQL
-
-    Backend -->|"OAuth2 Client Credentials"| McpGateway["受控 MCP Client"]
-
-    subgraph Context["业务上下文服务"]
-        McpGateway --> Account["account :25102<br/>申请人 / 项目"]
-        McpGateway --> Expense["expense :25103<br/>预算 / 报销 / 入账"]
-        McpGateway --> Audit["audit-history :25104<br/>历史 / 审计"]
-    end
-
+    Backend -->|"内部服务令牌"| Account["account :25102"]
+    Backend -->|"内部服务令牌"| Expense["expense :25103"]
+    Backend -->|"内部服务令牌"| Audit["audit-history :25104"]
     Account --> PostgreSQL
     Expense --> PostgreSQL
     Audit --> PostgreSQL
-    Account -.-> Keycloak
-    Expense -.-> Keycloak
-    Audit -.-> Keycloak
 ```
 
-关键安全边界：模型只提供票据候选事实；风险等级、审核路由、人工审批和入账始终由服务端规则与权限控制。
+浏览器认证使用 Spring Security Session、HttpOnly Cookie 和 CSRF Token。三个 MCP 服务使用独立的服务令牌，不与用户会话混用。
 
-## 核心流程
+## 业务流程
 
 ```text
-创建报销申请
- -> 上传 PDF/图片票据到 MinIO
- -> 结构化解析
- -> JSON Schema 与 Java 业务校验
- -> 最多一次定向修正 / 转人工
- -> LangGraph4j 收集 MCP 与制度证据
- -> 材料检查与 Java 风险审核
- -> 补材料 / 学院复核 / 财务复核 / 低风险路径
- -> 人工审批
- -> MCP 审批后写入
- -> 保存 Run、Checkpoint、模型、Tool 与审计链路
+创建申请
+  -> 上传票据到 MinIO
+  -> 票据解析与字段校验
+  -> 收集申请人、预算和历史证据
+  -> 检索适用制度
+  -> Java 规则计算风险并路由
+  -> 补充材料 / 人工复核
+  -> 审批后受控入账
+  -> 保存完整审计链路
 ```
 
-## 模块说明
+## 模块
 
 | 模块 | 端口 | 职责 |
 | --- | ---: | --- |
-| `expense-backend` | 25101 | 主业务 API、票据解析、制度检索、审核图、人工复核和受控入账 |
-| `expense-agents` | - | 执行策略、MCP Tool 目录、Tool 路由和客户端抽象 |
-| `expense-common` | - | 共享领域状态、安全组件、错误模型和通用契约 |
-| `account` | 25102 | 申请人、学院和项目上下文 REST API 与只读 MCP Tool |
-| `expense` | 25103 | 预算、历史报销以及审批后入账 REST API 与 MCP Tool |
-| `audit-history` | 25104 | 审核历史、申请事件和审计写入 REST API 与 MCP Tool |
-| `frontend` | 25105 | 申请、票据、审核、制度、评测和案例追踪界面 |
+| `expense-backend` | 25101 | 主业务 API、账号认证、审核编排和受控入账 |
+| `expense-agents` | - | MCP 工具目录、执行策略和客户端抽象 |
+| `expense-common` | - | 共享领域状态、MCP 安全组件和通用契约 |
+| `account` | 25102 | 申请人、学院和项目上下文 |
+| `expense` | 25103 | 预算、历史报销和审批后入账 |
+| `audit-history` | 25104 | 审核历史与审计写入 |
+| `frontend` | 25105 | 经费申请、审核、制度和评测工作台 |
+
+## 角色权限
+
+| 角色 | 主要权限 |
+| --- | --- |
+| `STUDENT` | 创建、查看和维护自己的申请，提交补充材料 |
+| `ADVISOR` | 查看申请并处理指导教师审核任务 |
+| `COLLEGE_REVIEWER` | 学院审核、查看制度和质量评测 |
+| `FINANCE_ADMIN` | 财务复核、制度管理和审批后入账 |
+| `AUDITOR` | 只读查看申请、审核记录、制度、评测与审计链路 |
+
+初始管理员拥有以上全部角色。
 
 ## 技术栈
 
 | 分类 | 技术 |
 | --- | --- |
-| 后端 | Java 21、Spring Boot 3.5、Spring Security、JdbcClient |
+| 后端 | Java 21、Spring Boot 3.5、Spring Security、Spring Session JDBC、JdbcClient |
 | AI 编排 | LangGraph4j、LangChain4j、MCP Java SDK |
 | 数据 | PostgreSQL、pgvector、Flyway、MinIO |
-| 身份认证 | Keycloak、OAuth2、JWT、PKCE |
 | 前端 | React 19、TypeScript、Vite、Ant Design、TanStack Query、Zustand |
-| 测试 | JUnit 5、Vitest、Testing Library、Playwright |
+| 测试 | JUnit 5、Testcontainers、Vitest、Testing Library、Playwright |
 
 ## 项目结构
 
 ```text
 my-expense-agent/
+|-- .github/workflows/       # 持续集成
 |-- app/
-|   |-- business-api/
-|   |   |-- account/             # 申请人和项目上下文服务
-|   |   |-- expense/             # 预算、报销和入账服务
-|   |   `-- audit-history/       # 审核历史和审计服务
-|   |-- frontend/                # React 前端
-|   `-- orchestrator/
-|       |-- expense-backend/     # 主编排服务
-|       |-- expense-agents/      # 工作流策略和 MCP 客户端
-|       `-- expense-common/      # 共享领域与安全组件
-|-- deploy/
-|   |-- .env.example             # 后端配置模板
-|   `-- keycloak/                # Realm 配置与用户初始化脚本
-|-- pom.xml                      # Maven 聚合工程
-|-- README.md
-`-- LICENSE
+|   |-- business-api/        # account、expense、audit-history MCP 服务
+|   |-- frontend/            # React 前端
+|   `-- orchestrator/        # 主后端、Agent 适配器和共享契约
+|-- deploy/                  # 可提交的配置模板
+|-- docs/                    # 设计与实施记录
+|-- scripts/                 # 本地辅助脚本
+|-- pom.xml                  # Maven 聚合工程
+`-- README.md
 ```
 
 ## 环境要求
@@ -118,19 +120,9 @@ my-expense-agent/
 - JDK 21
 - Maven 3.9+
 - Node.js 20+
-- PostgreSQL 15+，数据库账号需要具备创建 pgvector 扩展的权限
+- PostgreSQL 15+，数据库账号需要创建 `pgvector` 扩展的权限
 - MinIO
-- Keycloak
-- OpenAI 兼容的多模态模型服务（可选）
-
-默认端口：
-
-| 组件 | 端口 |
-| --- | ---: |
-| PostgreSQL | 5432 |
-| MinIO API | 9000 |
-| MinIO Console | 9001 |
-| Keycloak | 18080 |
+- OpenAI 兼容多模态模型服务，可选；离线开发可使用确定性解析器
 
 ## 快速开始
 
@@ -141,56 +133,72 @@ git clone https://github.com/yangaobo0235/my-expense-agent.git
 Set-Location my-expense-agent
 ```
 
-### 2. 准备配置
-
-从仓库中的模板创建本地配置：
+### 2. 创建本地配置
 
 ```powershell
 Copy-Item deploy/.env.example .env.local
 Copy-Item app/frontend/.env.example app/frontend/.env.local
 ```
 
-编辑两个 `.env.local` 文件，填写 PostgreSQL、MinIO、Keycloak 和模型服务的实际地址与密钥。本地配置已被 Git 忽略。
+编辑 `.env.local`，至少填写 PostgreSQL、MinIO、管理员密码和 MCP 服务令牌。不要提交该文件。
 
-### 3. 初始化 PostgreSQL
+```properties
+EXPENSE_DATASOURCE_URL=jdbc:postgresql://localhost:5432/my_expense_agent
+EXPENSE_DATASOURCE_USERNAME=<application-user>
+EXPENSE_DATASOURCE_PASSWORD=<local-database-password>
 
-先创建空数据库：
+EXPENSE_MINIO_ENDPOINT=http://localhost:9000
+EXPENSE_MINIO_ACCESS_KEY=<local-access-key>
+EXPENSE_MINIO_SECRET_KEY=<local-secret-key>
+
+EXPENSE_BOOTSTRAP_ADMIN_USERNAME=admin
+EXPENSE_BOOTSTRAP_ADMIN_PASSWORD=<set-a-strong-password>
+EXPENSE_MCP_SERVICE_TOKEN=<random-value-at-least-32-characters>
+```
+
+生产环境应使用部署平台的密钥管理能力注入这些值，而不是创建 `.env.local`。
+
+### 3. 可选的本地演示账号
+
+仅在一次性本地数据库中显式启用：
+
+```properties
+EXPENSE_DEMO_USERS_ENABLED=true
+```
+
+启用后会创建以下缺失账号；密码仅用于本地演示，均与账号名相同。该初始化不会重置已有账号密码。
+
+| 账号 | 角色 |
+| --- | --- |
+| `student` | 学生 |
+| `advisor` | 指导教师 |
+| `college_reviewer` | 学院审核员 |
+| `finance_admin` | 财务管理员 |
+| `auditor` | 审计员 |
+
+禁止在共享、测试验收或生产环境启用演示账号。
+
+### 4. 初始化数据库
 
 ```sql
 CREATE DATABASE my_expense_agent;
 ```
 
-主编排服务首次启动时会通过 Flyway 自动创建 pgvector 扩展和业务表，不需要手工执行迁移 SQL。
+主后端首次启动时由 Flyway 创建 pgvector 扩展、业务表、认证表和 Spring Session 表。
 
-### 4. 初始化 Keycloak
+### 5. 构建后端
 
-在 Keycloak 管理控制台中导入：
-
-```text
-deploy/keycloak/my-expense-agent-realm.json
-```
-
-如需初始化本地用户、Web Origin 和后端 Client Secret，可执行：
+确认终端使用 JDK 21：
 
 ```powershell
-./deploy/keycloak/init-campus-users.ps1 `
-  -AdminPassword (Read-Host 'Keycloak 管理员密码') `
-  -UserPassword (Read-Host '本地用户密码') `
-  -BackendClientSecret $env:KEYCLOAK_BACKEND_CLIENT_SECRET
-```
-
-`KEYCLOAK_BACKEND_CLIENT_SECRET` 应与 `.env.local` 中的 `EXPENSE_MCP_CLIENT_SECRET` 保持一致。
-
-### 5. 构建并启动后端
-
-确认当前终端使用 JDK 21，然后构建 Maven 聚合工程：
-
-```powershell
+$env:JAVA_HOME='<JDK 21 installation directory>'
 java -version
 mvn clean package
 ```
 
-分别在四个终端中按以下顺序启动服务：
+### 6. 启动服务
+
+在四个终端中从仓库根目录启动：
 
 ```powershell
 java -jar app/business-api/account/target/account-1.0.0-SNAPSHOT.jar
@@ -199,7 +207,9 @@ java -jar app/business-api/audit-history/target/audit-history-1.0.0-SNAPSHOT.jar
 java -jar app/orchestrator/expense-backend/target/expense-backend-1.0.0-SNAPSHOT.jar
 ```
 
-### 6. 启动前端
+四个服务必须读取同一个 `EXPENSE_MCP_SERVICE_TOKEN`。
+
+### 7. 启动前端
 
 ```powershell
 Set-Location app/frontend
@@ -212,101 +222,60 @@ npm run dev
 | 入口 | 地址 |
 | --- | --- |
 | 前端 | `http://localhost:25105` |
-| 后端 API | `http://localhost:25101` |
 | Swagger UI | `http://localhost:25101/swagger-ui.html` |
 | OpenAPI JSON | `http://localhost:25101/v3/api-docs` |
-| 健康检查 | `http://localhost:25101/actuator/health` |
+| 主服务健康检查 | `http://localhost:25101/actuator/health` |
 
-## 配置说明
-
-后端读取根目录 `.env.local`，完整模板位于 `deploy/.env.example`。主要配置如下：
+## 主要配置
 
 | 配置 | 说明 |
 | --- | --- |
-| `EXPENSE_DATASOURCE_*` | PostgreSQL 地址和账号 |
-| `EXPENSE_MINIO_*` | MinIO API 地址、密钥和 Bucket |
-| `KEYCLOAK_*` | Realm issuer、JWK 地址和 audience |
-| `EXPENSE_MCP_*` | Client Credentials 与三个 MCP 服务地址 |
+| `EXPENSE_DATASOURCE_*` | PostgreSQL 连接 |
+| `EXPENSE_MINIO_*` | MinIO API、密钥和 Bucket |
+| `EXPENSE_BOOTSTRAP_ADMIN_*` | 首次启动管理员；密码为空时不创建 |
+| `EXPENSE_DEMO_USERS_ENABLED` | 是否创建本地演示账号，默认 `false` |
+| `EXPENSE_SESSION_*` | Session 时长和 Cookie 安全属性 |
+| `EXPENSE_MCP_SERVICE_TOKEN` | 主后端与三个 MCP 服务共享的内部令牌 |
+| `EXPENSE_MCP_*_URL` | 三个 MCP 服务地址 |
 | `EXPENSE_EXTRACTION_*` | 票据解析模式、模型、地址、密钥和超时 |
 | `EXPENSE_AI_EMBEDDING_*` | 制度向量模型和维度 |
-| `EXPENSE_ALLOWED_ORIGINS` | 后端允许的前端来源 |
-
-票据解析支持两种运行方式：
-
-```properties
-# 调用多模态模型
-EXPENSE_EXTRACTION_MODE=llm
-EXPENSE_EXTRACTION_MODEL_NAME=gpt-5.4
-EXPENSE_EXTRACTION_BASE_URL=https://api.openai.com/v1
-EXPENSE_EXTRACTION_API_KEY=change-me
-
-# 不调用外部模型，用于离线开发
-EXPENSE_EXTRACTION_MODE=deterministic
-```
-
-前端配置位于 `app/frontend/.env.local`：
-
-| 配置 | 说明 |
-| --- | --- |
-| `VITE_API_BASE_URL` | 主后端地址 |
-| `VITE_AUTH_MODE` | `keycloak` 或本地开发模式 `development` |
+| `EXPENSE_ALLOWED_ORIGINS` | 允许携带 Cookie 的前端来源 |
+| `VITE_API_BASE_URL` | 前端访问的主后端地址 |
+| `VITE_AUTH_MODE` | `session` 或仅用于本地 UI 的 `development` |
 | `VITE_MOCK_API` | 设置为 `msw` 时使用浏览器 Mock API |
-| `VITE_KEYCLOAK_*` | Keycloak 地址、Realm 和 Web Client ID |
 
-## 关键接口
+生产环境通过 HTTPS 部署时必须设置 `EXPENSE_SESSION_COOKIE_SECURE=true`。
 
-除健康检查外，业务接口需要携带 Keycloak Bearer Token。
+## 测试
 
-| 接口 | 用途 |
-| --- | --- |
-| `POST /api/v1/fund-applications/{caseId}/documents` | 上传票据 |
-| `POST /api/v1/fund-applications/{caseId}/analyze` | 解析并校验案例内票据 |
-| `POST /api/v1/expense-cases/{caseId}/review-runs` | 审核、重审或恢复 |
-| `GET /api/v1/expense-cases/{caseId}/trace` | 查询案例完整链路 |
-| `GET /api/v1/policies/search` | 检索适用制度及章节引用 |
-| `POST /api/v1/review-tasks/{taskId}/approve` | 人工审批 |
-| `POST /api/v1/fund-applications/{caseId}/posting` | 审批后受控入账 |
-| `GET /api/v1/evaluations/extraction/latest` | 票据解析回归报告 |
-| `GET /api/v1/evaluations/risk/latest` | 风险分流回归报告 |
-
-## 测试与构建
-
-后端：
+后端测试：
 
 ```powershell
+$env:JAVA_HOME='<JDK 21 installation directory>'
 mvn test
-mvn clean package
 ```
 
-前端：
+前端测试：
 
 ```powershell
 Set-Location app/frontend
 npm run typecheck
 npm test
 npm run build
-```
-
-端到端测试要求前端、Keycloak 和四个 Java 服务已经启动：
-
-```powershell
 npm run e2e
 ```
 
-## 常见问题
+外部 PostgreSQL、MinIO 和 MCP 集成测试通过显式环境变量启用，并会清理其创建的测试数据。CI 默认执行单元测试、Testcontainers 数据库测试、前端构建和浏览器端到端测试。
 
-- `Flyway` 报告同版本迁移重复时，先执行 `mvn clean package`，避免旧资源残留在 `target` 中。
-- 登录失败时，检查前后端配置的 Keycloak 地址、Realm、Client ID、Client Secret 和系统时间。
-- MinIO 客户端必须连接 API 端口 `9000`，不能使用 Console 端口 `9001`。
-- 修改后端接口后，可在前端目录执行 `npm run api:generate` 更新 OpenAPI TypeScript 类型。
+## 安全说明
 
-## 数据与安全
-
-- 模型输出只作为票据候选事实，不直接决定风险等级、审核路由、审批或入账。
-- MCP 写 Tool 只能由人工审批后的服务端流程触发，并要求稳定的 `requestId`。
-- 仓库中的评测案例均为合成数据，不包含真实票据或个人信息。
-- `.env.local`、服务密钥、日志、构建产物和本地临时文件不应提交到 Git。
-- 当前业务服务用于模拟校内上下文和审批后入账边界，未连接真实高校财务系统。
+- 密码以 BCrypt 哈希保存，浏览器不保存访问令牌。
+- Session 保存在 PostgreSQL，刷新页面和后端多实例部署时可以恢复。
+- Cookie 认证开启 CSRF 防护，不要为联调关闭它。
+- MCP 服务令牌应使用至少 32 字符的随机值，并只放在本地配置或密钥系统中。
+- 数据库和 MinIO 不应使用超级管理员账号运行生产服务。
+- `.env.local`、日志、构建产物和测试报告不得提交到 Git。
+- 安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
 
 ## License
 

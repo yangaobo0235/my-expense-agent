@@ -19,18 +19,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class OpenApiConfiguration {
 
-    private static final String BEARER_AUTH = "bearerAuth";
+    private static final String SESSION_AUTH = "sessionCookie";
 
     @Bean
     OpenAPI campusFundFlowOpenApi() {
         Components components =
                 new Components()
                         .addSecuritySchemes(
-                                BEARER_AUTH,
+                                SESSION_AUTH,
                                         new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                        .bearerFormat("JWT"));
+                                                .type(SecurityScheme.Type.APIKEY)
+                                                .in(SecurityScheme.In.COOKIE)
+                                                .name("SESSION"));
         return new OpenAPI()
                 .info(
                         new Info()
@@ -39,7 +39,7 @@ public class OpenApiConfiguration {
                                 .description(
                                         "校园项目经费报销、合规审核、人工复核和审批后入账 API"))
                 .components(components)
-                .addSecurityItem(new SecurityRequirement().addList(BEARER_AUTH));
+                .addSecurityItem(new SecurityRequirement().addList(SESSION_AUTH));
     }
 
     @Bean
@@ -60,7 +60,7 @@ public class OpenApiConfiguration {
                                                                     operation
                                                                             .getResponses(),
                                                                     "401",
-                                                                    "Bearer Token 缺失或无效",
+                                                                    "登录会话缺失或已失效",
                                                                     "ACCESS_DENIED");
                                                             add(
                                                                     operation

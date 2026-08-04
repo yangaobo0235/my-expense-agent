@@ -28,9 +28,22 @@ void enableMocks().then(() => {
         locale={zhCN}
         theme={{
           token: {
-            colorPrimary: '#0f766e',
-            borderRadius: 6,
-            fontFamily: '"Inter", "PingFang SC", "Microsoft YaHei", sans-serif',
+            colorPrimary: '#173b63',
+            colorInfo: '#2f5f8f',
+            colorError: '#a1222f',
+            colorText: '#202a35',
+            colorTextSecondary: '#66717d',
+            colorBgLayout: '#f3f5f7',
+            colorBorderSecondary: '#dce1e7',
+            borderRadius: 3,
+            controlHeight: 34,
+            fontFamily: '"Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif',
+          },
+          components: {
+            Card: { boxShadowTertiary: 'none' },
+            Button: { primaryShadow: 'none' },
+            Menu: { itemBorderRadius: 0, itemHeight: 40 },
+            Table: { headerBg: '#eef1f5', headerColor: '#3f4c59' },
           },
         }}
       >

@@ -1,5 +1,16 @@
 server:
   port: ${EXPENSE_BACKEND_PORT:25101}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-response: true
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: ${EXPENSE_SESSION_COOKIE_SECURE:false}
 spring:
   config:
     import:
@@ -19,6 +30,11 @@ spring:
     table: flyway_schema_history
     baseline-on-migrate: true
     baseline-version: 0
+  session:
+    store-type: jdbc
+    timeout: ${EXPENSE_SESSION_TIMEOUT:8h}
+    jdbc:
+      initialize-schema: never
   servlet:
     multipart:
       max-file-size: 10MB
@@ -34,11 +50,12 @@ expense:
     max-retries: ${EXPENSE_EXTRACTION_MAX_RETRIES:2}
     fallback-enabled: ${EXPENSE_EXTRACTION_FALLBACK_ENABLED:true}
   security:
-    issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/realms/my-expense-agent}
-    jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/certs}
-    audiences: ${KEYCLOAK_BACKEND_AUDIENCES:my-expense-agent-backend}
-    jwt-clock-skew: ${KEYCLOAK_JWT_CLOCK_SKEW:60s}
     allowed-origins: ${EXPENSE_ALLOWED_ORIGINS:http://localhost:25105}
+  auth:
+    bootstrap-username: ${EXPENSE_BOOTSTRAP_ADMIN_USERNAME:admin}
+    bootstrap-password: ${EXPENSE_BOOTSTRAP_ADMIN_PASSWORD:}
+    bootstrap-display-name: ${EXPENSE_BOOTSTRAP_ADMIN_DISPLAY_NAME:系统管理员}
+    demo-users-enabled: ${EXPENSE_DEMO_USERS_ENABLED:false}
   minio:
     endpoint: ${EXPENSE_MINIO_ENDPOINT}
     access-key: ${EXPENSE_MINIO_ACCESS_KEY}
@@ -54,9 +71,7 @@ expense:
   mcp:
     client:
       enabled: ${EXPENSE_MCP_CLIENT_ENABLED:true}
-      token-uri: ${EXPENSE_MCP_TOKEN_URI:http://localhost:18080/realms/my-expense-agent/protocol/openid-connect/token}
-      client-id: ${EXPENSE_MCP_CLIENT_ID:my-expense-agent-backend}
-      client-secret: ${EXPENSE_MCP_CLIENT_SECRET:}
+      service-token: ${EXPENSE_MCP_SERVICE_TOKEN:}
       account-url: ${EXPENSE_ACCOUNT_MCP_URL:http://localhost:25102/mcp}
       expense-url: ${EXPENSE_EXPENSE_MCP_URL:http://localhost:25103/mcp}
       audit-history-url: ${EXPENSE_AUDIT_HISTORY_MCP_URL:http://localhost:25104/mcp}

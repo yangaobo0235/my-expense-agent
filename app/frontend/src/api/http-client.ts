@@ -1,24 +1,21 @@
 import axios from 'axios';
 
-type AccessTokenProvider = () => string | undefined | Promise<string | undefined>;
-let accessTokenProvider: AccessTokenProvider = () => undefined;
+let authenticationFailureHandler: () => void = () => undefined;
 
-export function setAccessTokenProvider(provider: AccessTokenProvider) {
-  accessTokenProvider = provider;
-}
-
-export async function getAccessToken() {
-  return accessTokenProvider();
+export function setAuthenticationFailureHandler(handler: () => void) {
+  authenticationFailureHandler = handler;
 }
 
 export const httpClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
   timeout: 20_000,
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
-httpClient.interceptors.request.use(async (config) => {
-  const token = await accessTokenProvider();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+httpClient.interceptors.request.use((config) => {
   config.headers['X-Request-ID'] ??= crypto.randomUUID();
   return config;
 });
@@ -26,8 +23,12 @@ httpClient.interceptors.request.use(async (config) => {
 httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && window.location.pathname !== '/login') {
-      window.location.assign('/login?reason=session-expired');
+    const isAuthRequest = error.config?.url?.includes('/api/v1/auth/');
+    if (error.response?.status === 401 && !isAuthRequest) {
+      authenticationFailureHandler();
+      if (window.location.pathname !== '/login') {
+        window.location.assign('/login?reason=session-expired');
+      }
     }
     return Promise.reject(error);
   },

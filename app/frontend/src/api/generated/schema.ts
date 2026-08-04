@@ -228,6 +228,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/review-tasks": {
         parameters: {
             query?: never;
@@ -380,6 +412,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["extractionReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["session"];
         put?: never;
         post?: never;
         delete?: never;
@@ -643,6 +691,21 @@ export interface components {
             completedAt?: string;
             /** Format: date-time */
             createdAt?: string;
+        };
+        LoginRequest: {
+            username: string;
+            password: string;
+        };
+        CsrfToken: {
+            parameterName?: string;
+            token?: string;
+            headerName?: string;
+        };
+        SessionResponse: {
+            authenticated?: boolean;
+            subject?: string;
+            displayName?: string;
+            roles?: string[];
         };
         ReviewTaskResponse: {
             /** Format: uuid */
@@ -1055,7 +1118,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1126,7 +1189,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1191,7 +1254,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1262,7 +1325,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1333,7 +1396,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1400,7 +1463,7 @@ export interface operations {
                     "*/*": components["schemas"]["MoreInfoSuggestion"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1471,7 +1534,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1536,7 +1599,7 @@ export interface operations {
                     "*/*": components["schemas"]["PolicyCatalogResponse"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1605,7 +1668,7 @@ export interface operations {
                     "*/*": components["schemas"]["PolicyImportResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1678,7 +1741,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCasePageResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1747,7 +1810,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseCaseResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1818,7 +1881,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseWorkflowResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1889,7 +1952,7 @@ export interface operations {
                     "*/*": components["schemas"]["SettlementResult"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1956,7 +2019,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseDocumentDetailResponse"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2030,7 +2093,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseDocumentResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2097,7 +2160,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExtractionResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2164,7 +2227,7 @@ export interface operations {
                     "*/*": components["schemas"]["WorkflowRunDetail"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2235,7 +2298,7 @@ export interface operations {
                     "*/*": components["schemas"]["ExpenseWorkflowResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2315,7 +2378,7 @@ export interface operations {
                     "*/*": components["schemas"]["MoreInfoSubmissionResult"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2386,7 +2449,141 @@ export interface operations {
                     "*/*": components["schemas"]["MoreInfoTask"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 登录会话缺失或已失效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query: {
+                csrfToken: components["schemas"]["CsrfToken"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionResponse"];
+                };
+            };
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2451,7 +2648,7 @@ export interface operations {
                     "*/*": components["schemas"]["ReviewTaskResponse"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2518,7 +2715,7 @@ export interface operations {
                     "*/*": components["schemas"]["ReviewTaskResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2591,7 +2788,7 @@ export interface operations {
                     "*/*": components["schemas"]["PolicySearchResponse"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2658,7 +2855,7 @@ export interface operations {
                     "*/*": components["schemas"]["CaseEvidence"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2729,7 +2926,7 @@ export interface operations {
                     "text/event-stream": components["schemas"]["SseEmitter"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2798,7 +2995,7 @@ export interface operations {
                     "*/*": components["schemas"]["CaseObservabilityResponse"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2865,7 +3062,7 @@ export interface operations {
                     "*/*": components["schemas"]["MoreInfoTask"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2932,7 +3129,7 @@ export interface operations {
                     "*/*": components["schemas"]["DocumentVersion"][];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2997,7 +3194,7 @@ export interface operations {
                     "*/*": components["schemas"]["RiskEvaluationReport"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -3062,7 +3259,74 @@ export interface operations {
                     "*/*": components["schemas"]["ExtractionEvaluationReport"];
                 };
             };
-            /** @description Bearer Token 缺失或无效 */
+            /** @description 登录会话缺失或已失效 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 当前身份没有访问权限 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 状态冲突、乐观锁冲突或重复请求 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 请求或业务字段校验失败 */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description 外部依赖暂时不可用 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    session: {
+        parameters: {
+            query: {
+                csrfToken: components["schemas"]["CsrfToken"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionResponse"];
+                };
+            };
+            /** @description 登录会话缺失或已失效 */
             401: {
                 headers: {
                     [name: string]: unknown;
